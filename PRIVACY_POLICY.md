@@ -52,7 +52,7 @@
 
 إذا كان لديك أي سؤال أو استفسار حول سياسة الخصوصية وأمان البيانات في تطبيق "إنجاز"، يمكنك التواصل معنا عبر:
 - **البريد الإلكتروني للمطور:** `ssultan.j2@gmail.com`
-- **مستودع المشروع:** [GitHub: sultanAlhabsi/habit](https://github.com/sultanAlhabsi/habit)
+- **مستودع المشروع:** [GitHub: sultanAlhabsi/enjaz-Habit-Tracker](https://github.com/sultanAlhabsi/enjaz-Habit-Tracker)
 
 ---
 

@@ -131,7 +131,7 @@ Start your journey towards a more organized and disciplined life today with Enja
 ### أ) سياسة الخصوصية (Privacy Policy)
 - **الرابط المطلوب وضعه**:
   ```text
-  https://sultanAlhabsi.github.io/habit/privacy.html
+  https://sultanalhabsi.github.io/enjaz-Habit-Tracker/privacy.html
   ```
   *(تأكد من عمل `git push` لمجلد `docs/` وتفعيل GitHub Pages من إعدادات مستودعك).*
 

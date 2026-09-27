@@ -117,7 +117,11 @@ const withProductionHardening = (config) => {
           );
           content = content.replace(
             /signingConfig\s+signingConfigs\.debug/,
-            'signingConfig (signingConfigs.release.storeFile != null && signingConfigs.release.storeFile.exists()) ? signingConfigs.release : signingConfigs.debug'
+            `if (signingConfigs.release.storeFile != null && signingConfigs.release.storeFile.exists()) {
+                signingConfig signingConfigs.release
+            } else {
+                signingConfig signingConfigs.debug
+            }`
           );
           fs.writeFileSync(buildGradlePath, content, 'utf8');
         }

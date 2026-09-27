@@ -6,23 +6,31 @@
   <title>سياسة الخصوصية وأمان البيانات — تطبيق إنجاز (Enjaz Habit Tracker)</title>
   <style>
     :root {
-      --primary: #2A4B3A;
-      --primary-light: #EBF3EE;
-      --bg: #F6F5F0;
+      --primary: #2A4B3A; /* أخضر غابي - هوية التطبيق */
+      --primary-accent: #1E382B;
+      --primary-light: #EBF2EE;
+      --primary-border: #D1E0D7;
+      --bg: #FAF9F6; /* خلفية التطبيق الفاتحة الدافئة */
       --card: #FFFFFF;
-      --text: #1E293B;
-      --text-muted: #64748B;
-      --border: #E2E8F0;
+      --text: #1C1917; /* Stone-900 */
+      --text-muted: #78716C; /* Stone-500 */
+      --border: #EBEAE5;
+      --link: #2A4B3A;
+      --link-hover: #1E382B;
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --primary: #34D399;
-        --primary-light: rgba(52, 211, 153, 0.12);
-        --bg: #0F172A;
-        --card: #1E293B;
-        --text: #F8FAFC;
-        --text-muted: #94A3B8;
-        --border: #334155;
+        --primary: #52B788; /* أخضر غابي هادئ متناسق عالي التباين */
+        --primary-accent: #74C69D;
+        --primary-light: rgba(42, 75, 58, 0.35);
+        --primary-border: #2A4B3A;
+        --bg: #0D0E10; /* خلفية التطبيق الداكنة الأصلية (Deep obsidian) */
+        --card: #16181B; /* بطاقة التطبيق الداكنة (Elevated charcoal) */
+        --text: #F8FAFC; /* Slate-50 */
+        --text-muted: #94A3B8; /* Slate-400 */
+        --border: #262A30; /* إطار التطبيق الداكن */
+        --link: #52B788;
+        --link-hover: #74C69D;
       }
     }
     * {
@@ -59,10 +67,11 @@
       background: var(--primary-light);
       color: var(--primary);
       font-weight: 700;
-      font-size: 20px;
-      padding: 8px 18px;
+      font-size: 18px;
+      padding: 8px 20px;
       border-radius: 999px;
       margin-bottom: 14px;
+      border: 1px solid var(--primary-border);
     }
     h1 {
       font-size: 26px;
@@ -113,6 +122,9 @@
       border-radius: 8px;
       margin: 20px 0;
       font-size: 14px;
+      border-top: 1px solid var(--primary-border);
+      border-bottom: 1px solid var(--primary-border);
+      border-left: 1px solid var(--primary-border);
     }
     .en-section {
       direction: ltr;
@@ -120,6 +132,10 @@
       margin-top: 48px;
       padding-top: 36px;
       border-top: 2px dashed var(--border);
+    }
+    .en-section .highlight-box {
+      border-right: 1px solid var(--primary-border);
+      border-left: 4px solid var(--primary);
     }
     .en-section h2 {
       border-bottom: 2px solid var(--primary-light);
@@ -131,9 +147,34 @@
     .en-section th, .en-section td {
       text-align: left;
     }
-    a {
-      color: var(--primary);
+    a, a:link, a:visited {
+      color: var(--link) !important;
       text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--primary-border);
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+    a:hover, a:active {
+      opacity: 0.85;
+      color: var(--link-hover) !important;
+    }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--link) !important;
+      background: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      padding: 5px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none !important;
+      margin-top: 4px;
+      transition: all 0.2s ease;
+    }
+    .contact-link:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
     }
     .footer {
       text-align: center;
@@ -211,8 +252,8 @@
     <h2>6. التواصل والاستفسارات</h2>
     <p>إذا كان لديك أي سؤال أو استفسار حول سياسة الخصوصية وأمان البيانات في تطبيق "إنجاز"، يمكنك التواصل معنا عبر:</p>
     <ul>
-      <li><strong>البريد الإلكتروني:</strong> <a href="mailto:ssultan.j2@gmail.com">ssultan.j2@gmail.com</a></li>
-      <li><strong>المستودع الرسمي:</strong> <a href="https://github.com/sultanAlhabsi/habit" target="_blank" rel="noopener">GitHub: sultanAlhabsi/habit</a></li>
+      <li><strong>البريد الإلكتروني:</strong> <a href="mailto:ssultan.j2@gmail.com" class="contact-link">ssultan.j2@gmail.com</a></li>
+      <li><strong>المستودع الرسمي:</strong> <a href="https://github.com/sultanAlhabsi/enjaz-Habit-Tracker" target="_blank" rel="noopener" class="contact-link">GitHub: sultanAlhabsi/enjaz-Habit-Tracker</a></li>
     </ul>
 
     <!-- English Summary for Google Play Reviewers -->
@@ -256,8 +297,8 @@
       <h2>5. Contact Us</h2>
       <p>For any privacy inquiries or policy questions, please contact:</p>
       <ul>
-        <li><strong>Developer Email:</strong> <a href="mailto:ssultan.j2@gmail.com">ssultan.j2@gmail.com</a></li>
-        <li><strong>Repository:</strong> <a href="https://github.com/sultanAlhabsi/habit" target="_blank" rel="noopener">https://github.com/sultanAlhabsi/habit</a></li>
+        <li><strong>Developer Email:</strong> <a href="mailto:ssultan.j2@gmail.com" class="contact-link">ssultan.j2@gmail.com</a></li>
+        <li><strong>Repository:</strong> <a href="https://github.com/sultanAlhabsi/enjaz-Habit-Tracker" target="_blank" rel="noopener" class="contact-link">https://github.com/sultanAlhabsi/enjaz-Habit-Tracker</a></li>
       </ul>
     </div>
 

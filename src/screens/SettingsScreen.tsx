@@ -1162,8 +1162,8 @@ export const SettingsScreen: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onPress={() => {
-                  Linking.openURL('https://sultanalhabsi.github.io/habit/privacy.html').catch(() => {
-                    Linking.openURL('https://github.com/sultanAlhabsi/habit/blob/main/PRIVACY_POLICY.md').catch(() => {});
+                  Linking.openURL('https://sultanalhabsi.github.io/enjaz-Habit-Tracker/privacy.html').catch(() => {
+                    Linking.openURL('https://github.com/sultanAlhabsi/enjaz-Habit-Tracker/blob/main/PRIVACY_POLICY.md').catch(() => {});
                   });
                 }}
               />
