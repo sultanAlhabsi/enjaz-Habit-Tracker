@@ -19,9 +19,6 @@
       "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
-      },
-      "env": {
-        "DATABASE_URL": ""
       }
     }
   },
