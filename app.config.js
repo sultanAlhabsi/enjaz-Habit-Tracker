@@ -192,12 +192,9 @@ module.exports = ({ config }) => {
       eas: {
         projectId: 'd0a6b8f4-ebb5-4510-ac3d-047a8145898f',
       },
-      // DATABASE_URL is injected from EAS Secrets at build time.
-      // Never hardcode credentials here — use `eas env:set` to manage them.
-      databaseUrl:
-        process.env.DATABASE_URL && process.env.DATABASE_URL.trim().length > 0
-          ? process.env.DATABASE_URL.trim()
-          : null,
+      // Google Play release is strictly 100% offline & local-first (No remote/cloud database).
+      // Remote cloud database (Neon) is disabled completely.
+      databaseUrl: null,
     },
     owner: 'sultanalhabsi',
   };
