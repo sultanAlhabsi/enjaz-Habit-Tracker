@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   toastBadge: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: 6,
     paddingHorizontal: 14,
@@ -388,13 +388,13 @@ const styles = StyleSheet.create({
     }),
   },
   cardHeader: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 14,
   },
   categoryBadge: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: 6,
     paddingHorizontal: 10,
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   },
   categoryTitle: { fontSize: 12, fontWeight: '600' },
   streakPill: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: 4,
     paddingHorizontal: 8,
@@ -416,11 +416,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     marginBottom: 4,
-    textAlign: 'left',
+    textAlign: 'right',
   },
-  habitSubtitle: { fontSize: 12, textAlign: 'left' },
+  habitSubtitle: { fontSize: 12, textAlign: 'right' },
   cardFooter: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: 12,
@@ -428,8 +428,8 @@ const styles = StyleSheet.create({
     borderTopColor: 'rgba(150, 150, 150, 0.2)',
   },
   progressInfo: { flex: 1 },
-  progressCount: { fontSize: 14, fontWeight: '700', marginBottom: 2 },
-  progressLabel: { fontSize: 11 },
+  progressCount: { fontSize: 14, fontWeight: '700', marginBottom: 2, textAlign: 'right' },
+  progressLabel: { fontSize: 11, textAlign: 'right' },
   checkButtonWrapper: {
     width: 48,
     height: 48,
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
     left: 22,
   },
   hintContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,

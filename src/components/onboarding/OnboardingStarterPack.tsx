@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   habitItem: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     padding: 12,
     borderRadius: 16,
@@ -320,16 +320,18 @@ const styles = StyleSheet.create({
   },
   habitDetails: {
     flex: 1,
+    justifyContent: 'center',
   },
   habitName: {
     fontSize: 15,
     fontWeight: '700',
     marginBottom: 3,
-    textAlign: 'left',
+    textAlign: 'right',
   },
   habitDesc: {
     fontSize: 11,
-    textAlign: 'left',
+    textAlign: 'right',
+    lineHeight: 16,
   },
   checkbox: {
     width: 26,
@@ -338,7 +340,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 4,
+    marginRight: 6,
   },
   buttonContainer: {
     paddingVertical: 14,

@@ -1,0 +1,15 @@
+{
+  "project_root": ".",
+  "skip_analysis_in_path": [
+    "node_modules",
+    "android/build",
+    "android/app/build",
+    ".expo",
+    "dist"
+  ],
+  "bufferoverrun": true,
+  "pulse": true,
+  "lshpack": true,
+  "racerd": true,
+  "siof": true
+}

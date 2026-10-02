@@ -10,6 +10,9 @@ import Animated, {
   SharedValue,
 } from 'react-native-reanimated';
 import { useTheme } from '../../theme/ThemeContext';
+import { normalizeProgressBarValue } from '../../utils/habitUtils';
+
+export { normalizeProgressBarValue };
 
 interface SparkConfig {
   id: number;
@@ -98,7 +101,13 @@ const SparkParticle: React.FC<SparkParticleProps> = React.memo(({ progress, conf
 });
 
 interface ProgressBarProps {
-  progress: number; // 0 to 1 or 0 to 100
+  /**
+   * Progress value:
+   * - By default, expected as a percentage from 0 to 100 (e.g. 50 = 50%, 1 = 1%, 0.5 = 0.5%).
+   * - If `isRatio` is true, expected as a 0 to 1 float (e.g. 0.5 = 50%, 0.01 = 1%, 1 = 100%).
+   */
+  progress: number;
+  isRatio?: boolean;
   color?: string;
   height?: number;
   style?: ViewStyle;
@@ -106,13 +115,13 @@ interface ProgressBarProps {
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
   progress,
+  isRatio = false,
   color,
   height = 4,
   style,
 }) => {
   const { theme, radius } = useTheme();
-  const normalizedProgress = progress > 1 ? progress / 100 : progress;
-  const clamped = Math.min(1, Math.max(0, isNaN(normalizedProgress) ? 0 : normalizedProgress));
+  const clamped = normalizeProgressBarValue(progress, isRatio);
 
   const isFirstRender = useRef(true);
   const prevClamped = useRef(clamped);
@@ -171,7 +180,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     'worklet';
     return {
       // Hide dot when progress is practically 0
-      opacity: progressAnim.value > 0.005 ? 1 : 0,
+      opacity: progressAnim.value > 0.0005 ? 1 : 0,
     };
   });
 

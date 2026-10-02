@@ -277,7 +277,7 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
       if (frequencyDays.length === 1) return; // Maintain at least one day
       setFrequencyDays(frequencyDays.filter((d) => d !== dayIndex));
     } else {
-      setFrequencyDays([...frequencyDays, dayIndex].sort());
+      setFrequencyDays([...frequencyDays, dayIndex].sort((a, b) => a - b));
     }
   };
 

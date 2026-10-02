@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   pointRow: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     padding: 10,
     borderRadius: 14,
@@ -260,14 +260,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     marginBottom: 2,
-    textAlign: 'left',
+    textAlign: 'right',
   },
   pointDescription: {
     fontSize: 10,
-    textAlign: 'left',
+    textAlign: 'right',
   },
   hintContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,

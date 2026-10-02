@@ -48,6 +48,7 @@ import {
   filterHabitsByQuery,
   formatDailySummaryForShare,
   isHabitDueOnDate,
+  isHabitScheduledForDate,
   getHabitCategory,
   sortHabits,
   formatHabitStatsForShare,
@@ -347,40 +348,46 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   // Memoized handlers to avoid creating new function references on every render
   const handleShareDaily = useCallback(async () => {
     try {
-      const message = formatDailySummaryForShare(selectedDate, habits, checkins);
+      const activeDate = useHabitStore.getState().selectedDate;
+      const { habits: currentHabits, checkins: currentCheckins } = useHabitStore.getState();
+      const message = formatDailySummaryForShare(activeDate, currentHabits, currentCheckins);
       await Share.share({ message });
     } catch (_) {}
-  }, [selectedDate, habits, checkins]);
+  }, []);
 
   const handleToggleCheckin = useCallback(
     (habitId: string) => {
       triggerSmoothLayoutTransition();
-      toggleCheckin(habitId, selectedDate);
+      const activeDate = useHabitStore.getState().selectedDate;
+      toggleCheckin(habitId, activeDate);
     },
-    [triggerSmoothLayoutTransition, toggleCheckin, selectedDate]
+    [triggerSmoothLayoutTransition, toggleCheckin]
   );
 
   const handleIncrementCheckin = useCallback(
     (habitId: string) => {
       triggerSmoothLayoutTransition();
-      incrementCheckin(habitId, selectedDate);
+      const activeDate = useHabitStore.getState().selectedDate;
+      incrementCheckin(habitId, activeDate);
     },
-    [triggerSmoothLayoutTransition, incrementCheckin, selectedDate]
+    [triggerSmoothLayoutTransition, incrementCheckin]
   );
 
   const handleDecrementCheckin = useCallback(
     (habitId: string) => {
       triggerSmoothLayoutTransition();
-      decrementCheckin(habitId, selectedDate);
+      const activeDate = useHabitStore.getState().selectedDate;
+      decrementCheckin(habitId, activeDate);
     },
-    [triggerSmoothLayoutTransition, decrementCheckin, selectedDate]
+    [triggerSmoothLayoutTransition, decrementCheckin]
   );
 
   const handlePressDetails = useCallback(
     (habitId: string) => {
-      navigation.navigate('HabitDetails', { habitId, date: selectedDate });
+      const activeDate = useHabitStore.getState().selectedDate;
+      navigation.navigate('HabitDetails', { habitId, date: activeDate });
     },
-    [navigation, selectedDate]
+    [navigation]
   );
 
   const handleLongPressHabit = useCallback((habit: Habit) => {
@@ -394,24 +401,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   const handlePressNote = useCallback(
     (habit: Habit, note?: string) => {
+      const activeDate = useHabitStore.getState().selectedDate;
       setActiveNoteModal({
         habit,
-        date: selectedDate,
+        date: activeDate,
         initialNote: note,
       });
     },
-    [selectedDate]
+    []
   );
 
   const handlePressQuantity = useCallback(
     (habit: Habit, currentCount: number) => {
+      const activeDate = useHabitStore.getState().selectedDate;
       setActiveQuantityModal({
         habit,
         currentCount,
-        date: selectedDate,
+        date: activeDate,
       });
     },
-    [selectedDate]
+    []
   );
 
   const handleResetAll = useCallback(() => {
@@ -426,12 +435,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           text: 'إعادة تعيين',
           style: 'destructive',
           onPress: async () => {
-            await resetAllDueHabits(selectedDate);
+            const activeDate = useHabitStore.getState().selectedDate;
+            await resetAllDueHabits(activeDate);
           },
         },
       ]
     );
-  }, [dailyStats.todayCompletedCount, resetAllDueHabits, selectedDate]);
+  }, [dailyStats.todayCompletedCount, resetAllDueHabits]);
 
   const listHeaderComponent = useMemo(
     () => (
@@ -517,7 +527,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               styles.sortBtn,
               {
                 backgroundColor: sortOption !== 'default' ? theme.cardSecondary : 'transparent',
-                borderColor: sortOption !== 'default' ? theme.border : theme.border,
+                borderColor: theme.border,
                 opacity: pressed ? 0.6 : 1,
               },
             ]}
@@ -747,8 +757,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                       isFuture={isFutureDate}
                       isOffSchedule={false}
                       periodicBadgeText={periodicBadgeText}
+                      selectedDate={selectedDate}
                       hasNote={Boolean(checkin?.note?.trim())}
                       onToggleCheckin={() => handleToggleCheckin(habit.id)}
+                      onIncrementCheckin={() => handleIncrementCheckin(habit.id)}
                       onPressDetails={() => handlePressDetails(habit.id)}
                       onLongPress={() => handleLongPressHabit(habit)}
                       onPressNote={() => handlePressNote(habit, checkin?.note)}
@@ -839,8 +851,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                       isFuture={isFutureDate}
                       isOffSchedule={true}
                       periodicBadgeText={periodicBadgeText}
+                      selectedDate={selectedDate}
                       hasNote={Boolean(checkin?.note?.trim())}
                       onToggleCheckin={() => handleToggleCheckin(habit.id)}
+                      onIncrementCheckin={() => handleIncrementCheckin(habit.id)}
                       onPressDetails={() => handlePressDetails(habit.id)}
                       onLongPress={() => handleLongPressHabit(habit)}
                       onPressNote={() => handlePressNote(habit, checkin?.note)}
@@ -891,7 +905,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       const isCompleted = Boolean(checkin?.completed);
       const currentCount = checkin ? checkin.count : 0;
       const streak = habitStreakMap.get(habit.id) ?? 0;
-      const isDue = isHabitDueOnDate(habit, selectedDate, true);
+      const isDue = isHabitDueOnDate(habit, selectedDate, true) || isHabitScheduledForDate(habit, selectedDate);
       const periodicBadgeText = getPeriodicBadgeText(
         habit,
         completedDatesByHabit.get(habit.id) || new Set<string>(),
@@ -907,8 +921,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           isFuture={isFutureDate}
           isOffSchedule={!isDue}
           periodicBadgeText={periodicBadgeText}
+          selectedDate={selectedDate}
           hasNote={Boolean(checkin?.note?.trim())}
           onToggleCheckin={() => handleToggleCheckin(habit.id)}
+          onIncrementCheckin={() => handleIncrementCheckin(habit.id)}
           onPressDetails={() => handlePressDetails(habit.id)}
           onLongPress={() => handleLongPressHabit(habit)}
           onPressNote={() => handlePressNote(habit, checkin?.note)}
@@ -924,6 +940,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       completedDatesByHabit,
       isFutureDate,
       handleToggleCheckin,
+      handleIncrementCheckin,
       handlePressDetails,
       handleLongPressHabit,
       handlePressNote,

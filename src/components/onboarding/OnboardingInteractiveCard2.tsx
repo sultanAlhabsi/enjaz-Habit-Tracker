@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
   },
   streakHeader: { alignItems: 'center' },
   streakCountNumber: { fontSize: 20, fontWeight: '800', marginBottom: 4 },
-  streakSubBadge: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  streakSubBadge: { flexDirection: 'row-reverse', alignItems: 'center', gap: 4 },
   streakSubText: { fontSize: 11, fontWeight: '600', color: '#B45309' },
   chartBox: {
     borderRadius: 16,
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   chartHeader: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   chartTitle: { fontSize: 11, fontWeight: '600' },
   chartScore: { fontSize: 11, fontWeight: '700' },
   barsContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     paddingTop: 4,
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   },
   dayLabel: { fontSize: 11, fontWeight: '600' },
   hintContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,

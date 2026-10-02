@@ -37,7 +37,9 @@ interface HabitCardProps {
   isOffSchedule?: boolean;
   hasNote?: boolean;
   periodicBadgeText?: string;
+  selectedDate?: string;
   onToggleCheckin: () => void;
+  onIncrementCheckin?: () => void;
   onPressDetails: () => void;
   onLongPress?: () => void;
   onPressNote?: () => void;
@@ -54,7 +56,9 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
   isOffSchedule = false,
   hasNote = false,
   periodicBadgeText,
+  selectedDate,
   onToggleCheckin,
+  onIncrementCheckin,
   onPressDetails,
   onLongPress,
   onPressNote,
@@ -75,11 +79,19 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
     setIsLocallyChecked(null);
   }, [isCompleted]);
 
-  // Clean up any pending timer on unmount
+  // Keep latest onToggleCheckin ref to safely flush on unmount
+  const onToggleCheckinRef = useRef(onToggleCheckin);
+  useEffect(() => {
+    onToggleCheckinRef.current = onToggleCheckin;
+  }, [onToggleCheckin]);
+
+  // Flush any pending checkin on unmount so fast taps or list reordering never drop an action
   useEffect(() => {
     return () => {
       if (checkinTimeoutRef.current) {
         clearTimeout(checkinTimeoutRef.current);
+        checkinTimeoutRef.current = null;
+        onToggleCheckinRef.current();
       }
     };
   }, []);
@@ -148,7 +160,21 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
 
   const handlePressCircle = () => {
     if (isMultiTarget) {
-      if (onPressQuantity) onPressQuantity();
+      if (isTargetMet) {
+        // Already completed: untoggle back to 0
+        onToggleCheckin();
+      } else {
+        // Direct tap on circle records +1 (Option B)
+        if (safeCount + 1 >= habit.targetCount) {
+          setIsLocallyChecked(true);
+          particleRef.current?.trigger();
+        }
+        if (onIncrementCheckin) {
+          onIncrementCheckin();
+        } else {
+          onToggleCheckin();
+        }
+      }
       return;
     }
 
@@ -167,6 +193,7 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
       // 3. Keep card peacefully in place for 280ms so the eye takes in completion,
       // then trigger the store update to slide down calmly
       checkinTimeoutRef.current = setTimeout(() => {
+        checkinTimeoutRef.current = null;
         onToggleCheckin();
       }, 280);
     } else {
@@ -177,7 +204,7 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
   };
 
   const panGesture = Gesture.Pan()
-    .activeOffsetX([-15, 15])
+    .activeOffsetX([-25, 25])
     .failOffsetY([-15, 15])
     .onUpdate((e) => {
       'worklet';
@@ -397,7 +424,7 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
           {/* Multi-target Progress Track */}
           {isMultiTarget && (
             <ProgressBar
-              progress={Math.min(100, Math.round(progressRatio * 100))}
+              progress={Math.min(100, Math.max(0, progressRatio * 100))}
               height={3}
               color={habit.color || theme.primary}
               style={{ marginTop: 4 }}
@@ -762,6 +789,7 @@ const styles = StyleSheet.create({
 
 export const HabitCard = React.memo(HabitCardBase, (prev, next) => {
   return (
+    prev.selectedDate === next.selectedDate &&
     prev.habit.id === next.habit.id &&
     prev.habit.name === next.habit.name &&
     prev.habit.color === next.habit.color &&

@@ -436,7 +436,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     const maxOrder = currentHabits.reduce((max, h) => Math.max(max, h.order ?? 0), -1);
     const newHabit: Habit = {
       ...data,
-      id: `habit_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      id: `habit_${Date.now()}_${(currentHabits.length + 1).toString(36)}_${(Date.now() % 10000).toString(36)}`,
       order: maxOrder + 1,
       createdAt: dayjs().toISOString(),
     };
@@ -588,11 +588,10 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     const habit = get().habits.find((h) => h.id === habitId);
     if (!habit) return false;
 
-    // Disallow checkins for future dates or dates before habit creation
+    // Disallow checkins for future dates
     const targetDay = dayjs(date).startOf('day');
     const today = dayjs().startOf('day');
-    const createdDay = dayjs(habit.createdAt).startOf('day');
-    if (targetDay.isAfter(today) || targetDay.isBefore(createdDay)) {
+    if (targetDay.isAfter(today)) {
       return false;
     }
 
@@ -662,6 +661,22 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       });
       await saveCheckinRecord(newCheckin);
       pushCheckinChangeAsync(newCheckin);
+
+      // If checkin is before habit creation date, adjust habit createdAt to support retroactive completion
+      const createdDay = dayjs(habit.createdAt).startOf('day');
+      if (targetDay.isBefore(createdDay)) {
+        const updatedHabit: Habit = {
+          ...habit,
+          createdAt: targetDay.toISOString(),
+          updatedAt: dayjs().toISOString(),
+        };
+        set((state) => ({
+          habits: state.habits.map((h) => (h.id === habitId ? updatedHabit : h)),
+        }));
+        await saveHabitRecord(updatedHabit);
+        pushHabitChangeAsync(updatedHabit);
+      }
+
       return true; // Became checked
     }
   },
@@ -669,6 +684,10 @@ export const useHabitStore = create<HabitState>((set, get) => ({
   completeAllDueHabits: async (targetDate?: string) => {
     const date = targetDate || get().selectedDate;
     const { habits, checkins } = get();
+
+    const targetDay = dayjs(date).startOf('day');
+    const today = dayjs().startOf('day');
+    if (targetDay.isAfter(today)) return 0;
 
     const pendingHabits = getPendingDueHabitsForDate(habits, checkins, date);
     if (pendingHabits.length === 0) return 0;
@@ -683,6 +702,27 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     // Save all checkins atomically within a single SQLite transaction
     await batchSaveCheckinRecords(newOrUpdatedCheckins);
     newOrUpdatedCheckins.forEach((c) => pushCheckinChangeAsync(c));
+
+    // Update habit creation dates if completing retroactively before habit creation
+    const habitsToUpdate: Habit[] = [];
+    for (const h of pendingHabits) {
+      const createdDay = dayjs(h.createdAt).startOf('day');
+      if (targetDay.isBefore(createdDay)) {
+        habitsToUpdate.push({
+          ...h,
+          createdAt: targetDay.toISOString(),
+          updatedAt: dayjs().toISOString(),
+        });
+      }
+    }
+    if (habitsToUpdate.length > 0) {
+      const updateMap = new Map(habitsToUpdate.map((h) => [h.id, h]));
+      set((state) => ({
+        habits: state.habits.map((h) => updateMap.get(h.id) || h),
+      }));
+      await batchSaveHabits(habitsToUpdate);
+      habitsToUpdate.forEach((h) => pushHabitChangeAsync(h));
+    }
 
     set((state) => {
       const pendingIds = new Set(pendingHabits.map((h) => h.id));
@@ -746,11 +786,10 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     const habit = get().habits.find((h) => h.id === habitId);
     if (!habit) return;
 
-    // Disallow checkins for future dates or dates before habit creation
+    // Disallow checkins for future dates
     const targetDay = dayjs(date).startOf('day');
     const today = dayjs().startOf('day');
-    const createdDay = dayjs(habit.createdAt).startOf('day');
-    if (targetDay.isAfter(today) || targetDay.isBefore(createdDay)) {
+    if (targetDay.isAfter(today)) {
       return;
     }
 
@@ -785,6 +824,22 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     });
     await saveCheckinRecord(updatedCheckin);
     pushCheckinChangeAsync(updatedCheckin);
+
+    if (isCompleted) {
+      const createdDay = dayjs(habit.createdAt).startOf('day');
+      if (targetDay.isBefore(createdDay)) {
+        const updatedHabit: Habit = {
+          ...habit,
+          createdAt: targetDay.toISOString(),
+          updatedAt: dayjs().toISOString(),
+        };
+        set((state) => ({
+          habits: state.habits.map((h) => (h.id === habitId ? updatedHabit : h)),
+        }));
+        await saveHabitRecord(updatedHabit);
+        pushHabitChangeAsync(updatedHabit);
+      }
+    }
 
     if (get().hapticsEnabled) {
       try {
@@ -865,11 +920,10 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     const habit = get().habits.find((h) => h.id === habitId);
     if (!habit) return;
 
-    // Disallow checkins for future dates or dates before habit creation
+    // Disallow checkins for future dates
     const targetDay = dayjs(date).startOf('day');
     const today = dayjs().startOf('day');
-    const createdDay = dayjs(habit.createdAt).startOf('day');
-    if (targetDay.isAfter(today) || targetDay.isBefore(createdDay)) {
+    if (targetDay.isAfter(today)) {
       return;
     }
 
@@ -880,7 +934,6 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     const existing = get().checkins.find(
       (c) => c.habitId === habitId && c.date === date
     );
-
 
     const updatedCheckin: HabitCheckin = {
       id: existing ? existing.id : `chk_${habitId}_${date}`,
@@ -905,6 +958,22 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     });
     await saveCheckinRecord(updatedCheckin);
     pushCheckinChangeAsync(updatedCheckin);
+
+    if (isCompleted) {
+      const createdDay = dayjs(habit.createdAt).startOf('day');
+      if (targetDay.isBefore(createdDay)) {
+        const updatedHabit: Habit = {
+          ...habit,
+          createdAt: targetDay.toISOString(),
+          updatedAt: dayjs().toISOString(),
+        };
+        set((state) => ({
+          habits: state.habits.map((h) => (h.id === habitId ? updatedHabit : h)),
+        }));
+        await saveHabitRecord(updatedHabit);
+        pushHabitChangeAsync(updatedHabit);
+      }
+    }
 
     if (get().hapticsEnabled) {
       try {

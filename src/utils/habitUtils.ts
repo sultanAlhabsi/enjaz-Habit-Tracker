@@ -153,25 +153,10 @@ export const getHabitCategory = (iconName?: string): string => {
 };
 
 /**
- * Check if a habit is scheduled to be done on a specific date (YYYY-MM-DD)
- * @param habit Habit object
- * @param dateStr Date in YYYY-MM-DD format
- * @param requireActive When true, inactive habits return false (used for daily checklist). When false, checks schedule regardless of pause (used for statistics).
+ * Check if a habit's schedule matches a specific date (irrespective of creation date)
  */
-export const isHabitDueOnDate = (habit: Habit, dateStr: string, requireActive = true): boolean => {
-  if (requireActive && (!habit.isActive || habit.archivedAt)) return false;
-
+export const isHabitScheduledForDate = (habit: Habit, dateStr: string): boolean => {
   const targetDateOnly = dateStr.slice(0, 10);
-  const createdDateOnly = (habit.createdAt || '').slice(0, 10);
-
-  // If date is before habit creation, it wasn't due then
-  if (createdDateOnly && targetDateOnly < createdDateOnly) return false;
-
-  // If habit was archived, it was not due on dates after archive date
-  if (habit.archivedAt) {
-    const archivedDateOnly = habit.archivedAt.slice(0, 10);
-    if (targetDateOnly > archivedDateOnly) return false;
-  }
 
   if (habit.frequency === 'daily') {
     return true;
@@ -194,6 +179,30 @@ export const isHabitDueOnDate = (habit: Habit, dateStr: string, requireActive = 
 
   // Periodic flexible habits (weekly_target, monthly_target) are not bound to a single calendar due day
   return false;
+};
+
+/**
+ * Check if a habit is scheduled to be done on a specific date (YYYY-MM-DD)
+ * @param habit Habit object
+ * @param dateStr Date in YYYY-MM-DD format
+ * @param requireActive When true, inactive habits return false (used for daily checklist). When false, checks schedule regardless of pause (used for statistics).
+ */
+export const isHabitDueOnDate = (habit: Habit, dateStr: string, requireActive = true): boolean => {
+  if (requireActive && (!habit.isActive || habit.archivedAt)) return false;
+
+  const targetDateOnly = dateStr.slice(0, 10);
+  const createdDateOnly = (habit.createdAt || '').slice(0, 10);
+
+  // If date is before habit creation, it wasn't due then
+  if (createdDateOnly && targetDateOnly < createdDateOnly) return false;
+
+  // If habit was archived, it was not due on dates after archive date
+  if (habit.archivedAt) {
+    const archivedDateOnly = habit.archivedAt.slice(0, 10);
+    if (targetDateOnly > archivedDateOnly) return false;
+  }
+
+  return isHabitScheduledForDate(habit, targetDateOnly);
 };
 
 /**
@@ -675,7 +684,16 @@ export const getHabitsForDate = (
     }
 
     // Or was it already completed on this past date?
-    return completedHabitIdsOnDate.has(h.id);
+    if (completedHabitIdsOnDate.has(h.id)) {
+      return true;
+    }
+
+    // Or is it active and scheduled for this day (enabling retroactive viewing and logging)?
+    if (h.isActive && !h.archivedAt && isHabitScheduledForDate(h, dateStr)) {
+      return true;
+    }
+
+    return false;
   });
 };
 
@@ -701,7 +719,8 @@ export const getPendingDueHabitsForDate = (
 
   return habits.filter((h) => {
     if (!h.isActive || h.archivedAt) return false;
-    if (!isHabitDueOnDate(h, dateStr, true)) return false;
+    const isDue = isHabitDueOnDate(h, dateStr, true) || isHabitScheduledForDate(h, dateStr);
+    if (!isDue) return false;
     return !completedIds.has(h.id);
   });
 };
@@ -722,7 +741,8 @@ export const getCompletedDueHabitsForDate = (
 
   return habits.filter((h) => {
     if (!h.isActive || h.archivedAt) return false;
-    if (!isHabitDueOnDate(h, dateStr, true)) return false;
+    const isDue = isHabitDueOnDate(h, dateStr, true) || isHabitScheduledForDate(h, dateStr);
+    if (!isDue) return false;
     return completedIds.has(h.id);
   });
 };
@@ -868,7 +888,7 @@ export const hasEverHadPerfectDay = (
   // Build a Set of `habitId:date` for O(1) lookups
   const completedSet = new Set(completedCheckins.map((c) => `${c.habitId}:${c.date}`));
   // Sort descending so the most recent dates are checked first, terminating early
-  const distinctDates = Array.from(new Set(completedCheckins.map((c) => c.date))).sort().reverse();
+  const distinctDates = Array.from(new Set(completedCheckins.map((c) => c.date))).sort((a, b) => b.localeCompare(a));
 
   for (const dateStr of distinctDates) {
     const dueHabits = habits.filter((h) => isHabitDueOnDate(h, dateStr, false));
@@ -1083,6 +1103,19 @@ export const calculateCheckinProgress = (
     rawRatio,
     rawPercent,
   };
+};
+
+/**
+ * Normalizes progress value to a [0, 1] range for visual width interpolation.
+ * Default assumes progress is a percentage (0 to 100, e.g. 1 = 1%, 50 = 50%, 100 = 100%).
+ * If isRatio is true, assumes progress is a 0 to 1 ratio (e.g. 0.01 = 1%, 0.5 = 50%, 1 = 100%).
+ */
+export const normalizeProgressBarValue = (
+  progress: number,
+  isRatio: boolean = false
+): number => {
+  const normalized = isRatio ? progress : progress / 100;
+  return Math.min(1, Math.max(0, isNaN(normalized) ? 0 : normalized));
 };
 
 /**

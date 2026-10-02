@@ -244,7 +244,7 @@ export const HabitHeatmap: React.FC<HabitHeatmapProps> = React.memo(({
 
   const weekDays = ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'];
 
-  const canGoPrev = !createdAt || currentMonth.isAfter(dayjs(createdAt).startOf('month'));
+  const canGoPrev = !readOnly && currentMonth.isAfter(dayjs().subtract(2, 'year').startOf('month'));
   const prevMonth = () => {
     if (canGoPrev) {
       setCurrentMonth((prev) => prev.subtract(1, 'month'));
@@ -406,7 +406,7 @@ export const HabitHeatmap: React.FC<HabitHeatmapProps> = React.memo(({
           const isBeforeCreation = createdAt
             ? cellDate.isBefore(dayjs(createdAt).startOf('day'))
             : false;
-          const isDisabled = isFuture || readOnly || isBeforeCreation;
+          const isDisabled = isFuture || readOnly;
           const intensity = getCellIntensity(dateStr);
 
           return (

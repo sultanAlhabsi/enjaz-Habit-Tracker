@@ -1018,7 +1018,7 @@ export const fetchStorageMetrics = async (): Promise<StorageMetrics> => {
       let oldestRecordDate: string | undefined;
       let newestRecordDate: string | undefined;
       if (checkins.length > 0) {
-        const sorted = [...checkins].map((c) => c.date).sort();
+        const sorted = [...checkins].map((c) => c.date).sort((a, b) => a.localeCompare(b));
         oldestRecordDate = sorted[0];
         newestRecordDate = sorted[sorted.length - 1];
       }

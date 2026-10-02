@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   },
   topBar: {
     height: 48,
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 18,
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     height: 52,
     borderRadius: 26,
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,

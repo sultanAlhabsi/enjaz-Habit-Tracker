@@ -501,7 +501,7 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
 
                 <View style={{ marginBottom: spacing.sm }}>
                   <ProgressBar
-                    progress={Math.min(100, Math.round((activeCount / habit.targetCount) * 100))}
+                    progress={Math.min(100, Math.max(0, (activeCount / habit.targetCount) * 100))}
                     height={5}
                     color={habit.color || theme.primary}
                   />

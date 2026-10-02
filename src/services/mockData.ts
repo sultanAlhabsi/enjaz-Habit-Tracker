@@ -102,8 +102,10 @@ export const generateDemoCheckins = (): HabitCheckin[] => {
         continue;
       }
 
-      // Make recent days completed for habit-1 to have a nice active streak
-      const isCompleted = (habitIndex === 0 && i <= 5) ? true : Math.random() < completionProbability;
+      // Make recent days completed for habit-1 to have a nice active streak.
+      // Use deterministic pseudo-random formula to ensure reproducible demo datasets.
+      const pseudoRand = ((habitIndex * 19 + i * 29 + 11) % 100) / 100;
+      const isCompleted = (habitIndex === 0 && i <= 5) ? true : pseudoRand < completionProbability;
 
       if (isCompleted) {
         let note: string | undefined;

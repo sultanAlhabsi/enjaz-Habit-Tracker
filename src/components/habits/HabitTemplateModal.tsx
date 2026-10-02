@@ -229,9 +229,36 @@ export const HabitTemplateModal: React.FC<HabitTemplateModalProps> = ({
                   ]}
                 >
                   <View style={styles.cardHeaderRow}>
+                    {/* Icon Box on the Right (Leading in RTL) */}
+                    <View
+                      style={[
+                        styles.iconBox,
+                        {
+                          backgroundColor: `${item.color}18`,
+                          borderColor: `${item.color}35`,
+                          borderRadius: radius.md,
+                          marginLeft: spacing.sm,
+                        },
+                      ]}
+                    >
+                      <Ionicons name={item.icon as any} size={22} color={item.color} />
+                    </View>
+
+                    {/* Text Container on the Left */}
                     <View style={styles.templateTextContainer}>
                       <View style={styles.titleRow}>
-                        <Text style={[typography.bodyMedium, { color: theme.text, fontWeight: '700', textAlign: 'right' }]}>
+                        <Text
+                          style={[
+                            typography.bodyMedium,
+                            {
+                              color: theme.text,
+                              fontWeight: '700',
+                              textAlign: 'right',
+                              flex: 1,
+                              marginLeft: spacing.xs,
+                            },
+                          ]}
+                        >
                           {item.name}
                         </Text>
                         <View
@@ -264,21 +291,6 @@ export const HabitTemplateModal: React.FC<HabitTemplateModalProps> = ({
                       >
                         {item.description}
                       </Text>
-                    </View>
-
-                    {/* Icon Box */}
-                    <View
-                      style={[
-                        styles.iconBox,
-                        {
-                          backgroundColor: `${item.color}18`,
-                          borderColor: `${item.color}35`,
-                          borderRadius: radius.md,
-                          marginLeft: spacing.sm,
-                        },
-                      ]}
-                    >
-                      <Ionicons name={item.icon as any} size={22} color={item.color} />
                     </View>
                   </View>
 
