@@ -57,7 +57,7 @@ const withProductionHardening = (config) => {
       {
         type: 'property',
         key: 'android.targetSdkVersion',
-        value: '35',
+        value: '36',
       }
     );
     return modConfig;

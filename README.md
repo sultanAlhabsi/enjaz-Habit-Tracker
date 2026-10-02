@@ -183,7 +183,7 @@ npm run typecheck
 ## 🛡️ الأمان والجاهزية للإنتاج (Production & Security)
 
 * **تقليص الحجم والتشفير (Android R8 & ProGuard):** تم ضبط `app.config.js` لتمكين `minifyEnabled` و `shrinkResources` في إصدارات الإنتاج مع قواعد ProGuard صارمة لمكتبات Reanimated و SQLite.
-* **أحدث مستويات أندرويد:** متوافق مع `targetSdkVersion 35` و `compileSdkVersion 36`.
+* **أحدث مستويات أندرويد:** متوافق مع `targetSdkVersion 36` و `compileSdkVersion 36`.
 * **أمان وخصوصية البيانات:** تشغيل محلي بالكامل دون إرسال أي بايت من البيانات لأي خوادم خارجية.
 
 ---
