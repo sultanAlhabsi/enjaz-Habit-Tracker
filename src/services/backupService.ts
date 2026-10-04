@@ -8,6 +8,84 @@ import {
 
 export * from '../utils/backupUtils.ts';
 
+export interface ExportFileResult {
+  success: boolean;
+  canceled?: boolean;
+  fileName?: string;
+  uri?: string;
+  error?: string;
+}
+
+/**
+ * Saves backup JSON directly to device storage using StorageAccessFramework on Android,
+ * or native share sheet with 'Save to Files' on iOS.
+ */
+export const exportBackupToDevice = async (payload: BackupPayload): Promise<ExportFileResult> => {
+  try {
+    const jsonString = JSON.stringify(payload, null, 2);
+    const dateFormatted = dayjs(payload.exportedAt).format('YYYY-MM-DD');
+    const baseFileName = `enjaz_backup_${dateFormatted}`;
+    const fullFileName = `${baseFileName}.json`;
+
+    if (Platform.OS === 'android' && FileSystem.StorageAccessFramework) {
+      try {
+        const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (!permissions.granted) {
+          return { success: false, canceled: true };
+        }
+
+        const fileUri = await FileSystem.StorageAccessFramework.createFileAsync(
+          permissions.directoryUri,
+          baseFileName,
+          'application/json'
+        );
+
+        await FileSystem.writeAsStringAsync(fileUri, jsonString, {
+          encoding: FileSystem.EncodingType.UTF8,
+        });
+
+        return {
+          success: true,
+          fileName: fullFileName,
+          uri: fileUri,
+        };
+      } catch (safError: any) {
+        console.warn('[BackupService] SAF export error, falling back to share:', safError);
+        const shareOk = await exportBackupViaShare(payload);
+        return {
+          success: shareOk,
+          fileName: fullFileName,
+          error: shareOk ? undefined : (safError?.message || 'تعذر حفظ ملف النسخة الاحتياطية.'),
+        };
+      }
+    }
+
+    // On iOS or other platforms, export via share which presents native Save to Files
+    if (FileSystem.cacheDirectory) {
+      const fileUri = `${FileSystem.cacheDirectory}${fullFileName}`;
+      await FileSystem.writeAsStringAsync(fileUri, jsonString, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+
+      const shareResult = await Share.share(
+        Platform.OS === 'ios'
+          ? { url: fileUri, title: `نسخة احتياطية - إنجاز (${dateFormatted})` }
+          : { title: `نسخة احتياطية - إنجاز (${dateFormatted})`, url: fileUri }
+      );
+
+      if (shareResult.action === Share.dismissedAction) {
+        return { success: false, canceled: true };
+      }
+      return { success: true, fileName: fullFileName, uri: fileUri };
+    }
+
+    return { success: false, error: 'دليل الملفات المؤقتة غير متوفر.' };
+  } catch (error: any) {
+    console.warn('[BackupService] exportBackupToDevice error:', error);
+    return { success: false, error: error?.message || 'حدث خطأ أثناء حفظ النسخة الاحتياطية.' };
+  }
+};
+
 /**
  * Triggers native system share dialog with the backup JSON file.
  * Writes to a temporary file in cacheDirectory to avoid Android Binder 1MB transaction buffer overflow.
@@ -37,6 +115,80 @@ export const exportBackupViaShare = async (payload: BackupPayload): Promise<bool
   } catch (error) {
     console.warn('[BackupService] Share error:', error);
     return false;
+  }
+};
+
+/**
+ * Saves exported CSV directly to device storage using StorageAccessFramework on Android,
+ * or native share sheet with 'Save to Files' on iOS.
+ */
+export const exportCsvToDevice = async (
+  csvContent: string,
+  title = 'سجلات إنجاز - تقرير شامل'
+): Promise<ExportFileResult> => {
+  try {
+    const todayStr = dayjs().format('YYYY-MM-DD');
+    const cleanTitle = (title || 'تقرير_إنجاز').replace(/[^a-zA-Z0-9\u0600-\u06FF_-]/g, '_');
+    const baseFileName = `${cleanTitle}_${todayStr}`;
+    const fullFileName = `${baseFileName}.csv`;
+
+    const contentWithBOM = csvContent.startsWith('\uFEFF') ? csvContent : '\uFEFF' + csvContent;
+
+    if (Platform.OS === 'android' && FileSystem.StorageAccessFramework) {
+      try {
+        const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (!permissions.granted) {
+          return { success: false, canceled: true };
+        }
+
+        const fileUri = await FileSystem.StorageAccessFramework.createFileAsync(
+          permissions.directoryUri,
+          baseFileName,
+          'text/csv'
+        );
+
+        await FileSystem.writeAsStringAsync(fileUri, contentWithBOM, {
+          encoding: FileSystem.EncodingType.UTF8,
+        });
+
+        return {
+          success: true,
+          fileName: fullFileName,
+          uri: fileUri,
+        };
+      } catch (safError: any) {
+        console.warn('[BackupService] SAF CSV export error, falling back to share:', safError);
+        const shareOk = await exportCsvViaShare(csvContent, title);
+        return {
+          success: shareOk,
+          fileName: fullFileName,
+          error: shareOk ? undefined : (safError?.message || 'تعذر حفظ ملف CSV.'),
+        };
+      }
+    }
+
+    if (FileSystem.cacheDirectory) {
+      const fileUri = `${FileSystem.cacheDirectory}${fullFileName}`;
+      await FileSystem.writeAsStringAsync(fileUri, contentWithBOM, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+
+      const shareResult = await Share.share(
+        Platform.OS === 'ios'
+          ? { url: fileUri, title: `${title} (${todayStr})` }
+          : { title: `${title} (${todayStr})`, url: fileUri }
+      );
+
+      if (shareResult.action === Share.dismissedAction) {
+        return { success: false, canceled: true };
+      }
+      return { success: true, fileName: fullFileName, uri: fileUri };
+    }
+
+    return { success: false, error: 'دليل الملفات المؤقتة غير متوفر.' };
+  } catch (error: any) {
+    console.warn('[BackupService] exportCsvToDevice error:', error);
+    return { success: false, error: error?.message || 'حدث خطأ أثناء حفظ ملف CSV.' };
   }
 };
 
@@ -101,8 +253,8 @@ export const pickAndReadBackupFile = async (): Promise<{
     }
 
     const res = await DocumentPicker.getDocumentAsync({
-      type: ['application/json', '*/*'],
-      copyToCacheDirectory: true,
+      type: 'application/json',
+      copyToCacheDirectory: Platform.OS === 'ios',
     });
 
     if (res.canceled || !res.assets || res.assets.length === 0) {
@@ -110,9 +262,29 @@ export const pickAndReadBackupFile = async (): Promise<{
     }
 
     const asset = res.assets[0];
-    const fileContent = await FileSystem.readAsStringAsync(asset.uri, {
-      encoding: FileSystem.EncodingType.UTF8,
-    });
+    const fileName = (asset.name || '').toLowerCase();
+    if (fileName && !fileName.endsWith('.json')) {
+      return {
+        valid: false,
+        error: 'يرجى اختيار ملف نسخة احتياطية بصيغة JSON (.json).',
+        fileName: asset.name,
+      };
+    }
+
+    let fileContent: string = '';
+    try {
+      fileContent = await FileSystem.readAsStringAsync(asset.uri, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+    } catch (fsErr) {
+      console.warn('[BackupService] FileSystem.readAsStringAsync failed, trying fetch fallback:', fsErr);
+      try {
+        const response = await fetch(asset.uri);
+        fileContent = await response.text();
+      } catch {
+        throw fsErr;
+      }
+    }
 
     const validation = validateBackupJson(fileContent);
     if (!validation.valid) {

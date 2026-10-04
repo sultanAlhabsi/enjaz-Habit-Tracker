@@ -58,9 +58,11 @@ export const validateBackupJson = (rawJson: string): ValidationResult => {
     return { valid: false, error: 'النص المدخل فارغ' };
   }
 
+  const cleanJson = rawJson.replace(/^\uFEFF/, '').trim();
+
   let parsed: any;
   try {
-    parsed = JSON.parse(rawJson);
+    parsed = JSON.parse(cleanJson);
   } catch {
     return { valid: false, error: 'صيغة JSON غير صالحة' };
   }

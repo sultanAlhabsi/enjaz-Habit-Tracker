@@ -142,16 +142,22 @@ module.exports = ({ config }) => {
     ...config,
     name: 'إنجاز - تتبع العادات',
     slug: 'enjaz-habit-tracker',
-    version: '1.0.0',
+    version: '1.0.1',
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'automatic',
+    updates: {
+      url: 'https://u.expo.dev/d0a6b8f4-ebb5-4510-ac3d-047a8145898f',
+    },
+    runtimeVersion: {
+      policy: 'appVersion',
+    },
     ios: {
       supportsTablet: true,
     },
     android: {
       package: 'com.enjaz.habittracker',
-      versionCode: 1,
+      versionCode: 2,
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#F6F5F0',
@@ -165,6 +171,7 @@ module.exports = ({ config }) => {
       favicon: './assets/favicon.png',
     },
     plugins: [
+      'expo-updates',
       'expo-asset',
       'expo-sqlite',
       'expo-notifications',

@@ -27,8 +27,10 @@ import { ClockTimePicker } from '../components/common/ClockTimePicker';
 import { sendTestNotification } from '../services/notificationService';
 import {
   exportBackupViaShare,
+  exportBackupToDevice,
   validateBackupJson,
   exportCsvViaShare,
+  exportCsvToDevice,
   pickAndReadBackupFile,
 } from '../services/backupService';
 import { toArabicNumerals, formatArabicCount } from '../utils/habitUtils';
@@ -200,7 +202,48 @@ export const SettingsScreen: React.FC = () => {
   const handleExportBackup = async () => {
     try {
       const payload = await exportBackup();
-      await exportBackupViaShare(payload);
+
+      if (Platform.OS === 'android') {
+        appAlert(
+          'تصدير النسخة الاحتياطية',
+          'اختر طريقة تصدير النسخة الاحتياطية الخاصة بك:',
+          [
+            {
+              text: 'تنزيل وحفظ في الهاتف (JSON)',
+              onPress: async () => {
+                try {
+                  const res = await exportBackupToDevice(payload);
+                  if (res.success) {
+                    appAlert(
+                      'تم التنزيل بنجاح',
+                      `تم حفظ ملف النسخة الاحتياطية (${res.fileName || 'enjaz_backup.json'}) في المجلد المحدد بنجاح.`
+                    );
+                  } else if (!res.canceled) {
+                    appAlert('خطأ', res.error || 'تعذر حفظ ملف النسخة الاحتياطية على الجهاز.');
+                  }
+                } catch (e: any) {
+                  appAlert('خطأ', e?.message || 'حدث خطأ أثناء تنزيل الملف.');
+                }
+              },
+            },
+            {
+              text: 'مشاركة عبر التطبيقات',
+              onPress: async () => {
+                await exportBackupViaShare(payload);
+              },
+            },
+            {
+              text: 'إلغاء',
+              style: 'cancel',
+            },
+          ]
+        );
+      } else {
+        const res = await exportBackupToDevice(payload);
+        if (!res.success && !res.canceled) {
+          appAlert('خطأ', res.error || 'حدث خطأ أثناء تصدير النسخة الاحتياطية.');
+        }
+      }
     } catch (err) {
       appAlert('خطأ', 'حدث خطأ أثناء تصدير النسخة الاحتياطية.');
     }
@@ -213,7 +256,48 @@ export const SettingsScreen: React.FC = () => {
         return;
       }
       const csvData = await exportFullReportCsv();
-      await exportCsvViaShare(csvData, 'تقرير عادات وسجلات إنجاز');
+
+      if (Platform.OS === 'android') {
+        appAlert(
+          'تصدير تقرير السجلات',
+          'اختر طريقة تصدير تقرير الإنجاز (CSV / Excel):',
+          [
+            {
+              text: 'تنزيل وحفظ في الهاتف (CSV)',
+              onPress: async () => {
+                try {
+                  const res = await exportCsvToDevice(csvData, 'تقرير عادات وسجلات إنجاز');
+                  if (res.success) {
+                    appAlert(
+                      'تم التنزيل بنجاح',
+                      `تم حفظ ملف التقرير (${res.fileName || 'تقرير_إنجاز.csv'}) في المجلد المحدد بنجاح.`
+                    );
+                  } else if (!res.canceled) {
+                    appAlert('خطأ', res.error || 'تعذر حفظ ملف التقرير على الجهاز.');
+                  }
+                } catch (e: any) {
+                  appAlert('خطأ', e?.message || 'حدث خطأ أثناء تنزيل التقرير.');
+                }
+              },
+            },
+            {
+              text: 'مشاركة عبر التطبيقات',
+              onPress: async () => {
+                await exportCsvViaShare(csvData, 'تقرير عادات وسجلات إنجاز');
+              },
+            },
+            {
+              text: 'إلغاء',
+              style: 'cancel',
+            },
+          ]
+        );
+      } else {
+        const res = await exportCsvToDevice(csvData, 'تقرير عادات وسجلات إنجاز');
+        if (!res.success && !res.canceled) {
+          appAlert('خطأ', res.error || 'حدث خطأ أثناء تصدير ملف CSV.');
+        }
+      }
     } catch (err) {
       appAlert('خطأ', 'حدث خطأ أثناء تصدير ملف CSV.');
     }

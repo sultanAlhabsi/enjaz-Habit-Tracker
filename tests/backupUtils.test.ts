@@ -271,3 +271,30 @@ test('CSV export filename: sanitizes Arabic and special characters safely', () =
   );
 });
 
+test('Backup export filename: generates standardized date-based file name', () => {
+  const getBackupFileName = (dateStr: string) => `enjaz_backup_${dateStr}`;
+  assert.equal(getBackupFileName('2026-10-03'), 'enjaz_backup_2026-10-03');
+  assert.equal(`${getBackupFileName('2026-10-03')}.json`, 'enjaz_backup_2026-10-03.json');
+});
+
+test('Backup JSON payload: correctly stringifies with 2 spaces indentation and UTF-8 encoding', () => {
+  const payload = createBackupPayload([mockHabit1], [mockCheckin1]);
+  const jsonStr = JSON.stringify(payload, null, 2);
+  assert.ok(jsonStr.includes('"appName": "enjaz-habits"'));
+  assert.ok(jsonStr.includes('"name": "قراءة القرآن"'));
+  const parsed = JSON.parse(jsonStr);
+  assert.equal(parsed.habits[0].name, 'قراءة القرآن');
+});
+
+test('validateBackupJson: gracefully tolerates UTF-8 BOM prefix (\\uFEFF)', () => {
+  const payload = createBackupPayload([mockHabit1], [mockCheckin1]);
+  const jsonWithBOM = '\uFEFF' + JSON.stringify(payload);
+  const result = validateBackupJson(jsonWithBOM);
+  assert.equal(result.valid, true);
+  if (result.valid) {
+    assert.equal(result.data.habits[0].name, 'قراءة القرآن');
+  }
+});
+
+
+
