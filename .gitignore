@@ -40,3 +40,8 @@ yarn-error.*
 
 # Scratch and temporary tool files
 .scratch/
+
+# Google Play Service Account Keys
+*-play-*.json
+pc-api-*.json
+service-account*.json
