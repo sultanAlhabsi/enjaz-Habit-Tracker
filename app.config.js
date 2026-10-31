@@ -142,7 +142,7 @@ module.exports = ({ config }) => {
     ...config,
     name: 'إنجاز - تتبع العادات',
     slug: 'enjaz-habit-tracker',
-    version: '1.0.2',
+    version: '1.0.3',
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'automatic',
@@ -158,6 +158,7 @@ module.exports = ({ config }) => {
     android: {
       package: 'com.enjaz.habittracker',
       versionCode: 2,
+      allowBackup: false,
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#F6F5F0',

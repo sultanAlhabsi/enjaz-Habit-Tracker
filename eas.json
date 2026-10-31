@@ -27,7 +27,7 @@
   "submit": {
     "production": {
       "android": {
-        "serviceAccountKeyPath": "./enjaz-play-22192eacc893.json",
+        "serviceAccountKeyPath": "/home/sultan/.credentials/enjaz-play-22192eacc893.json",
         "track": "alpha"
       }
     }
