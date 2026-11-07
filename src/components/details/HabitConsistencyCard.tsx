@@ -116,13 +116,15 @@ export const HabitConsistencyCard: React.FC<HabitConsistencyCardProps> = React.m
 
               {/* Day short name label below */}
               <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
                 style={[
                   typography.caption,
                   {
                     color: isBest ? theme.text : theme.textSecondary,
                     fontWeight: isBest ? '700' : '400',
                     marginTop: 6,
-                    fontSize: 11,
+                    fontSize: 10.5,
                   },
                 ]}
               >

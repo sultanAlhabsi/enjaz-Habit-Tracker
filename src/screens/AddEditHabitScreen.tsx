@@ -849,12 +849,14 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
                           ]}
                         >
                           <Text
+                            numberOfLines={1}
+                            adjustsFontSizeToFit
                             style={[
                               typography.caption,
                               {
                                 color: isSelected ? '#FFFFFF' : theme.textSecondary,
                                 fontWeight: isSelected ? '700' : '500',
-                                fontSize: 12,
+                                fontSize: 11,
                               },
                             ]}
                           >

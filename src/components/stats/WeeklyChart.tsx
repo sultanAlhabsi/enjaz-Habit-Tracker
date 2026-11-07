@@ -145,6 +145,8 @@ const AnimatedWeeklyBar: React.FC<AnimatedWeeklyBarProps> = React.memo(({
 
       {/* Day label */}
       <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
         style={[
           typography.caption,
           {
@@ -153,7 +155,7 @@ const AnimatedWeeklyBar: React.FC<AnimatedWeeklyBarProps> = React.memo(({
               : item.totalCount > 0 && !isItemFuture
               ? theme.textSecondary
               : theme.textMuted,
-            fontSize: 11,
+            fontSize: 10.5,
             fontWeight: item.isToday ? '600' : '400',
             marginTop: 6,
           },

@@ -242,7 +242,7 @@ export const HabitHeatmap: React.FC<HabitHeatmapProps> = React.memo(({
   const monthTitle = `${arabicMonths[currentMonth.month()]} ${currentMonth.year()}`;
   const monthKey = currentMonth.format('YYYY-MM');
 
-  const weekDays = ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'];
+  const weekDays = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
 
   const canGoPrev = !readOnly && currentMonth.isAfter(dayjs().subtract(2, 'year').startOf('month'));
   const prevMonth = () => {
@@ -384,7 +384,11 @@ export const HabitHeatmap: React.FC<HabitHeatmapProps> = React.memo(({
       <View style={styles.weekDaysRow}>
         {weekDays.map((d, index) => (
           <View key={index} style={styles.dayCol}>
-            <Text style={[typography.caption, { color: theme.textMuted, fontSize: 11 }]}>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={[typography.caption, { color: theme.textMuted, fontSize: 10.5 }]}
+            >
               {d}
             </Text>
           </View>

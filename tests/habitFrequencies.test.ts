@@ -310,15 +310,15 @@ test('formatHabitStreakArabic: formats specific_days as consecutive completions 
 test('formatHabitScheduleShort: produces concise badges for specific days and monthly day', () => {
   assert.equal(
     formatHabitScheduleShort(createMockHabit({ frequency: 'specific_days', frequencyDays: [1, 4] })),
-    'إثن • خمي'
+    'إثنين • خميس'
   );
   assert.equal(
     formatHabitScheduleShort(createMockHabit({ frequency: 'specific_days', frequencyDays: [5] })),
-    'جمع'
+    'جمعة'
   );
   assert.equal(
     formatHabitScheduleShort(createMockHabit({ frequency: 'specific_days', frequencyDays: [0, 2, 4] })),
-    'أحد • ثلا • خمي'
+    'أحد • ثلاثاء • خميس'
   );
   assert.equal(
     formatHabitScheduleShort(createMockHabit({ frequency: 'daily' })),

@@ -54,7 +54,7 @@ const DateStripComponent: React.FC<DateStripProps> = ({
       return {
         dateStr: d.format('YYYY-MM-DD'),
         dayNum: d.date(),
-        dayShort: ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'][d.day()],
+        dayShort: ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'][d.day()],
         isToday: d.isSame(today, 'day'),
       };
     }),
@@ -257,6 +257,7 @@ const DateStripComponent: React.FC<DateStripProps> = ({
               ]}
             >
               <Text
+                numberOfLines={1}
                 style={[
                   typography.caption,
                   {
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 6,
-    paddingHorizontal: 6,
+    paddingHorizontal: 7,
   },
   todayDot: {
     width: 4,

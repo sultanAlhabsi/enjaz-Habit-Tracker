@@ -18,11 +18,11 @@ import type {
 
 export const DAYS_OF_WEEK_AR = [
   { index: 0, name: 'الأحد', short: 'أحد' },
-  { index: 1, name: 'الإثنين', short: 'إثن' },
-  { index: 2, name: 'الثلاثاء', short: 'ثلا' },
-  { index: 3, name: 'الأربعاء', short: 'أرب' },
-  { index: 4, name: 'الخميس', short: 'خمي' },
-  { index: 5, name: 'الجمعة', short: 'جمع' },
+  { index: 1, name: 'الإثنين', short: 'إثنين' },
+  { index: 2, name: 'الثلاثاء', short: 'ثلاثاء' },
+  { index: 3, name: 'الأربعاء', short: 'أربعاء' },
+  { index: 4, name: 'الخميس', short: 'خميس' },
+  { index: 5, name: 'الجمعة', short: 'جمعة' },
   { index: 6, name: 'السبت', short: 'سبت' },
 ];
 
@@ -976,7 +976,7 @@ export const calculateWeekAdherence = (
   );
 
   const dayNamesArabic = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-  const dayShortArabic = ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت'];
+  const dayShortArabic = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
 
   const weeklyAdherence: DayAdherence[] = [];
 
