@@ -142,7 +142,7 @@ module.exports = ({ config }) => {
     ...config,
     name: 'إنجاز - تتبع العادات',
     slug: 'enjaz-habit-tracker',
-    version: '1.0.3',
+    version: '1.0.4',
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'automatic',
