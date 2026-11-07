@@ -26,7 +26,10 @@ const MainTabsNavigator: React.FC = () => {
       tabBar={(props) => <WhatsAppTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        animation: 'fade',
+        animation: 'none',
+        sceneStyle: {
+          transform: [{ translateX: 0 }],
+        },
       }}
     >
       <Tab.Screen name="HomeTab" component={HomeScreen} />
