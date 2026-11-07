@@ -199,7 +199,7 @@ export const WhatsAppTabBar: React.FC<BottomTabBarProps> = ({
 
 const styles = StyleSheet.create({
   barContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     borderTopWidth: StyleSheet.hairlineWidth,
     paddingTop: 8,
     elevation: 0,
