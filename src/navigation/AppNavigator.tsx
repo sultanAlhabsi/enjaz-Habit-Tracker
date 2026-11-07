@@ -1,6 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  createBottomTabNavigator,
+  BottomTabNavigationOptions,
+} from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { MainTabParamList, RootStackParamList } from './types';
@@ -20,16 +23,38 @@ import { useHabitStore } from '../store/useHabitStore';
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+/**
+ * RTL-aware tab shift animation:
+ * In RTL, tabs flow from right to left (Home -> Stats -> Settings).
+ * Inverted translateX ensures moving forward to next tabs slides in from the left.
+ */
+const forRTLShift: NonNullable<BottomTabNavigationOptions['sceneStyleInterpolator']> = ({
+  current,
+}) => ({
+  sceneStyle: {
+    opacity: current.progress.interpolate({
+      inputRange: [-1, 0, 1],
+      outputRange: [0, 1, 0],
+    }),
+    transform: [
+      {
+        translateX: current.progress.interpolate({
+          inputRange: [-1, 0, 1],
+          outputRange: [50, 0, -50],
+        }),
+      },
+    ],
+  },
+});
+
 const MainTabsNavigator: React.FC = () => {
   return (
     <Tab.Navigator
       tabBar={(props) => <WhatsAppTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        animation: 'none',
-        sceneStyle: {
-          transform: [{ translateX: 0 }],
-        },
+        animation: 'shift',
+        sceneStyleInterpolator: forRTLShift,
       }}
     >
       <Tab.Screen name="HomeTab" component={HomeScreen} />
@@ -67,7 +92,7 @@ export const AppNavigator: React.FC = () => {
         initialRouteName={hasCompletedOnboarding ? 'MainTabs' : 'Onboarding'}
         screenOptions={{
           headerShown: false,
-          animation: 'slide_from_right',
+          animation: 'slide_from_left',
         }}
       >
         <Stack.Screen name="MainTabs" component={MainTabsNavigator} />
@@ -90,21 +115,21 @@ export const AppNavigator: React.FC = () => {
           name="HabitDetails"
           component={HabitDetailsScreen}
           options={{
-            animation: 'slide_from_right',
+            animation: 'slide_from_left',
           }}
         />
         <Stack.Screen
           name="ArchivedHabits"
           component={ArchivedHabitsScreen}
           options={{
-            animation: 'slide_from_right',
+            animation: 'slide_from_left',
           }}
         />
         <Stack.Screen
           name="Contact"
           component={ContactScreen}
           options={{
-            animation: 'slide_from_right',
+            animation: 'slide_from_left',
           }}
         />
       </Stack.Navigator>
