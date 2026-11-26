@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { appendDownloadLink, SHARE_DOWNLOAD_LINE } from './storeLinks.ts';
 import type {
   Habit,
   HabitFrequency,
@@ -1357,7 +1358,7 @@ export const formatDailySummaryForShare = (
   const dueHabits = getHabitsForDate(habits, allCheckins, dateStr);
 
   if (dueHabits.length === 0) {
-    return `تطبيق إنجاز | ${dateFormatted}\nلا توجد عادات مجدولة لهذا اليوم.`;
+    return appendDownloadLink(`تطبيق إنجاز | ${dateFormatted}\nلا توجد عادات مجدولة لهذا اليوم.`);
   }
 
   const completedList: string[] = [];
@@ -1402,7 +1403,7 @@ export const formatDailySummaryForShare = (
 
   sections.push('تم التوثيق عبر تطبيق إنجاز');
 
-  return sections.join('\n').trim();
+  return appendDownloadLink(sections.join('\n'));
 };
 
 /**
@@ -1424,6 +1425,7 @@ export const formatOverallStatsForShare = (
     `• العادات النشطة: ${formatArabicCount(overall.activeHabits, 'عادة واحدة', 'عادتان', 'عادات', 'عادة')}`,
     '',
     'تطبيق إنجاز للالتزام وبناء العادات',
+    SHARE_DOWNLOAD_LINE,
   ].join('\n');
 };
 
@@ -1651,6 +1653,7 @@ export const formatMonthlySummaryForShare = (stats: MonthAdherenceStats): string
     `• العادات النشطة: ${formatArabicCount(stats.activeHabitsCount, 'عادة واحدة', 'عادتان', 'عادات', 'عادة')}`,
     '',
     'تطبيق إنجاز لبناء العادات وتتبع الأهداف',
+    SHARE_DOWNLOAD_LINE,
   ].join('\n');
 };
 
@@ -1913,7 +1916,7 @@ export const formatHabitStatsForShare = (
     lines.push(`• آخر خاطرة: "${latestNote.trim()}"`);
   }
 
-  lines.push('', 'تطبيق إنجاز لبناء العادات وتتبع الأهداف');
+  lines.push('', 'تطبيق إنجاز لبناء العادات وتتبع الأهداف', SHARE_DOWNLOAD_LINE);
   return lines.join('\n');
 };
 
@@ -1943,7 +1946,7 @@ export const formatHabitNotesForShare = (
   notes: HabitCheckin[]
 ): string => {
   if (!notes || notes.length === 0) {
-    return `مذكرات وخواطر عادة: ${habit.name}\nلا توجد ملاحظات مسجلة بعد.`;
+    return appendDownloadLink(`مذكرات وخواطر عادة: ${habit.name}\nلا توجد ملاحظات مسجلة بعد.`);
   }
 
   const formattedNotes = notes.slice(0, 5).map((n) => {
@@ -1958,6 +1961,7 @@ export const formatHabitNotesForShare = (
     ...formattedNotes,
     '',
     'تطبيق إنجاز لبناء العادات وتتبع الأهداف',
+    SHARE_DOWNLOAD_LINE,
   ].join('\n');
 };
 

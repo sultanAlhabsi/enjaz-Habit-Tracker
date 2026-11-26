@@ -73,6 +73,7 @@ import {
 } from '../services/syncService.ts';
 import { isCloudSyncConfigured } from '../services/neonService.ts';
 import { playCompletionSound, initSound } from '../services/soundService.ts';
+import { maybeRequestReview } from '../services/reviewService.ts';
 
 interface HabitState {
   habits: Habit[];
@@ -677,6 +678,11 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         pushHabitChangeAsync(updatedHabit);
       }
 
+      void maybeRequestReview(
+        get().habits.filter((h) => h.id === habitId),
+        get().checkins
+      );
+
       return true; // Became checked
     }
   },
@@ -742,6 +748,12 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     if (pendingHabits.length > 0 && get().soundEnabled) {
       playCompletionSound();
     }
+
+    const completedIds = new Set(pendingHabits.map((h) => h.id));
+    void maybeRequestReview(
+      get().habits.filter((h) => completedIds.has(h.id)),
+      get().checkins
+    );
 
     return pendingHabits.length;
   },
@@ -848,6 +860,12 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     }
     if (isCompleted && !existing?.completed && get().soundEnabled) {
       playCompletionSound();
+    }
+    if (isCompleted && !existing?.completed) {
+      void maybeRequestReview(
+        get().habits.filter((h) => h.id === habitId),
+        get().checkins
+      );
     }
   },
 
@@ -982,6 +1000,12 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     }
     if (isCompleted && !existing?.completed && get().soundEnabled) {
       playCompletionSound();
+    }
+    if (isCompleted && !existing?.completed) {
+      void maybeRequestReview(
+        get().habits.filter((h) => h.id === habitId),
+        get().checkins
+      );
     }
   },
 
