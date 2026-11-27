@@ -24,6 +24,8 @@ const getObserveModule = () => safeRequire(() => require('expo-observe')?.Observ
 /* eslint-enable @typescript-eslint/no-require-imports */
 
 const FILTERED_ROUTE_PARAMS = ['habitId', 'habitName', 'name', 'title', 'note', 'isRevisit'];
+const VERIFY_TRACE_SPAN_NAME = 'enjaz.sentry.verify_trace';
+const VERIFY_TRACE_ATTRIBUTE = 'enjaz.verification';
 
 export const getSentryDsn = (): string | null => {
   const constants = getExpoConstants();
@@ -63,13 +65,31 @@ const initSentryIfOptedIn = (): void => {
   const Sentry = getSentryModule();
   if (!Sentry?.init) return;
 
+  const isDev = typeof __DEV__ !== 'undefined' && __DEV__;
+
   try {
     Sentry.init({
       dsn,
+      environment: isDev ? 'development' : 'production',
       sendDefaultPii: false,
-      enableAutoPerformanceTracing: false,
-      tracesSampleRate: 0,
-      profilesSampleRate: 0,
+      enableAutoPerformanceTracing: true,
+      tracesSampler(samplingContext: {
+        name?: string;
+        attributes?: Record<string, unknown>;
+        inheritOrSampleWith?: (fallbackSampleRate: number) => number;
+      }) {
+        if (
+          isPreviewTelemetryTestingAllowed() &&
+          samplingContext?.name === VERIFY_TRACE_SPAN_NAME &&
+          samplingContext?.attributes?.[VERIFY_TRACE_ATTRIBUTE] === true
+        ) {
+          return 1.0;
+        }
+        const defaultRate = isDev ? 1.0 : 0.1;
+        return samplingContext?.inheritOrSampleWith
+          ? samplingContext.inheritOrSampleWith(defaultRate)
+          : defaultRate;
+      },
       attachScreenshot: false,
       attachViewHierarchy: false,
       enableUserInteractionTracing: false,
@@ -113,8 +133,8 @@ export const setDiagnosticsEnabled = (enabled: boolean): void => {
 
 export const isDiagnosticsEnabled = (): boolean => _diagnosticsEnabled;
 
-export const captureTelemetryException = (error: unknown): void => {
-  if (!_diagnosticsEnabled) return;
+export const captureTelemetryException = (error: unknown): boolean => {
+  if (!_diagnosticsEnabled) return false;
 
   const safeError =
     error instanceof Error
@@ -126,13 +146,15 @@ export const captureTelemetryException = (error: unknown): void => {
         })()
       : new Error('Unexpected application error');
 
+  let sentryCaptured = false;
   const Sentry = getSentryModule();
   try {
     if (_sentryInitialized && Sentry?.captureException) {
       Sentry.captureException(safeError);
+      sentryCaptured = true;
     }
   } catch {
-    // No-op
+    sentryCaptured = false;
   }
 
   const Observe = getObserveModule();
@@ -141,6 +163,8 @@ export const captureTelemetryException = (error: unknown): void => {
   } catch {
     // No-op
   }
+
+  return sentryCaptured;
 };
 
 export const markAppInteractive = (): void => {
@@ -151,4 +175,59 @@ export const markAppInteractive = (): void => {
   } catch {
     // No-op
   }
+};
+
+export const isPreviewTelemetryTestingAllowed = (): boolean => {
+  const constants = getExpoConstants();
+  const isDev = typeof __DEV__ !== 'undefined' && __DEV__;
+  return isDev || constants?.expoConfig?.extra?.appVariant === 'preview';
+};
+
+export const sendTelemetryVerificationError = async (): Promise<string | null> => {
+  if (!_diagnosticsEnabled || !isPreviewTelemetryTestingAllowed() || !_sentryInitialized) {
+    return null;
+  }
+
+  const label = `Sentry test error ${Date.now()}`;
+  const Sentry = getSentryModule();
+
+  let spanRecorded = false;
+  try {
+    if (Sentry?.startSpan) {
+      spanRecorded = Sentry.startSpan(
+        {
+          name: VERIFY_TRACE_SPAN_NAME,
+          op: 'app.verify',
+          parentSpan: null,
+          forceTransaction: true,
+          attributes: { [VERIFY_TRACE_ATTRIBUTE]: true },
+        },
+        (span: { isRecording?: () => boolean } | undefined) => span?.isRecording?.() ?? true
+      );
+    }
+  } catch {
+    spanRecorded = false;
+  }
+
+  if (!spanRecorded) {
+    return null;
+  }
+
+  const captured = captureTelemetryException(new Error(label));
+  if (!captured) {
+    return null;
+  }
+
+  try {
+    if (Sentry?.flush) {
+      const flushed = await Sentry.flush();
+      if (flushed === false) {
+        return null;
+      }
+    }
+  } catch {
+    return null;
+  }
+
+  return label;
 };

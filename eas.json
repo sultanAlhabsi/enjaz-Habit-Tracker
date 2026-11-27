@@ -12,6 +12,9 @@
       "channel": "preview",
       "autoIncrement": true,
       "distribution": "internal",
+      "env": {
+        "APP_VARIANT": "preview"
+      },
       "android": {
         "buildType": "apk"
       }
