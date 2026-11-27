@@ -24,7 +24,7 @@
     "@sentry/react-native": "~7.11.0",
     "@shopify/flash-list": "2.0.2",
     "dayjs": "^1.11.20",
-    "expo": "~57.0.32",
+    "expo": "~57.0.33",
     "expo-asset": "~57.0.21",
     "expo-audio": "~57.0.5",
     "expo-document-picker": "~57.0.3",
