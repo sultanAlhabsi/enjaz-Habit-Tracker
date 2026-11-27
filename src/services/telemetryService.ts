@@ -24,6 +24,8 @@ const getObserveModule = () => safeRequire(() => require('expo-observe')?.Observ
 /* eslint-enable @typescript-eslint/no-require-imports */
 
 const FILTERED_ROUTE_PARAMS = ['habitId', 'habitName', 'name', 'title', 'note', 'isRevisit'];
+const VERIFY_TRACE_SPAN_NAME = 'enjaz.sentry.verify_trace';
+const VERIFY_TRACE_ATTRIBUTE = 'enjaz.verification';
 
 export const getSentryDsn = (): string | null => {
   const constants = getExpoConstants();
@@ -71,7 +73,23 @@ const initSentryIfOptedIn = (): void => {
       environment: isDev ? 'development' : 'production',
       sendDefaultPii: false,
       enableAutoPerformanceTracing: true,
-      tracesSampleRate: isDev ? 1.0 : 0.1,
+      tracesSampler(samplingContext: {
+        name?: string;
+        attributes?: Record<string, unknown>;
+        inheritOrSampleWith?: (fallbackSampleRate: number) => number;
+      }) {
+        if (
+          isPreviewTelemetryTestingAllowed() &&
+          samplingContext?.name === VERIFY_TRACE_SPAN_NAME &&
+          samplingContext?.attributes?.[VERIFY_TRACE_ATTRIBUTE] === true
+        ) {
+          return 1.0;
+        }
+        const defaultRate = isDev ? 1.0 : 0.1;
+        return samplingContext?.inheritOrSampleWith
+          ? samplingContext.inheritOrSampleWith(defaultRate)
+          : defaultRate;
+      },
       attachScreenshot: false,
       attachViewHierarchy: false,
       enableUserInteractionTracing: false,
@@ -173,12 +191,26 @@ export const sendTelemetryVerificationError = async (): Promise<string | null> =
   const label = `Sentry test error ${Date.now()}`;
   const Sentry = getSentryModule();
 
+  let spanRecorded = false;
   try {
     if (Sentry?.startSpan) {
-      Sentry.startSpan({ name: 'enjaz.sentry.verify_trace', op: 'app.verify' }, () => {});
+      spanRecorded = Sentry.startSpan(
+        {
+          name: VERIFY_TRACE_SPAN_NAME,
+          op: 'app.verify',
+          parentSpan: null,
+          forceTransaction: true,
+          attributes: { [VERIFY_TRACE_ATTRIBUTE]: true },
+        },
+        (span: { isRecording?: () => boolean } | undefined) => span?.isRecording?.() ?? true
+      );
     }
   } catch {
-    // No-op
+    spanRecorded = false;
+  }
+
+  if (!spanRecorded) {
+    return null;
   }
 
   const captured = captureTelemetryException(new Error(label));
