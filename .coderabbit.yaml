@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: 'ar'
+early_access: false
+enable_free_tier: true
+
+reviews:
+  profile: 'chill'
+  request_changes_workflow: false
+  high_level_summary: true
+  review_status: true
+  collapse_walkthrough: false
+  poem: false
+  in_progress_fortune: false
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+    base_branches:
+      - 'main'
+  path_filters:
+    - '!package-lock.json'
+    - '!assets/**'
+    - '!dist/**'
+    - '!android/**'
+    - '!ios/**'
+    - '!*.db'
+  path_instructions:
+    - path: 'src/**'
+      instructions: |
+        هذا مشروع تطبيق عادات (Enjaz Habit Tracker) مبني بـ React Native وExpo SDK 57 وTypeScript وSQLite وReanimated 4 وZustand.
+        ركّز عند المراجعة على:
+        1. الخصوصية أولاً (Privacy-First): عدم إرسال أسماء العادات أو الملاحظات أو أي بيانات شخصية (PII) في تقارير الأعطال أو الشبكة.
+        2. التوافق مع واجهة RTL العربية والأداء السلس على أندرويد (FlashList، تجنب إعادة الرسم غير الضرورية، وتأمين worklets في Reanimated 4).
+        3. سلامة عمليات SQLite وتوافق الاستيرادات مع `tsc --noEmit` واختبارات Node.
+    - path: 'tests/**'
+      instructions: |
+        تُشغّل ملفات `tests/*.test.ts` عبر مشغّل Node الاختباري (`node --test --experimental-strip-types`)، بينما تُشغّل اختبارات المكونات في `tests/components/*.test.tsx` عبر Jest وReact Native Testing Library.
+        تأكد من عدم خلط بيئتي التشغيل ومن تغطية حالات الخصوصية والحالات الحدّية.
+    - path: '.github/**'
+      instructions: |
+        تحقق من أمان مسارات GitHub Actions: أقل الصلاحيات الممكنة (least privilege)، تثبيت الـ Actions بـ Commit SHA كامل، واستخدام مشغّلات Linux (`ubuntu-latest`) فقط.
+
+chat:
+  auto_reply: true

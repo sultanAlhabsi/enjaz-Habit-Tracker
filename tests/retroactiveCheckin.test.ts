@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   isHabitScheduledForDate,
-  isHabitDueOnDate,
   getHabitsForDate,
   getPendingDueHabitsForDate,
   getCompletedDueHabitsForDate,
@@ -106,9 +105,9 @@ test('retroactiveCheckin: stats and streaks properly calculate when createdAt is
   };
 
   const checkins: HabitCheckin[] = [
-    { id: '1', habitId: 'h_daily', date: '2026-09-23', count: 1, completed: true, updatedAt: '' },
+    { id: '1', habitId: 'h_daily', date: wednesdayDate, count: 1, completed: true, updatedAt: '' },
     { id: '2', habitId: 'h_daily', date: '2026-09-24', count: 1, completed: true, updatedAt: '' },
-    { id: '3', habitId: 'h_daily', date: '2026-09-25', count: 1, completed: true, updatedAt: '' },
+    { id: '3', habitId: 'h_daily', date: fridayDate, count: 1, completed: true, updatedAt: '' },
   ];
 
   const stats = calculateHabitStats(habit, checkins, fridayDate);
@@ -119,7 +118,7 @@ test('retroactiveCheckin: stats and streaks properly calculate when createdAt is
 
   const streak = calculateCurrentStreakFromDates(
     habit,
-    new Set(['2026-09-23', '2026-09-24', '2026-09-25']),
+    new Set([wednesdayDate, '2026-09-24', fridayDate]),
     fridayDate
   );
   assert.equal(streak, 3);

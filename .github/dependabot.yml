@@ -11,6 +11,48 @@ updates:
     labels:
       - 'dependencies'
       - 'security'
+    ignore:
+      # Prevent Dependabot from proposing Expo SDK 58+ major bumps or native minor drifts
+      # while still allowing security advisory updates.
+      - dependency-name: 'expo'
+        update-types:
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
+      - dependency-name: 'expo-*'
+        update-types:
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
+      - dependency-name: '@expo/*'
+        update-types:
+          - 'version-update:semver-major'
+      - dependency-name: 'babel-preset-expo'
+        update-types:
+          - 'version-update:semver-major'
+      - dependency-name: 'jest-expo'
+        update-types:
+          - 'version-update:semver-major'
+      - dependency-name: 'eslint-config-expo'
+        update-types:
+          - 'version-update:semver-major'
+      - dependency-name: 'react'
+        update-types:
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
+      - dependency-name: 'react-native'
+        update-types:
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
+      - dependency-name: 'react-native-*'
+        update-types:
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
+      - dependency-name: '@shopify/flash-list'
+        update-types:
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
+      - dependency-name: '@sentry/react-native'
+        update-types:
+          - 'version-update:semver-major'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
