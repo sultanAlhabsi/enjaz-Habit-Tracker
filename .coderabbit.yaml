@@ -17,6 +17,10 @@ reviews:
     drafts: false
     base_branches:
       - 'main'
+  tools:
+    eslint:
+      # ESLint runs in CI Fast with full node_modules (expo/tsconfig.base)
+      enabled: false
   path_filters:
     - '!package-lock.json'
     - '!assets/**'
