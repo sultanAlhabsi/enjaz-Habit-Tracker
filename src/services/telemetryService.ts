@@ -63,22 +63,12 @@ const initSentryIfOptedIn = (): void => {
   const Sentry = getSentryModule();
   if (!Sentry?.init) return;
 
-  const constants = getExpoConstants();
   const isDev = typeof __DEV__ !== 'undefined' && __DEV__;
-  const appVersion = constants?.expoConfig?.version || '1.0.4';
-  const androidPackage = constants?.expoConfig?.android?.package || 'com.enjaz.habittracker';
-  const versionCode = constants?.expoConfig?.android?.versionCode;
-  const dist = versionCode ? String(versionCode) : undefined;
-  const release = dist
-    ? `${androidPackage}@${appVersion}+${dist}`
-    : `${androidPackage}@${appVersion}`;
 
   try {
     Sentry.init({
       dsn,
       environment: isDev ? 'development' : 'production',
-      release,
-      dist,
       sendDefaultPii: false,
       enableAutoPerformanceTracing: true,
       tracesSampleRate: isDev ? 1.0 : 0.1,
@@ -125,8 +115,8 @@ export const setDiagnosticsEnabled = (enabled: boolean): void => {
 
 export const isDiagnosticsEnabled = (): boolean => _diagnosticsEnabled;
 
-export const captureTelemetryException = (error: unknown): void => {
-  if (!_diagnosticsEnabled) return;
+export const captureTelemetryException = (error: unknown): boolean => {
+  if (!_diagnosticsEnabled) return false;
 
   const safeError =
     error instanceof Error
@@ -138,13 +128,15 @@ export const captureTelemetryException = (error: unknown): void => {
         })()
       : new Error('Unexpected application error');
 
+  let sentryCaptured = false;
   const Sentry = getSentryModule();
   try {
     if (_sentryInitialized && Sentry?.captureException) {
       Sentry.captureException(safeError);
+      sentryCaptured = true;
     }
   } catch {
-    // No-op
+    sentryCaptured = false;
   }
 
   const Observe = getObserveModule();
@@ -153,6 +145,8 @@ export const captureTelemetryException = (error: unknown): void => {
   } catch {
     // No-op
   }
+
+  return sentryCaptured;
 };
 
 export const markAppInteractive = (): void => {
@@ -172,7 +166,7 @@ export const isPreviewTelemetryTestingAllowed = (): boolean => {
 };
 
 export const sendTelemetryVerificationError = async (): Promise<string | null> => {
-  if (!_diagnosticsEnabled || !isPreviewTelemetryTestingAllowed()) {
+  if (!_diagnosticsEnabled || !isPreviewTelemetryTestingAllowed() || !_sentryInitialized) {
     return null;
   }
 
@@ -180,21 +174,27 @@ export const sendTelemetryVerificationError = async (): Promise<string | null> =
   const Sentry = getSentryModule();
 
   try {
-    if (_sentryInitialized && Sentry?.startSpan) {
+    if (Sentry?.startSpan) {
       Sentry.startSpan({ name: 'enjaz.sentry.verify_trace', op: 'app.verify' }, () => {});
     }
   } catch {
     // No-op
   }
 
-  captureTelemetryException(new Error(label));
+  const captured = captureTelemetryException(new Error(label));
+  if (!captured) {
+    return null;
+  }
 
   try {
-    if (_sentryInitialized && Sentry?.flush) {
-      await Sentry.flush();
+    if (Sentry?.flush) {
+      const flushed = await Sentry.flush();
+      if (flushed === false) {
+        return null;
+      }
     }
   } catch {
-    // No-op
+    return null;
   }
 
   return label;
