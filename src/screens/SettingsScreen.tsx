@@ -36,6 +36,10 @@ import {
 import { toArabicNumerals, formatArabicCount } from '../utils/habitUtils';
 import { inspectAndParseLoopDatabase, ConvertedLoopData } from '../services/loopImportService';
 import { triggerLightHaptic } from '../utils/haptics';
+import {
+  isPreviewTelemetryTestingAllowed,
+  sendTelemetryVerificationError,
+} from '../services/telemetryService';
 
 export const SettingsScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -704,6 +708,26 @@ export const SettingsScreen: React.FC = () => {
             value={diagnosticsEnabled}
             onValueChange={toggleDiagnostics}
           />
+
+          {isPreviewTelemetryTestingAllowed() && diagnosticsEnabled && (
+            <SettingRow
+              iconName="flask-outline"
+              title="إرسال حدث تجريبي إلى Sentry (معاينة)"
+              description="زر مخصص لنسخة المعاينة فقط للتحقق من وصول الأخطاء والـ Trace"
+              type="button"
+              onPress={async () => {
+                const label = await sendTelemetryVerificationError();
+                if (label) {
+                  appAlert(
+                    'تم إرسال الحدث التجريبي',
+                    `تم إرسال "${label}" إلى مشروع Sentry (enjaz-habit-tracker).`
+                  );
+                } else {
+                  appAlert('تنبيه', 'تأكد من توفر EXPO_PUBLIC_SENTRY_DSN وتفعيل تقارير الأعطال.');
+                }
+              }}
+            />
+          )}
 
           <SettingRow
             iconName="shield-checkmark-outline"

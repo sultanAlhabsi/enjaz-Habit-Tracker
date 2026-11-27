@@ -146,9 +146,11 @@ const withProductionHardening = (config) => {
 
 /** @type {import('@expo/config').ExpoConfig} */
 module.exports = ({ config }) => {
+  const isPreviewBuild = process.env.APP_VARIANT === 'preview';
+
   const baseConfig = {
     ...config,
-    name: 'إنجاز - تتبع العادات',
+    name: isPreviewBuild ? 'إنجاز (معاينة)' : 'إنجاز - تتبع العادات',
     slug: 'enjaz-habit-tracker',
     version: '1.0.4',
     orientation: 'portrait',
@@ -164,7 +166,7 @@ module.exports = ({ config }) => {
       supportsTablet: true,
     },
     android: {
-      package: 'com.enjaz.habittracker',
+      package: isPreviewBuild ? 'com.enjaz.habittracker.preview' : 'com.enjaz.habittracker',
       versionCode: 2,
       allowBackup: false,
       adaptiveIcon: {
@@ -200,13 +202,14 @@ module.exports = ({ config }) => {
           enableBackgroundRecording: false,
         },
       ],
-      ...(process.env.SENTRY_ORG && process.env.SENTRY_PROJECT && process.env.SENTRY_AUTH_TOKEN
+      ...(process.env.SENTRY_AUTH_TOKEN
         ? [
             [
               '@sentry/react-native/expo',
               {
-                organization: process.env.SENTRY_ORG,
-                project: process.env.SENTRY_PROJECT,
+                url: 'https://sentry.io/',
+                organization: process.env.SENTRY_ORG || 'sultan-4l',
+                project: process.env.SENTRY_PROJECT || 'enjaz-habit-tracker',
               },
             ],
           ]
@@ -219,6 +222,7 @@ module.exports = ({ config }) => {
       // Google Play release is strictly 100% offline & local-first (No remote/cloud database).
       // Remote cloud database (Neon) is disabled completely.
       databaseUrl: null,
+      appVariant: isPreviewBuild ? 'preview' : 'production',
       sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN || null,
     },
     owner: 'sultanalhabsi',

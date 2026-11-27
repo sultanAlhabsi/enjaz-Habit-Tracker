@@ -63,13 +63,25 @@ const initSentryIfOptedIn = (): void => {
   const Sentry = getSentryModule();
   if (!Sentry?.init) return;
 
+  const constants = getExpoConstants();
+  const isDev = typeof __DEV__ !== 'undefined' && __DEV__;
+  const appVersion = constants?.expoConfig?.version || '1.0.4';
+  const androidPackage = constants?.expoConfig?.android?.package || 'com.enjaz.habittracker';
+  const versionCode = constants?.expoConfig?.android?.versionCode;
+  const dist = versionCode ? String(versionCode) : undefined;
+  const release = dist
+    ? `${androidPackage}@${appVersion}+${dist}`
+    : `${androidPackage}@${appVersion}`;
+
   try {
     Sentry.init({
       dsn,
+      environment: isDev ? 'development' : 'production',
+      release,
+      dist,
       sendDefaultPii: false,
-      enableAutoPerformanceTracing: false,
-      tracesSampleRate: 0,
-      profilesSampleRate: 0,
+      enableAutoPerformanceTracing: true,
+      tracesSampleRate: isDev ? 1.0 : 0.1,
       attachScreenshot: false,
       attachViewHierarchy: false,
       enableUserInteractionTracing: false,
@@ -151,4 +163,39 @@ export const markAppInteractive = (): void => {
   } catch {
     // No-op
   }
+};
+
+export const isPreviewTelemetryTestingAllowed = (): boolean => {
+  const constants = getExpoConstants();
+  const isDev = typeof __DEV__ !== 'undefined' && __DEV__;
+  return isDev || constants?.expoConfig?.extra?.appVariant === 'preview';
+};
+
+export const sendTelemetryVerificationError = async (): Promise<string | null> => {
+  if (!_diagnosticsEnabled || !isPreviewTelemetryTestingAllowed()) {
+    return null;
+  }
+
+  const label = `Sentry test error ${Date.now()}`;
+  const Sentry = getSentryModule();
+
+  try {
+    if (_sentryInitialized && Sentry?.startSpan) {
+      Sentry.startSpan({ name: 'enjaz.sentry.verify_trace', op: 'app.verify' }, () => {});
+    }
+  } catch {
+    // No-op
+  }
+
+  captureTelemetryException(new Error(label));
+
+  try {
+    if (_sentryInitialized && Sentry?.flush) {
+      await Sentry.flush();
+    }
+  } catch {
+    // No-op
+  }
+
+  return label;
 };
