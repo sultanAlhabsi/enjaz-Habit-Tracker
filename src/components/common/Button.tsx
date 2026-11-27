@@ -138,11 +138,7 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <View style={styles.content}>
           {iconName && iconPosition === 'left' && (
-            <Ionicons
-              name={iconName}
-              size={sizeStyle.fontSize + 3}
-              color={resolvedIconColor}
-            />
+            <Ionicons name={iconName} size={sizeStyle.fontSize + 3} color={resolvedIconColor} />
           )}
           <Text
             style={[
@@ -158,11 +154,7 @@ export const Button: React.FC<ButtonProps> = ({
             {title}
           </Text>
           {iconName && iconPosition === 'right' && (
-            <Ionicons
-              name={iconName}
-              size={sizeStyle.fontSize + 3}
-              color={resolvedIconColor}
-            />
+            <Ionicons name={iconName} size={sizeStyle.fontSize + 3} color={resolvedIconColor} />
           )}
         </View>
       )}

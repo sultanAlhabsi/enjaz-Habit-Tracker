@@ -896,9 +896,30 @@ test('calculateHabitConsistencyPattern: calculates adherence distribution across
   // Checkins for May 2026: May 3 (Sunday), May 4 (Monday), May 10 (Sunday), May 11 (Monday)
   // Let's create specific checkins
   const checkins: HabitCheckin[] = [
-    { id: 'c1', habitId: 'habit-dist', date: '2026-05-03', count: 1, completed: true, updatedAt: '' }, // Sunday (day 0)
-    { id: 'c2', habitId: 'habit-dist', date: '2026-05-10', count: 1, completed: true, updatedAt: '' }, // Sunday (day 0)
-    { id: 'c3', habitId: 'habit-dist', date: '2026-05-04', count: 1, completed: true, updatedAt: '' }, // Monday (day 1)
+    {
+      id: 'c1',
+      habitId: 'habit-dist',
+      date: '2026-05-03',
+      count: 1,
+      completed: true,
+      updatedAt: '',
+    }, // Sunday (day 0)
+    {
+      id: 'c2',
+      habitId: 'habit-dist',
+      date: '2026-05-10',
+      count: 1,
+      completed: true,
+      updatedAt: '',
+    }, // Sunday (day 0)
+    {
+      id: 'c3',
+      habitId: 'habit-dist',
+      date: '2026-05-04',
+      count: 1,
+      completed: true,
+      updatedAt: '',
+    }, // Monday (day 1)
   ];
 
   // Evaluate up to May 14, 2026
@@ -955,17 +976,54 @@ test('formatHabitStatsForShare: creates detailed Arabic share text for a specifi
   assert.ok(text.includes('تطبيق إنجاز'));
 
   // Test optional latest note
-  const textWithNote = formatHabitStatsForShare(habit, stats, milestone, 'شعور ممتاز بعد جولة المشي في الحديقة');
+  const textWithNote = formatHabitStatsForShare(
+    habit,
+    stats,
+    milestone,
+    'شعور ممتاز بعد جولة المشي في الحديقة'
+  );
   assert.ok(textWithNote.includes('آخر خاطرة: "شعور ممتاز بعد جولة المشي في الحديقة"'));
 });
 
 test('getHabitCheckinNotes: extracts non-empty notes sorted descending by date', () => {
   const checkins: HabitCheckin[] = [
-    { id: 'c1', habitId: 'h1', date: '2026-06-01', count: 1, completed: true, updatedAt: '', note: 'تدوينة أولى' },
-    { id: 'c2', habitId: 'h1', date: '2026-06-03', count: 1, completed: true, updatedAt: '', note: 'تدوينة أحدث' },
-    { id: 'c3', habitId: 'h1', date: '2026-06-02', count: 1, completed: true, updatedAt: '', note: '   ' }, // empty whitespace
+    {
+      id: 'c1',
+      habitId: 'h1',
+      date: '2026-06-01',
+      count: 1,
+      completed: true,
+      updatedAt: '',
+      note: 'تدوينة أولى',
+    },
+    {
+      id: 'c2',
+      habitId: 'h1',
+      date: '2026-06-03',
+      count: 1,
+      completed: true,
+      updatedAt: '',
+      note: 'تدوينة أحدث',
+    },
+    {
+      id: 'c3',
+      habitId: 'h1',
+      date: '2026-06-02',
+      count: 1,
+      completed: true,
+      updatedAt: '',
+      note: '   ',
+    }, // empty whitespace
     { id: 'c4', habitId: 'h1', date: '2026-06-04', count: 1, completed: true, updatedAt: '' }, // undefined note
-    { id: 'c5', habitId: 'h2', date: '2026-06-05', count: 1, completed: true, updatedAt: '', note: 'عادة أخرى' }, // other habit
+    {
+      id: 'c5',
+      habitId: 'h2',
+      date: '2026-06-05',
+      count: 1,
+      completed: true,
+      updatedAt: '',
+      note: 'عادة أخرى',
+    }, // other habit
   ];
 
   const notes = getHabitCheckinNotes(checkins, 'h1');
@@ -979,8 +1037,24 @@ test('getHabitCheckinNotes: extracts non-empty notes sorted descending by date',
 test('formatHabitNotesForShare: formats Arabic reflection diary summary correctly', () => {
   const habit = createMockHabit({ name: 'القراءة اليومية' });
   const checkins: HabitCheckin[] = [
-    { id: 'c1', habitId: habit.id, date: '2026-06-01', count: 1, completed: true, updatedAt: '', note: 'أنهيت الفصل الخامس من الكتاب' },
-    { id: 'c2', habitId: habit.id, date: '2026-06-02', count: 1, completed: true, updatedAt: '', note: 'فكرة ملهمة حول الانضباط الذاتي' },
+    {
+      id: 'c1',
+      habitId: habit.id,
+      date: '2026-06-01',
+      count: 1,
+      completed: true,
+      updatedAt: '',
+      note: 'أنهيت الفصل الخامس من الكتاب',
+    },
+    {
+      id: 'c2',
+      habitId: habit.id,
+      date: '2026-06-02',
+      count: 1,
+      completed: true,
+      updatedAt: '',
+      note: 'فكرة ملهمة حول الانضباط الذاتي',
+    },
   ];
 
   const shareText = formatHabitNotesForShare(habit, checkins);
@@ -1047,10 +1121,30 @@ test('filterHabitsByQuery: matches Arabic queries regardless of Alef forms, Taa 
 });
 
 test('sortHabits: prioritizes pinned habits at the top across all sort modes', () => {
-  const hUnpinned1 = createMockHabit({ id: 'h1', name: 'عادة عادية 1', reminderTime: '10:00', isPinned: false });
-  const hPinned1 = createMockHabit({ id: 'h2', name: 'عادة مثبتة 1', reminderTime: '12:00', isPinned: true });
-  const hUnpinned2 = createMockHabit({ id: 'h3', name: 'عادة عادية 2', reminderTime: '08:00', isPinned: false });
-  const hPinned2 = createMockHabit({ id: 'h4', name: 'عادة مثبتة 2', reminderTime: '06:00', isPinned: true });
+  const hUnpinned1 = createMockHabit({
+    id: 'h1',
+    name: 'عادة عادية 1',
+    reminderTime: '10:00',
+    isPinned: false,
+  });
+  const hPinned1 = createMockHabit({
+    id: 'h2',
+    name: 'عادة مثبتة 1',
+    reminderTime: '12:00',
+    isPinned: true,
+  });
+  const hUnpinned2 = createMockHabit({
+    id: 'h3',
+    name: 'عادة عادية 2',
+    reminderTime: '08:00',
+    isPinned: false,
+  });
+  const hPinned2 = createMockHabit({
+    id: 'h4',
+    name: 'عادة مثبتة 2',
+    reminderTime: '06:00',
+    isPinned: true,
+  });
 
   const all = [hUnpinned1, hPinned1, hUnpinned2, hPinned2];
 
@@ -1119,7 +1213,10 @@ test('calculateHabitStats: computes streaks beyond 365 days without artificial t
   }
 
   const stats = calculateHabitStats(habit, checkins, '2026-06-15');
-  assert.ok(stats.currentStreak >= 390, `Current streak should be at least 391, got ${stats.currentStreak}`);
+  assert.ok(
+    stats.currentStreak >= 390,
+    `Current streak should be at least 391, got ${stats.currentStreak}`
+  );
   assert.ok(stats.bestStreak >= 390, `Best streak should be at least 391, got ${stats.bestStreak}`);
 });
 
@@ -1186,7 +1283,11 @@ test('exportCheckinsToCsv: outputs valid CSV with UTF-8 BOM and correct checkin 
   // Must start with UTF-8 BOM for Excel Arabic compatibility
   assert.ok(csv.startsWith('\uFEFF'));
   // Headers check
-  assert.ok(csv.includes('تاريخ الإنجاز,اسم العادة,القسم,الحالة,العدد المنجز,الهدف اليومي,الوحدة,الملاحظات والخواطر,تاريخ التوثيق'));
+  assert.ok(
+    csv.includes(
+      'تاريخ الإنجاز,اسم العادة,القسم,الحالة,العدد المنجز,الهدف اليومي,الوحدة,الملاحظات والخواطر,تاريخ التوثيق'
+    )
+  );
   // Habit name check
   assert.ok(csv.includes('قراءة القرآن'));
   assert.ok(csv.includes('2026-09-01'));
@@ -1209,7 +1310,11 @@ test('exportHabitsSummaryToCsv: outputs summary metrics for each habit', () => {
   const csv = exportHabitsSummaryToCsv([habit1, habit2], [checkin]);
 
   assert.ok(csv.startsWith('\uFEFF'));
-  assert.ok(csv.includes('اسم العادة,القسم,نوع التكرار,الهدف اليومي,الوحدة,السلسلة الحالية,أعلى سلسلة,إجمالي الإنجازات,نسبة الالتزام %,الحالة,وقت التذكير,مثبتة,تاريخ الإنشاء'));
+  assert.ok(
+    csv.includes(
+      'اسم العادة,القسم,نوع التكرار,الهدف اليومي,الوحدة,السلسلة الحالية,أعلى سلسلة,إجمالي الإنجازات,نسبة الالتزام %,الحالة,وقت التذكير,مثبتة,تاريخ الإنشاء'
+    )
+  );
   assert.ok(csv.includes('قراءة القرآن'));
   assert.ok(csv.includes('ممارسة الرياضة'));
   assert.ok(csv.includes('نشطة'));
@@ -1343,13 +1448,7 @@ test('sortHabits: alphabetical mode correctly sorts Arabic habit names and prior
 
 test('formatArabicCount: handles active habits singular, dual, and plural rules', () => {
   const formatHabits = (count: number) =>
-    formatArabicCount(
-      count,
-      'عادة نشطة واحدة',
-      'عادتان نشطتان',
-      'عادات نشطة',
-      'عادة نشطة'
-    );
+    formatArabicCount(count, 'عادة نشطة واحدة', 'عادتان نشطتان', 'عادات نشطة', 'عادة نشطة');
 
   assert.equal(formatHabits(0), '٠ عادة نشطة');
   assert.equal(formatHabits(1), 'عادة نشطة واحدة');
@@ -1363,13 +1462,7 @@ test('formatArabicCount: handles active habits singular, dual, and plural rules'
 
 test('formatArabicCount: handles archived habits singular, dual, and plural rules', () => {
   const formatArchived = (count: number) =>
-    formatArabicCount(
-      count,
-      'عادة مؤرشفة واحدة',
-      'عادتان مؤرشفتان',
-      'عادات مؤرشفة',
-      'عادة مؤرشفة'
-    );
+    formatArabicCount(count, 'عادة مؤرشفة واحدة', 'عادتان مؤرشفتان', 'عادات مؤرشفة', 'عادة مؤرشفة');
 
   assert.equal(formatArchived(0), '٠ عادة مؤرشفة');
   assert.equal(formatArchived(1), 'عادة مؤرشفة واحدة');
@@ -1381,9 +1474,24 @@ test('formatArabicCount: handles archived habits singular, dual, and plural rule
 
 test('filterHabitsByQuery: successfully filters archived habits by name and description', () => {
   const archivedHabits: Habit[] = [
-    createMockHabit({ id: 'a1', name: 'الاستيقاظ مبكراً', description: 'الساعة السادسة صباحاً', archivedAt: '2026-01-01' }),
-    createMockHabit({ id: 'a2', name: 'جلسة تأمل', description: 'تنفس واسترخاء', archivedAt: '2026-01-02' }),
-    createMockHabit({ id: 'a3', name: 'تعلم لغة جديدة', description: 'تطبيق دولينجو', archivedAt: '2026-01-03' }),
+    createMockHabit({
+      id: 'a1',
+      name: 'الاستيقاظ مبكراً',
+      description: 'الساعة السادسة صباحاً',
+      archivedAt: '2026-01-01',
+    }),
+    createMockHabit({
+      id: 'a2',
+      name: 'جلسة تأمل',
+      description: 'تنفس واسترخاء',
+      archivedAt: '2026-01-02',
+    }),
+    createMockHabit({
+      id: 'a3',
+      name: 'تعلم لغة جديدة',
+      description: 'تطبيق دولينجو',
+      archivedAt: '2026-01-03',
+    }),
   ];
 
   const res1 = filterHabitsByQuery(archivedHabits, 'تأمل');
@@ -1470,8 +1578,7 @@ test('formatArabicCount: accurately applies Arabic grammatical rules for milesto
   assert.equal(formatMilestones(15), '١٥ محطة');
   assert.equal(formatMilestones(24), '٢٤ محطة');
 
-  const formatOpps = (count: number) =>
-    formatArabicCount(count, 'فرصة', 'فرصتان', 'فرص', 'فرصة');
+  const formatOpps = (count: number) => formatArabicCount(count, 'فرصة', 'فرصتان', 'فرص', 'فرصة');
 
   assert.equal(formatOpps(1), 'فرصة');
   assert.equal(formatOpps(2), 'فرصتان');
@@ -1587,7 +1694,15 @@ test('checkin with note only does not count as completed and does not increment 
 
   const checkins: HabitCheckin[] = [
     { id: 'c_prev', habitId: habit.id, date: yesterday, count: 1, completed: true, updatedAt: '' },
-    { id: 'c_note', habitId: habit.id, date: today, count: 0, completed: false, note: 'تأمل وملاحظة فقط دون إنجاز', updatedAt: '' },
+    {
+      id: 'c_note',
+      habitId: habit.id,
+      date: today,
+      count: 0,
+      completed: false,
+      note: 'تأمل وملاحظة فقط دون إنجاز',
+      updatedAt: '',
+    },
   ];
 
   const stats = calculateHabitStats(habit, checkins, today);
@@ -1635,8 +1750,3 @@ test('getPeriodicBadgeText: formats weekly and monthly target progress badges ac
   // 5. Daily habit returns undefined (no periodic badge clutter)
   assert.equal(getPeriodicBadgeText(dailyHabit, weeklyDates1, refDate), undefined);
 });
-
-
-
-
-

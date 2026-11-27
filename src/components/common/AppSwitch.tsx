@@ -61,10 +61,7 @@ export const AppSwitch: React.FC<AppSwitchProps> = ({
     'worklet';
     const translateX = interpolate(progress.value, [0, 1], [0, TRAVEL_DISTANCE]);
     return {
-      transform: [
-        { translateX },
-        { scale: pressedScale.value },
-      ],
+      transform: [{ translateX }, { scale: pressedScale.value }],
     };
   });
 
@@ -93,10 +90,7 @@ export const AppSwitch: React.FC<AppSwitchProps> = ({
       onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={[
-        styles.container,
-        disabled && styles.disabled,
-      ]}
+      style={[styles.container, disabled && styles.disabled]}
       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
     >
       {/* Slender Pill Track */}

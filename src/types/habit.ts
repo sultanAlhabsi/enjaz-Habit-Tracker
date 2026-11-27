@@ -1,6 +1,7 @@
 export type ThemeMode = 'light' | 'dark' | 'system';
 
-export type HabitFrequency = 'daily' | 'specific_days' | 'weekly_target' | 'monthly_day' | 'monthly_target';
+export type HabitFrequency =
+  'daily' | 'specific_days' | 'weekly_target' | 'monthly_day' | 'monthly_target';
 
 export interface Habit {
   id: string;
@@ -318,7 +319,8 @@ export const DAYS_OF_WEEK_AR = [
 export const HABIT_CATEGORIES = ['الكل', 'صحة', 'إنتاجية', 'روتين', 'روحانية', 'تطوير'] as const;
 export type HabitCategory = (typeof HABIT_CATEGORIES)[number];
 
-export type HabitSortOption = 'default' | 'pending_first' | 'alphabetical' | 'reminder_time' | 'streak';
+export type HabitSortOption =
+  'default' | 'pending_first' | 'alphabetical' | 'reminder_time' | 'streak';
 
 export interface HabitSortOptionItem {
   id: HabitSortOption;
@@ -399,4 +401,3 @@ export interface CategoryAnalytics {
   balanceScore: number; // 0 - 100
   insightMessage: string;
 }
-

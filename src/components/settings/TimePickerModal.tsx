@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  Modal,
-  Pressable,
-  ScrollView,
-} from 'react-native';
+import { View, StyleSheet, Modal, Pressable, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Text } from '../common/AppText';
 import { Button } from '../common/Button';
@@ -60,12 +54,7 @@ export const TimePickerModal: React.FC<TimePickerModalProps> = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
       <View style={styles.backdrop}>
         <Pressable style={styles.dismissOverlay} onPress={onClose} />
 
@@ -82,10 +71,13 @@ export const TimePickerModal: React.FC<TimePickerModalProps> = ({
           {/* Header: Title on Right (Leading), Close button on Left (Trailing) */}
           <View style={styles.header}>
             <View style={styles.headerTitleRow}>
-              <Ionicons name="time-outline" size={20} color={theme.primary} style={{ marginLeft: 6 }} />
-              <Text style={[typography.h3, { color: theme.text }]}>
-                تحديد موعد التذكير المسائي
-              </Text>
+              <Ionicons
+                name="time-outline"
+                size={20}
+                color={theme.primary}
+                style={{ marginLeft: 6 }}
+              />
+              <Text style={[typography.h3, { color: theme.text }]}>تحديد موعد التذكير المسائي</Text>
             </View>
 
             <Pressable
@@ -107,7 +99,12 @@ export const TimePickerModal: React.FC<TimePickerModalProps> = ({
               style={[
                 styles.periodButton,
                 {
-                  backgroundColor: selectedPeriod === 'PM' ? theme.primary : isDark ? '#23272E' : theme.cardSecondary,
+                  backgroundColor:
+                    selectedPeriod === 'PM'
+                      ? theme.primary
+                      : isDark
+                        ? '#23272E'
+                        : theme.cardSecondary,
                   borderColor: selectedPeriod === 'PM' ? theme.primary : theme.border,
                   borderRadius: radius.sm,
                 },
@@ -134,7 +131,12 @@ export const TimePickerModal: React.FC<TimePickerModalProps> = ({
               style={[
                 styles.periodButton,
                 {
-                  backgroundColor: selectedPeriod === 'AM' ? theme.primary : isDark ? '#23272E' : theme.cardSecondary,
+                  backgroundColor:
+                    selectedPeriod === 'AM'
+                      ? theme.primary
+                      : isDark
+                        ? '#23272E'
+                        : theme.cardSecondary,
                   borderColor: selectedPeriod === 'AM' ? theme.primary : theme.border,
                   borderRadius: radius.sm,
                 },
@@ -158,7 +160,12 @@ export const TimePickerModal: React.FC<TimePickerModalProps> = ({
           <View style={styles.pickerColumnsContainer}>
             {/* Hour Column */}
             <View style={styles.columnWrapper}>
-              <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'center', marginBottom: 8 }]}>
+              <Text
+                style={[
+                  typography.caption,
+                  { color: theme.textMuted, textAlign: 'center', marginBottom: 8 },
+                ]}
+              >
                 الساعة
               </Text>
               <ScrollView
@@ -205,13 +212,23 @@ export const TimePickerModal: React.FC<TimePickerModalProps> = ({
               </ScrollView>
             </View>
 
-            <Text style={[typography.h2, { color: theme.textMuted, alignSelf: 'center', marginTop: 14 }]}>
+            <Text
+              style={[
+                typography.h2,
+                { color: theme.textMuted, alignSelf: 'center', marginTop: 14 },
+              ]}
+            >
               :
             </Text>
 
             {/* Minute Column */}
             <View style={styles.columnWrapper}>
-              <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'center', marginBottom: 8 }]}>
+              <Text
+                style={[
+                  typography.caption,
+                  { color: theme.textMuted, textAlign: 'center', marginBottom: 8 },
+                ]}
+              >
                 الدقيقة
               </Text>
               <ScrollView

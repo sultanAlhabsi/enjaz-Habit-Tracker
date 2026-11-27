@@ -1,12 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Pressable,
-  Vibration,
-  Platform,
-} from 'react-native';
+import { StyleSheet, View, Text, Pressable, Vibration, Platform } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -32,14 +25,7 @@ interface ParticleData {
   size: number;
 }
 
-const PARTICLE_COLORS = [
-  '#2A4B3A',
-  '#0F766E',
-  '#D97706',
-  '#10B981',
-  '#528268',
-  '#F59E0B',
-];
+const PARTICLE_COLORS = ['#2A4B3A', '#0F766E', '#D97706', '#10B981', '#528268', '#F59E0B'];
 
 const PARTICLES: ParticleData[] = Array.from({ length: 8 }).map((_, i) => ({
   id: i,
@@ -68,11 +54,7 @@ const ParticleItem: React.FC<ParticleItemProps> = ({ particle, progress }) => {
 
     return {
       opacity,
-      transform: [
-        { translateX: tx },
-        { translateY: ty },
-        { scale },
-      ],
+      transform: [{ translateX: tx }, { translateY: ty }, { scale }],
     };
   });
 
@@ -179,10 +161,7 @@ export const OnboardingInteractiveCard1: React.FC = () => {
   const cardAnimatedStyle = useAnimatedStyle(() => {
     'worklet';
     return {
-      transform: [
-        { translateY: floatTranslateY.value },
-        { scale: cardScale.value },
-      ],
+      transform: [{ translateY: floatTranslateY.value }, { scale: cardScale.value }],
     };
   });
 
@@ -214,12 +193,7 @@ export const OnboardingInteractiveCard1: React.FC = () => {
         ]}
       >
         <Ionicons name="sparkles" size={14} color="#15803D" />
-        <Text
-          style={[
-            styles.toastText,
-            { color: isDark ? '#A7F3D0' : '#15803D' },
-          ]}
-        >
+        <Text style={[styles.toastText, { color: isDark ? '#A7F3D0' : '#15803D' }]}>
           أحسنت! أتممت عادتك الأولى ✨
         </Text>
       </Animated.View>
@@ -238,24 +212,12 @@ export const OnboardingInteractiveCard1: React.FC = () => {
       >
         {/* Card Top Row */}
         <View style={styles.cardHeader}>
-          <View
-            style={[
-              styles.categoryBadge,
-              { backgroundColor: isDark ? '#242D26' : '#EEF4F0' },
-            ]}
-          >
+          <View style={[styles.categoryBadge, { backgroundColor: isDark ? '#242D26' : '#EEF4F0' }]}>
             <Ionicons name="book-outline" size={18} color={theme.primary} />
-            <Text style={[styles.categoryTitle, { color: theme.primary }]}>
-              معرفة وتعلّم
-            </Text>
+            <Text style={[styles.categoryTitle, { color: theme.primary }]}>معرفة وتعلّم</Text>
           </View>
 
-          <View
-            style={[
-              styles.streakPill,
-              { backgroundColor: isDark ? '#26241E' : '#FFFBEB' },
-            ]}
-          >
+          <View style={[styles.streakPill, { backgroundColor: isDark ? '#26241E' : '#FFFBEB' }]}>
             <Ionicons name="flame" size={14} color="#D97706" />
             <Text style={styles.streakText}>سلسلة ٧ أيام</Text>
           </View>
@@ -263,12 +225,8 @@ export const OnboardingInteractiveCard1: React.FC = () => {
 
         {/* Habit Title */}
         <View style={styles.cardContent}>
-          <Text style={[styles.habitTitle, { color: theme.text }]}>
-            قراءة ٢٠ صفحة يومياً
-          </Text>
-          <Text
-            style={[styles.habitSubtitle, { color: theme.textSecondary }]}
-          >
+          <Text style={[styles.habitTitle, { color: theme.text }]}>قراءة ٢٠ صفحة يومياً</Text>
+          <Text style={[styles.habitSubtitle, { color: theme.textSecondary }]}>
             كل يوم، بعد صلاة الفجر
           </Text>
         </View>
@@ -288,11 +246,7 @@ export const OnboardingInteractiveCard1: React.FC = () => {
           <View style={styles.checkButtonWrapper}>
             {/* Particles — each is its own component */}
             {PARTICLES.map((p) => (
-              <ParticleItem
-                key={`p-${p.id}`}
-                particle={p}
-                progress={particleProgress}
-              />
+              <ParticleItem key={`p-${p.id}`} particle={p} progress={particleProgress} />
             ))}
 
             <Pressable
@@ -303,16 +257,8 @@ export const OnboardingInteractiveCard1: React.FC = () => {
                 style={[
                   styles.checkButton,
                   {
-                    backgroundColor: isCompleted
-                      ? theme.primary
-                      : isDark
-                      ? '#262624'
-                      : '#F3F2EE',
-                    borderColor: isCompleted
-                      ? theme.primary
-                      : isDark
-                      ? '#383834'
-                      : '#DDD9D0',
+                    backgroundColor: isCompleted ? theme.primary : isDark ? '#262624' : '#F3F2EE',
+                    borderColor: isCompleted ? theme.primary : isDark ? '#383834' : '#DDD9D0',
                   },
                   checkAnimatedStyle,
                 ]}
@@ -320,13 +266,7 @@ export const OnboardingInteractiveCard1: React.FC = () => {
                 <Ionicons
                   name={isCompleted ? 'checkmark' : 'ellipse-outline'}
                   size={22}
-                  color={
-                    isCompleted
-                      ? '#FFFFFF'
-                      : isDark
-                      ? '#71716A'
-                      : '#A09C94'
-                  }
+                  color={isCompleted ? '#FFFFFF' : isDark ? '#71716A' : '#A09C94'}
                 />
               </Animated.View>
             </Pressable>
@@ -335,11 +275,7 @@ export const OnboardingInteractiveCard1: React.FC = () => {
 
         {/* Hint */}
         <View style={styles.hintContainer}>
-          <Ionicons
-            name="hand-left-outline"
-            size={12}
-            color={theme.textMuted}
-          />
+          <Ionicons name="hand-left-outline" size={12} color={theme.textMuted} />
           <Text style={[styles.hintText, { color: theme.textMuted }]}>
             المس الدائرة لإتمام العادة وتجربة الإنجاز
           </Text>

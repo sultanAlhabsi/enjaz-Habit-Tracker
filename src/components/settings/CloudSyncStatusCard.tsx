@@ -27,28 +27,36 @@ export const CloudSyncStatusCard: React.FC<CloudSyncStatusCardProps> = ({
   const statusColor = isBusy
     ? '#F59E0B'
     : cloudSyncState === 'synced'
-    ? theme.primary
-    : cloudSyncState === 'error'
-    ? '#EF4444'
-    : theme.textMuted;
+      ? theme.primary
+      : cloudSyncState === 'error'
+        ? '#EF4444'
+        : theme.textMuted;
 
   const statusBg = isBusy
-    ? isDark ? 'rgba(245, 158, 11, 0.12)' : '#FEF3C7'
+    ? isDark
+      ? 'rgba(245, 158, 11, 0.12)'
+      : '#FEF3C7'
     : cloudSyncState === 'synced'
-    ? isDark ? 'rgba(16, 185, 129, 0.12)' : theme.primaryLight
-    : cloudSyncState === 'error'
-    ? isDark ? 'rgba(239, 68, 68, 0.12)' : '#FEE2E2'
-    : isDark ? 'rgba(255, 255, 255, 0.05)' : '#F3F4F6';
+      ? isDark
+        ? 'rgba(16, 185, 129, 0.12)'
+        : theme.primaryLight
+      : cloudSyncState === 'error'
+        ? isDark
+          ? 'rgba(239, 68, 68, 0.12)'
+          : '#FEE2E2'
+        : isDark
+          ? 'rgba(255, 255, 255, 0.05)'
+          : '#F3F4F6';
 
   const statusText = isBusy
     ? 'جارٍ المزامنة الآن...'
     : cloudSyncState === 'synced'
-    ? 'متصل ومتزامن مع السحابة'
-    : cloudSyncState === 'error'
-    ? 'تعذرت المزامنة'
-    : cloudSyncState === 'offline'
-    ? 'وضع عدم الاتصال (محلياً)'
-    : 'المزامنة السحابية متوقفة مؤقتاً';
+      ? 'متصل ومتزامن مع السحابة'
+      : cloudSyncState === 'error'
+        ? 'تعذرت المزامنة'
+        : cloudSyncState === 'offline'
+          ? 'وضع عدم الاتصال (محلياً)'
+          : 'المزامنة السحابية متوقفة مؤقتاً';
 
   const formattedTime = lastCloudSyncTime
     ? dayjs(lastCloudSyncTime).format('YYYY/MM/DD hh:mm A')
@@ -79,10 +87,10 @@ export const CloudSyncStatusCard: React.FC<CloudSyncStatusCardProps> = ({
               cloudSyncState === 'synced'
                 ? 'cloud-done-outline'
                 : cloudSyncState === 'error'
-                ? 'alert-circle-outline'
-                : cloudSyncState === 'offline'
-                ? 'cloud-offline-outline'
-                : 'cloud-outline'
+                  ? 'alert-circle-outline'
+                  : cloudSyncState === 'offline'
+                    ? 'cloud-offline-outline'
+                    : 'cloud-outline'
             }
             size={18}
             color={statusColor}

@@ -236,10 +236,7 @@ export const initDatabase = async (): Promise<void> => {
   return initPromise;
 };
 
-const saveHabitRecordInternal = async (
-  db: SQLite.SQLiteDatabase,
-  habit: Habit
-): Promise<void> => {
+const saveHabitRecordInternal = async (db: SQLite.SQLiteDatabase, habit: Habit): Promise<void> => {
   await db.runAsync(
     `INSERT OR REPLACE INTO habits (
       id, name, description, icon, color, frequency, frequency_days,
@@ -340,10 +337,7 @@ const seedDatabaseInternal = async (db: SQLite.SQLiteDatabase) => {
   ];
   for (const [key, val] of defaultMetaEntries) {
     try {
-      await db.runAsync(
-        'INSERT OR IGNORE INTO meta (key, value) VALUES (?, ?)',
-        [key, val]
-      );
+      await db.runAsync('INSERT OR IGNORE INTO meta (key, value) VALUES (?, ?)', [key, val]);
     } catch {}
   }
 };
@@ -453,10 +447,10 @@ export const deleteHabitRecord = async (habitId: string): Promise<void> => {
     async (db) => {
       await db.runAsync('DELETE FROM habits WHERE id = ?;', [habitId]);
       await db.runAsync('DELETE FROM checkins WHERE habit_id = ?;', [habitId]);
-      await db.runAsync(
-        'INSERT OR REPLACE INTO deleted_habits (id, deleted_at) VALUES (?, ?);',
-        [habitId, new Date().toISOString()]
-      );
+      await db.runAsync('INSERT OR REPLACE INTO deleted_habits (id, deleted_at) VALUES (?, ?);', [
+        habitId,
+        new Date().toISOString(),
+      ]);
     },
     () => {}
   );
@@ -495,15 +489,18 @@ export const deleteImportedLoopHabitsRecord = async (): Promise<{
 
       const now = new Date().toISOString();
       for (const id of habitIds) {
-        await db.runAsync(
-          'INSERT OR REPLACE INTO deleted_habits (id, deleted_at) VALUES (?, ?);',
-          [id, now]
-        );
+        await db.runAsync('INSERT OR REPLACE INTO deleted_habits (id, deleted_at) VALUES (?, ?);', [
+          id,
+          now,
+        ]);
       }
 
       return { deletedHabitsCount: habitIds.length, deletedCheckinsCount: checkinCount };
     },
-    () => ({ deletedHabitsCount: deletedHabitIds.length, deletedCheckinsCount: deletedCheckinCount })
+    () => ({
+      deletedHabitsCount: deletedHabitIds.length,
+      deletedCheckinsCount: deletedCheckinCount,
+    })
   );
 };
 
@@ -528,10 +525,10 @@ export const markHabitDeletedLocally = async (habitId: string): Promise<void> =>
     async (db) => {
       await db.runAsync('DELETE FROM habits WHERE id = ?;', [habitId]);
       await db.runAsync('DELETE FROM checkins WHERE habit_id = ?;', [habitId]);
-      await db.runAsync(
-        'INSERT OR REPLACE INTO deleted_habits (id, deleted_at) VALUES (?, ?);',
-        [habitId, new Date().toISOString()]
-      );
+      await db.runAsync('INSERT OR REPLACE INTO deleted_habits (id, deleted_at) VALUES (?, ?);', [
+        habitId,
+        new Date().toISOString(),
+      ]);
     },
     () => {}
   );
@@ -552,10 +549,7 @@ export const fetchRecentCheckins = async (days = 180): Promise<HabitCheckin[]> =
         completed: number;
         updated_at: string;
         note?: string | null;
-      }>(
-        'SELECT * FROM checkins WHERE date >= ? ORDER BY date DESC',
-        [cutoffDate]
-      );
+      }>('SELECT * FROM checkins WHERE date >= ? ORDER BY date DESC', [cutoffDate]);
 
       return rows.map((r) => ({
         id: r.id,
@@ -621,7 +615,10 @@ export const fetchCheckinsForHabit = async (habitId: string): Promise<HabitCheck
         note: r.note || undefined,
       }));
     },
-    () => memoryCheckins.filter((c) => c.habitId === habitId).sort((a, b) => b.date.localeCompare(a.date))
+    () =>
+      memoryCheckins
+        .filter((c) => c.habitId === habitId)
+        .sort((a, b) => b.date.localeCompare(a.date))
   );
 };
 
@@ -654,16 +651,11 @@ export const saveCheckinRecord = async (checkin: HabitCheckin): Promise<void> =>
 };
 
 export const removeCheckinRecord = async (habitId: string, date: string): Promise<void> => {
-  memoryCheckins = memoryCheckins.filter(
-    (c) => !(c.habitId === habitId && c.date === date)
-  );
+  memoryCheckins = memoryCheckins.filter((c) => !(c.habitId === habitId && c.date === date));
 
   await runSerialized(
     async (db) => {
-      await db.runAsync('DELETE FROM checkins WHERE habit_id = ? AND date = ?', [
-        habitId,
-        date,
-      ]);
+      await db.runAsync('DELETE FROM checkins WHERE habit_id = ? AND date = ?', [habitId, date]);
     },
     () => {}
   );
@@ -729,10 +721,7 @@ export const setPreference = async (key: string, value: string): Promise<void> =
 
   await runSerialized(
     async (db) => {
-      await db.runAsync(
-        'INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)',
-        [key, value]
-      );
+      await db.runAsync('INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)', [key, value]);
     },
     () => {}
   );
@@ -818,9 +807,7 @@ export const importDatabaseRecords = async (
       else memoryHabits.push(h);
     });
     checkins.forEach((c) => {
-      const idx = memoryCheckins.findIndex(
-        (x) => x.habitId === c.habitId && x.date === c.date
-      );
+      const idx = memoryCheckins.findIndex((x) => x.habitId === c.habitId && x.date === c.date);
       if (idx >= 0) memoryCheckins[idx] = c;
       else memoryCheckins.push(c);
     });
@@ -870,9 +857,7 @@ export const batchInsertLoopData = async (
   });
 
   checkins.forEach((c) => {
-    const idx = memoryCheckins.findIndex(
-      (x) => x.habitId === c.habitId && x.date === c.date
-    );
+    const idx = memoryCheckins.findIndex((x) => x.habitId === c.habitId && x.date === c.date);
     if (idx >= 0) memoryCheckins[idx] = c;
     else memoryCheckins.push(c);
   });
@@ -929,9 +914,7 @@ export const batchSaveCheckinRecords = async (checkins: HabitCheckin[]): Promise
 
   // Update memory fallbacks
   checkins.forEach((c) => {
-    const idx = memoryCheckins.findIndex(
-      (x) => x.habitId === c.habitId && x.date === c.date
-    );
+    const idx = memoryCheckins.findIndex((x) => x.habitId === c.habitId && x.date === c.date);
     if (idx >= 0) memoryCheckins[idx] = c;
     else memoryCheckins.push(c);
   });
@@ -1011,8 +994,8 @@ export const fetchStorageMetrics = async (): Promise<StorageMetrics> => {
       const archivedHabits = habits.filter((h) => Boolean(h.archivedAt)).length;
       const totalCheckins = checkins.length;
       const completedCheckins = checkins.filter((c) => c.completed).length;
-      const reflectionNotesCount = checkins.filter(
-        (c) => Boolean(c.note && c.note.trim().length > 0)
+      const reflectionNotesCount = checkins.filter((c) =>
+        Boolean(c.note && c.note.trim().length > 0)
       ).length;
 
       let oldestRecordDate: string | undefined;
@@ -1153,7 +1136,8 @@ export const deduplicateLocalHabits = async (): Promise<DeduplicateResult> => {
               ]);
 
               if (canonicalCheckin) {
-                const mergedCompleted = canonicalCheckin.completed === 1 || dc.completed === 1 ? 1 : 0;
+                const mergedCompleted =
+                  canonicalCheckin.completed === 1 || dc.completed === 1 ? 1 : 0;
                 const mergedCount = Math.max(canonicalCheckin.count, dc.count);
                 let mergedNote = canonicalCheckin.note;
                 if (!mergedNote && dc.note) {
@@ -1167,10 +1151,10 @@ export const deduplicateLocalHabits = async (): Promise<DeduplicateResult> => {
                 );
                 await db.runAsync('DELETE FROM checkins WHERE id = ?;', [dc.id]);
               } else {
-                await db.runAsync(
-                  'UPDATE checkins SET habit_id = ? WHERE id = ?;',
-                  [canonical.id, dc.id]
-                );
+                await db.runAsync('UPDATE checkins SET habit_id = ? WHERE id = ?;', [
+                  canonical.id,
+                  dc.id,
+                ]);
                 migratedCheckinsCount++;
               }
             }
@@ -1229,5 +1213,3 @@ export const deduplicateLocalHabits = async (): Promise<DeduplicateResult> => {
     }
   );
 };
-
-

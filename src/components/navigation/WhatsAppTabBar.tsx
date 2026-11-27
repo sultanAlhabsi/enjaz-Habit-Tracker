@@ -109,11 +109,7 @@ const WhatsAppTabItem: React.FC<WhatsAppTabItemProps> = ({
       <Animated.View style={[styles.tabContent, buttonAnimatedStyle]}>
         <View style={styles.pillContainer}>
           <Animated.View
-            style={[
-              styles.pill,
-              { backgroundColor: theme.tabPill },
-              pillAnimatedStyle,
-            ]}
+            style={[styles.pill, { backgroundColor: theme.tabPill }, pillAnimatedStyle]}
           />
           <View style={styles.iconCenter}>
             <Ionicons name={iconName} size={24} color={iconColor} />
@@ -135,11 +131,7 @@ const WhatsAppTabItem: React.FC<WhatsAppTabItemProps> = ({
   );
 };
 
-export const WhatsAppTabBar: React.FC<BottomTabBarProps> = ({
-  state,
-  navigation,
-  insets,
-}) => {
+export const WhatsAppTabBar: React.FC<BottomTabBarProps> = ({ state, navigation, insets }) => {
   const { theme } = useTheme();
 
   return (

@@ -1,10 +1,7 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import { Share, Platform } from 'react-native';
 import dayjs from 'dayjs';
-import {
-  BackupPayload,
-  validateBackupJson,
-} from '../utils/backupUtils.ts';
+import { BackupPayload, validateBackupJson } from '../utils/backupUtils.ts';
 
 export * from '../utils/backupUtils.ts';
 
@@ -29,7 +26,8 @@ export const exportBackupToDevice = async (payload: BackupPayload): Promise<Expo
 
     if (Platform.OS === 'android' && FileSystem.StorageAccessFramework) {
       try {
-        const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+        const permissions =
+          await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
         if (!permissions.granted) {
           return { success: false, canceled: true };
         }
@@ -55,7 +53,7 @@ export const exportBackupToDevice = async (payload: BackupPayload): Promise<Expo
         return {
           success: shareOk,
           fileName: fullFileName,
-          error: shareOk ? undefined : (safError?.message || 'تعذر حفظ ملف النسخة الاحتياطية.'),
+          error: shareOk ? undefined : safError?.message || 'تعذر حفظ ملف النسخة الاحتياطية.',
         };
       }
     }
@@ -136,7 +134,8 @@ export const exportCsvToDevice = async (
 
     if (Platform.OS === 'android' && FileSystem.StorageAccessFramework) {
       try {
-        const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+        const permissions =
+          await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
         if (!permissions.granted) {
           return { success: false, canceled: true };
         }
@@ -162,7 +161,7 @@ export const exportCsvToDevice = async (
         return {
           success: shareOk,
           fileName: fullFileName,
-          error: shareOk ? undefined : (safError?.message || 'تعذر حفظ ملف CSV.'),
+          error: shareOk ? undefined : safError?.message || 'تعذر حفظ ملف CSV.',
         };
       }
     }
@@ -277,7 +276,10 @@ export const pickAndReadBackupFile = async (): Promise<{
         encoding: FileSystem.EncodingType.UTF8,
       });
     } catch (fsErr) {
-      console.warn('[BackupService] FileSystem.readAsStringAsync failed, trying fetch fallback:', fsErr);
+      console.warn(
+        '[BackupService] FileSystem.readAsStringAsync failed, trying fetch fallback:',
+        fsErr
+      );
       try {
         const response = await fetch(asset.uri);
         fileContent = await response.text();
@@ -296,5 +298,3 @@ export const pickAndReadBackupFile = async (): Promise<{
     return { valid: false, error: err?.message || 'حدث خطأ أثناء قراءة ملف النسخة الاحتياطية.' };
   }
 };
-
-

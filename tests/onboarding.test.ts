@@ -119,7 +119,10 @@ test('Onboarding Starter Habits: exercise target count is 30 minutes', () => {
 test('Onboarding Starter Habits: optional habits are not selected by default', () => {
   const mindfulness = STARTER_HABITS.find((h) => h.id === 'starter_mindfulness');
   const sleep = STARTER_HABITS.find((h) => h.id === 'starter_sleep');
-  assert.ok(mindfulness && !mindfulness.isDefaultSelected, 'Mindfulness should not be pre-selected');
+  assert.ok(
+    mindfulness && !mindfulness.isDefaultSelected,
+    'Mindfulness should not be pre-selected'
+  );
   assert.ok(sleep && !sleep.isDefaultSelected, 'Sleep should not be pre-selected');
 });
 
@@ -158,4 +161,3 @@ test('Onboarding: new user with 0 habits and no pref sees onboarding', () => {
   const onboardingPref = allPrefs['has_completed_onboarding'] === 'true' || hasExistingHabits;
   assert.equal(onboardingPref, false);
 });
-

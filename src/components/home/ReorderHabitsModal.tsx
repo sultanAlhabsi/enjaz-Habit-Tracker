@@ -15,7 +15,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Habit } from '../../types/habit';
 import { useTheme } from '../../theme/ThemeContext';
 import { useHabitStore } from '../../store/useHabitStore';
-import { reorderArray, sortHabits, isQuantitativeHabit, formatHabitFrequencyLabel, toArabicNumerals } from '../../utils/habitUtils';
+import {
+  reorderArray,
+  sortHabits,
+  isQuantitativeHabit,
+  formatHabitFrequencyLabel,
+  toArabicNumerals,
+} from '../../utils/habitUtils';
 
 interface ReorderHabitsModalProps {
   visible: boolean;
@@ -37,10 +43,7 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
   const hapticsEnabled = useHabitStore((state) => state.hapticsEnabled);
 
   // Filter active, unarchived habits
-  const activeHabits = useMemo(
-    () => habits.filter((h) => !h.archivedAt && h.isActive),
-    [habits]
-  );
+  const activeHabits = useMemo(() => habits.filter((h) => !h.archivedAt && h.isActive), [habits]);
 
   const [localHabits, setLocalHabits] = useState<Habit[]>([]);
   const [draggingHabitId, setDraggingHabitId] = useState<string | null>(null);
@@ -69,15 +72,9 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
   }, [visible, initialFocusedHabitId]);
 
   // Separate pinned and regular habits
-  const pinnedList = useMemo(
-    () => localHabits.filter((h) => h.isPinned),
-    [localHabits]
-  );
+  const pinnedList = useMemo(() => localHabits.filter((h) => h.isPinned), [localHabits]);
 
-  const regularList = useMemo(
-    () => localHabits.filter((h) => !h.isPinned),
-    [localHabits]
-  );
+  const regularList = useMemo(() => localHabits.filter((h) => !h.isPinned), [localHabits]);
 
   const triggerHaptic = (duration = 30) => {
     if (hapticsEnabled) {
@@ -202,11 +199,7 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
     });
   };
 
-  const renderHabitRow = (
-    habit: Habit,
-    index: number,
-    totalCount: number
-  ) => {
+  const renderHabitRow = (habit: Habit, index: number, totalCount: number) => {
     const isDragging = draggingHabitId === habit.id;
     const isFocused = focusedHabitId === habit.id;
     const panResponder = createPanResponder(habit);
@@ -322,7 +315,7 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
           <Ionicons
             name="reorder-two-outline"
             size={18}
-            color={isDragging ? (habit.color || theme.primary) : theme.textMuted}
+            color={isDragging ? habit.color || theme.primary : theme.textMuted}
           />
         </View>
       </Animated.View>
@@ -330,12 +323,7 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
         <Pressable
           style={styles.backdropPressable}
@@ -365,7 +353,12 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
               <Text style={[typography.h3, { color: theme.text, textAlign: 'right' }]}>
                 إعادة ترتيب العادات
               </Text>
-              <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'right', marginTop: 2 }]}>
+              <Text
+                style={[
+                  typography.caption,
+                  { color: theme.textMuted, textAlign: 'right', marginTop: 2 },
+                ]}
+              >
                 اسحب بالمقبض (≡) لإعادة الترتيب
               </Text>
             </View>
@@ -404,7 +397,12 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
             ]}
           >
             <View style={{ flex: 1, paddingLeft: 10 }}>
-              <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', lineHeight: 18 }]}>
+              <Text
+                style={[
+                  typography.caption,
+                  { color: theme.textSecondary, textAlign: 'right', lineHeight: 18 },
+                ]}
+              >
                 يُحفظ هذا الترتيب المخصص ويصبح ترتيبك الافتراضي على الشاشة الرئيسية.
               </Text>
             </View>
@@ -424,8 +422,18 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
                 },
               ]}
             >
-              <Ionicons name="refresh-outline" size={13} color={theme.textSecondary} style={{ marginLeft: 4 }} />
-              <Text style={[typography.caption, { color: theme.textSecondary, fontWeight: '600', fontSize: 11 }]}>
+              <Ionicons
+                name="refresh-outline"
+                size={13}
+                color={theme.textSecondary}
+                style={{ marginLeft: 4 }}
+              />
+              <Text
+                style={[
+                  typography.caption,
+                  { color: theme.textSecondary, fontWeight: '600', fontSize: 11 },
+                ]}
+              >
                 حسب الإنشاء
               </Text>
             </Pressable>
@@ -441,8 +449,18 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
               <View style={styles.sectionContainer}>
                 <View style={styles.sectionHeaderRow}>
                   <View style={styles.sectionBadge}>
-                    <Ionicons name="pin" size={11} color={theme.primary} style={{ marginLeft: 4 }} />
-                    <Text style={[typography.caption, { color: theme.primary, fontWeight: '700', fontSize: 11 }]}>
+                    <Ionicons
+                      name="pin"
+                      size={11}
+                      color={theme.primary}
+                      style={{ marginLeft: 4 }}
+                    />
+                    <Text
+                      style={[
+                        typography.caption,
+                        { color: theme.primary, fontWeight: '700', fontSize: 11 },
+                      ]}
+                    >
                       العادات المثبتة ({toArabicNumerals(pinnedList.length)})
                     </Text>
                   </View>
@@ -451,9 +469,7 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
                   </Text>
                 </View>
 
-                {pinnedList.map((h, idx) =>
-                  renderHabitRow(h, idx, pinnedList.length)
-                )}
+                {pinnedList.map((h, idx) => renderHabitRow(h, idx, pinnedList.length))}
               </View>
             )}
 
@@ -467,14 +483,14 @@ export const ReorderHabitsModal: React.FC<ReorderHabitsModalProps> = ({
                 </View>
               )}
 
-              {regularList.map((h, idx) =>
-                renderHabitRow(h, idx, regularList.length)
-              )}
+              {regularList.map((h, idx) => renderHabitRow(h, idx, regularList.length))}
             </View>
           </ScrollView>
 
           {/* Bottom Confirmation Bar */}
-          <View style={[styles.bottomBar, { paddingHorizontal: spacing.base, marginTop: spacing.sm }]}>
+          <View
+            style={[styles.bottomBar, { paddingHorizontal: spacing.base, marginTop: spacing.sm }]}
+          >
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="حفظ الترتيب والرجوع"

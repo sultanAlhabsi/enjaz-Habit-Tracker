@@ -57,10 +57,7 @@ export const MorphingThemeToggle: React.FC<MorphingThemeToggleProps> = ({
   const animatedContainerStyle = useAnimatedStyle(() => {
     const rotate = interpolate(progress.value, [0, 1], [0, 180], Extrapolation.CLAMP);
     return {
-      transform: [
-        { rotate: `${rotate}deg` },
-        { scale: buttonScale.value },
-      ],
+      transform: [{ rotate: `${rotate}deg` }, { scale: buttonScale.value }],
     };
   });
 
@@ -71,10 +68,7 @@ export const MorphingThemeToggle: React.FC<MorphingThemeToggleProps> = ({
     const rotate = interpolate(progress.value, [0, 1], [0, 90], Extrapolation.CLAMP);
     return {
       opacity,
-      transform: [
-        { scale },
-        { rotate: `${rotate}deg` },
-      ],
+      transform: [{ scale }, { rotate: `${rotate}deg` }],
     };
   });
 
@@ -85,10 +79,7 @@ export const MorphingThemeToggle: React.FC<MorphingThemeToggleProps> = ({
     const rotate = interpolate(progress.value, [0, 1], [-90, 0], Extrapolation.CLAMP);
     return {
       opacity,
-      transform: [
-        { scale },
-        { rotate: `${rotate}deg` },
-      ],
+      transform: [{ scale }, { rotate: `${rotate}deg` }],
     };
   });
 
@@ -111,11 +102,19 @@ export const MorphingThemeToggle: React.FC<MorphingThemeToggleProps> = ({
         style,
       ]}
     >
-      <Animated.View style={[styles.container, animatedContainerStyle, { width: size, height: size }]}>
+      <Animated.View
+        style={[styles.container, animatedContainerStyle, { width: size, height: size }]}
+      >
         {/* Sun (SVG Vector with 8 radiating beams) */}
         <Animated.View style={[styles.layer, animatedSunStyle]}>
           <Svg width={iconSize} height={iconSize} viewBox="0 0 24 24">
-            <G fill="none" stroke="#F59E0B" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <G
+              fill="none"
+              stroke="#F59E0B"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               {/* Sun Core */}
               <Circle cx="12" cy="12" r="4.8" fill="#F59E0B" stroke="#F59E0B" />
               {/* 8 Sun Rays */}
@@ -143,15 +142,9 @@ export const MorphingThemeToggle: React.FC<MorphingThemeToggleProps> = ({
               strokeLinejoin="round"
             />
             {/* Twinkling Night Star 1 */}
-            <Path
-              d="M18.5 3.5l.4 1 1 .4-1 .4-.4 1-.4-1-1-.4 1-.4z"
-              fill="#FEF08A"
-            />
+            <Path d="M18.5 3.5l.4 1 1 .4-1 .4-.4 1-.4-1-1-.4 1-.4z" fill="#FEF08A" />
             {/* Twinkling Night Star 2 */}
-            <Path
-              d="M19.5 16.5l.3.7.7.3-.7.3-.3.7-.3-.7-.7-.3.7-.3z"
-              fill="#FEF08A"
-            />
+            <Path d="M19.5 16.5l.3.7.7.3-.7.3-.3.7-.3-.7-.7-.3.7-.3z" fill="#FEF08A" />
           </Svg>
         </Animated.View>
       </Animated.View>

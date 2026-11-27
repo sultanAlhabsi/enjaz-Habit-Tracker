@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  Pressable,
-} from 'react-native';
+import { View, StyleSheet, ScrollView, TextInput, Pressable } from 'react-native';
 import { appAlert } from '../services/alertService';
 import { Text } from '../components/common/AppText';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,39 +10,22 @@ import { Header } from '../components/common/Header';
 import { Card } from '../components/common/Card';
 import { ClockTimePicker } from '../components/common/ClockTimePicker';
 import { AppSwitch } from '../components/common/AppSwitch';
-import {
-  DAYS_OF_WEEK_AR,
-  HabitFrequency,
-} from '../types/habit';
+import { DAYS_OF_WEEK_AR, HabitFrequency } from '../types/habit';
 import { HABIT_PALETTES } from '../theme/colors';
 import { isValidReminderTime } from '../utils/notificationUtils';
 import { normalizeArabicNumerals, toArabicNumerals } from '../utils/habitUtils';
 import { HabitTemplateModal } from '../components/habits/HabitTemplateModal';
 import { HabitIconPickerModal } from '../components/habits/HabitIconPickerModal';
-import {
-  HabitTemplate,
-  getHabitTemplateById,
-} from '../utils/habitTemplates';
-import {
-  triggerLightHaptic,
-  triggerMediumHaptic,
-  triggerSuccessHaptic,
-} from '../utils/haptics';
-import {
-  getHabitDraft,
-  saveHabitDraft,
-  deleteHabitDraft,
-} from '../services/draftService';
+import { HabitTemplate, getHabitTemplateById } from '../utils/habitTemplates';
+import { triggerLightHaptic, triggerMediumHaptic, triggerSuccessHaptic } from '../utils/haptics';
+import { getHabitDraft, saveHabitDraft, deleteHabitDraft } from '../services/draftService';
 
 interface AddEditHabitScreenProps {
   route: any;
   navigation: any;
 }
 
-export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
-  route,
-  navigation,
-}) => {
+export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({ route, navigation }) => {
   const insets = useSafeAreaInsets();
   const { theme, isDark, spacing, radius, typography, touchTarget } = useTheme();
   const { habits, addHabit, updateHabit, deleteHabit } = useHabitStore();
@@ -59,7 +36,9 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
   const initialTemplate = initialTemplateId ? getHabitTemplateById(initialTemplateId) : null;
 
   const existingHabit = habitId ? habits.find((h) => h.id === habitId) : null;
-  const duplicateSourceHabit = duplicateFromId ? habits.find((h) => h.id === duplicateFromId) : null;
+  const duplicateSourceHabit = duplicateFromId
+    ? habits.find((h) => h.id === duplicateFromId)
+    : null;
   const isEditing = Boolean(existingHabit);
   const isDuplicating = Boolean(duplicateSourceHabit && !existingHabit);
 
@@ -68,7 +47,8 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
   const [name, setName] = useState(
     existingHabit?.name ||
       (duplicateSourceHabit ? `${duplicateSourceHabit.name} (نسخة)` : '') ||
-      (initialTemplate?.name || '')
+      initialTemplate?.name ||
+      ''
   );
   const [description, setDescription] = useState(
     templateHabit?.description || initialTemplate?.description || ''
@@ -100,9 +80,7 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
   const [monthlyTargetCount, setMonthlyTargetCount] = useState(
     String(templateHabit?.monthlyTargetCount || 4)
   );
-  const [monthlyDay, setMonthlyDay] = useState(
-    String(templateHabit?.monthlyDay || 1)
-  );
+  const [monthlyDay, setMonthlyDay] = useState(String(templateHabit?.monthlyDay || 1));
   const [frequency, setFrequency] = useState<HabitFrequency>(initialFreq);
   const [frequencyDays, setFrequencyDays] = useState<number[]>(
     templateHabit?.frequencyDays || initialTemplate?.frequencyDays || [0, 1, 2, 3, 4, 5, 6]
@@ -110,9 +88,7 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
   const [targetCount, setTargetCount] = useState(
     String(templateHabit?.targetCount || initialTemplate?.targetCount || '1')
   );
-  const [unit, setUnit] = useState(
-    templateHabit?.unit || initialTemplate?.unit || 'مرة'
-  );
+  const [unit, setUnit] = useState(templateHabit?.unit || initialTemplate?.unit || 'مرة');
   const [reminderTime, setReminderTime] = useState(
     templateHabit?.reminderTime || initialTemplate?.reminderTime || '08:00'
   );
@@ -297,10 +273,7 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
 
     const normalizedReminderTime = normalizeArabicNumerals(reminderTime);
     if (hasReminder && !isValidReminderTime(normalizedReminderTime)) {
-      appAlert(
-        'تنبيه',
-        'يرجى تحديد وقت تذكير صحيح بتنسيق 24 ساعة (مثلاً 08:00 أو 20:30).'
-      );
+      appAlert('تنبيه', 'يرجى تحديد وقت تذكير صحيح بتنسيق 24 ساعة (مثلاً 08:00 أو 20:30).');
       return;
     }
 
@@ -308,13 +281,16 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
     const validTarget = isNaN(parsedTarget) || parsedTarget < 1 ? 1 : Math.min(99999, parsedTarget);
 
     const parsedWeeklyTarget = parseInt(normalizeArabicNumerals(weeklyTargetCount), 10);
-    const validWeeklyTarget = isNaN(parsedWeeklyTarget) || parsedWeeklyTarget < 1 ? 3 : Math.min(7, parsedWeeklyTarget);
+    const validWeeklyTarget =
+      isNaN(parsedWeeklyTarget) || parsedWeeklyTarget < 1 ? 3 : Math.min(7, parsedWeeklyTarget);
 
     const parsedMonthlyTarget = parseInt(normalizeArabicNumerals(monthlyTargetCount), 10);
-    const validMonthlyTarget = isNaN(parsedMonthlyTarget) || parsedMonthlyTarget < 1 ? 4 : Math.min(31, parsedMonthlyTarget);
+    const validMonthlyTarget =
+      isNaN(parsedMonthlyTarget) || parsedMonthlyTarget < 1 ? 4 : Math.min(31, parsedMonthlyTarget);
 
     const parsedMonthlyDay = parseInt(normalizeArabicNumerals(monthlyDay), 10);
-    const validMonthlyDay = isNaN(parsedMonthlyDay) || parsedMonthlyDay < 1 ? 1 : Math.min(31, parsedMonthlyDay);
+    const validMonthlyDay =
+      isNaN(parsedMonthlyDay) || parsedMonthlyDay < 1 ? 1 : Math.min(31, parsedMonthlyDay);
 
     const finalReminder = hasReminder ? normalizedReminderTime : null;
 
@@ -389,8 +365,8 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
           isEditing
             ? existingHabit?.name
             : isDuplicating
-            ? `نسخ من "${duplicateSourceHabit?.name}"`
-            : undefined
+              ? `نسخ من "${duplicateSourceHabit?.name}"`
+              : undefined
         }
         onBackPress={() => navigation.goBack()}
       />
@@ -416,14 +392,35 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
               },
             ]}
           >
-            <View style={{ flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View
+              style={{
+                flexDirection: 'row-reverse',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
               <View style={{ flexDirection: 'row-reverse', alignItems: 'center', flex: 1 }}>
-                <Ionicons name="document-text-outline" size={18} color={theme.primary} style={{ marginLeft: 8 }} />
+                <Ionicons
+                  name="document-text-outline"
+                  size={18}
+                  color={theme.primary}
+                  style={{ marginLeft: 8 }}
+                />
                 <View style={{ flex: 1 }}>
-                  <Text style={[typography.subMedium, { color: theme.text, textAlign: 'right', fontWeight: '700' }]}>
+                  <Text
+                    style={[
+                      typography.subMedium,
+                      { color: theme.text, textAlign: 'right', fontWeight: '700' },
+                    ]}
+                  >
                     تم استرجاع مسودة غير محفوظة
                   </Text>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', fontSize: 11 }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'right', fontSize: 11 },
+                    ]}
+                  >
                     يمكنك متابعة التعديل أو بدء عادة جديدة
                   </Text>
                 </View>
@@ -456,10 +453,20 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
           <View style={styles.templatesHeaderContainer}>
             <View style={styles.templatesTitleRow}>
               <View style={styles.templatesTextGroup}>
-                <Text style={[typography.subMedium, { color: theme.text, textAlign: 'right', fontWeight: '700' }]}>
+                <Text
+                  style={[
+                    typography.subMedium,
+                    { color: theme.text, textAlign: 'right', fontWeight: '700' },
+                  ]}
+                >
                   نماذج جاهزة سريعة ✨
                 </Text>
-                <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'right', fontSize: 11 }]}>
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textMuted, textAlign: 'right', fontSize: 11 },
+                  ]}
+                >
                   اختر نموذجًا لتعبئة الإعدادات فوراً
                 </Text>
               </View>
@@ -481,7 +488,12 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
                   },
                 ]}
               >
-                <Ionicons name="sparkles-outline" size={13} color={theme.primary} style={{ marginLeft: 4 }} />
+                <Ionicons
+                  name="sparkles-outline"
+                  size={13}
+                  color={theme.primary}
+                  style={{ marginLeft: 4 }}
+                />
                 <Text style={[typography.caption, { color: theme.primary, fontWeight: '700' }]}>
                   تصفح الكل (24)
                 </Text>
@@ -658,9 +670,7 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
                       },
                     ]}
                   >
-                    {isSelected && (
-                      <Ionicons name="checkmark" size={13} color="#FFFFFF" />
-                    )}
+                    {isSelected && <Ionicons name="checkmark" size={13} color="#FFFFFF" />}
                   </View>
                 </Pressable>
               );
@@ -673,10 +683,20 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
         {/* ═════════════════════════════════════════════════════════════════ */}
         <Card style={styles.insetGroupCard}>
           <View style={styles.groupHeaderRow}>
-            <View style={[styles.groupHeaderIcon, { backgroundColor: `${selectedColor}18`, borderRadius: radius.sm }]}>
+            <View
+              style={[
+                styles.groupHeaderIcon,
+                { backgroundColor: `${selectedColor}18`, borderRadius: radius.sm },
+              ]}
+            >
               <Ionicons name="calendar" size={16} color={selectedColor} />
             </View>
-            <Text style={[typography.subMedium, { color: theme.text, fontWeight: '700', marginRight: 8 }]}>
+            <Text
+              style={[
+                typography.subMedium,
+                { color: theme.text, fontWeight: '700', marginRight: 8 },
+              ]}
+            >
               الجدول والتكرار
             </Text>
           </View>
@@ -704,14 +724,18 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
                     triggerLightHaptic();
                     setFreqTab(tab);
                     if (tab === 'daily') setFrequency('daily');
-                    if (tab === 'weekly') setFrequency(weeklyMode === 'target' ? 'weekly_target' : 'specific_days');
-                    if (tab === 'monthly') setFrequency(monthlyMode === 'day' ? 'monthly_day' : 'monthly_target');
+                    if (tab === 'weekly')
+                      setFrequency(weeklyMode === 'target' ? 'weekly_target' : 'specific_days');
+                    if (tab === 'monthly')
+                      setFrequency(monthlyMode === 'day' ? 'monthly_day' : 'monthly_target');
                   }}
                   style={[
                     styles.segmentButton,
                     {
                       backgroundColor: isSelected
-                        ? isDark ? '#2D323B' : '#FFFFFF'
+                        ? isDark
+                          ? '#2D323B'
+                          : '#FFFFFF'
                         : 'transparent',
                       borderRadius: radius.sm,
                       shadowColor: '#000',
@@ -751,13 +775,30 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
                   padding: spacing.md,
                 }}
               >
-                <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 4 }}>
-                  <Ionicons name="sunny-outline" size={16} color={selectedColor} style={{ marginLeft: 6 }} />
+                <View
+                  style={{ flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 4 }}
+                >
+                  <Ionicons
+                    name="sunny-outline"
+                    size={16}
+                    color={selectedColor}
+                    style={{ marginLeft: 6 }}
+                  />
                   <Text style={[typography.subMedium, { color: theme.text, fontWeight: '700' }]}>
                     عادة يومية مستمرة
                   </Text>
                 </View>
-                <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', fontSize: 12, lineHeight: 18 }]}>
+                <Text
+                  style={[
+                    typography.caption,
+                    {
+                      color: theme.textSecondary,
+                      textAlign: 'right',
+                      fontSize: 12,
+                      lineHeight: 18,
+                    },
+                  ]}
+                >
                   تتكرر هذه العادة يومياً طوال أيام الأسبوع.
                 </Text>
               </View>
@@ -777,7 +818,8 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
                   style={[
                     styles.subPill,
                     {
-                      backgroundColor: weeklyMode === 'specific_days' ? `${selectedColor}18` : theme.cardSecondary,
+                      backgroundColor:
+                        weeklyMode === 'specific_days' ? `${selectedColor}18` : theme.cardSecondary,
                       borderColor: weeklyMode === 'specific_days' ? selectedColor : theme.border,
                       borderRadius: radius.full,
                     },
@@ -805,7 +847,8 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
                   style={[
                     styles.subPill,
                     {
-                      backgroundColor: weeklyMode === 'target' ? `${selectedColor}18` : theme.cardSecondary,
+                      backgroundColor:
+                        weeklyMode === 'target' ? `${selectedColor}18` : theme.cardSecondary,
                       borderColor: weeklyMode === 'target' ? selectedColor : theme.border,
                       borderRadius: radius.full,
                     },
@@ -827,7 +870,12 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
 
               {weeklyMode === 'specific_days' && (
                 <View style={styles.daysContainer}>
-                  <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'right', marginBottom: 8, fontSize: 11 }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textMuted, textAlign: 'right', marginBottom: 8, fontSize: 11 },
+                    ]}
+                  >
                     اختر أيام التكرار:
                   </Text>
                   <View style={styles.daysRow}>
@@ -866,7 +914,12 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
                       );
                     })}
                   </View>
-                  <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'right', marginTop: 8, fontSize: 11 }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textMuted, textAlign: 'right', marginTop: 8, fontSize: 11 },
+                    ]}
+                  >
                     تكون العادة مستحقة في الأيام المحددة فقط.
                   </Text>
                 </View>
@@ -874,7 +927,12 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
 
               {weeklyMode === 'target' && (
                 <View style={{ marginTop: 12 }}>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginBottom: 8 }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'right', marginBottom: 8 },
+                    ]}
+                  >
                     كم مرة في الأسبوع؟
                   </Text>
                   <View style={styles.numberRow}>
@@ -930,7 +988,8 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
                   style={[
                     styles.subPill,
                     {
-                      backgroundColor: monthlyMode === 'day' ? `${selectedColor}18` : theme.cardSecondary,
+                      backgroundColor:
+                        monthlyMode === 'day' ? `${selectedColor}18` : theme.cardSecondary,
                       borderColor: monthlyMode === 'day' ? selectedColor : theme.border,
                       borderRadius: radius.full,
                     },
@@ -958,7 +1017,8 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
                   style={[
                     styles.subPill,
                     {
-                      backgroundColor: monthlyMode === 'target' ? `${selectedColor}18` : theme.cardSecondary,
+                      backgroundColor:
+                        monthlyMode === 'target' ? `${selectedColor}18` : theme.cardSecondary,
                       borderColor: monthlyMode === 'target' ? selectedColor : theme.border,
                       borderRadius: radius.full,
                     },
@@ -980,7 +1040,12 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
 
               {monthlyMode === 'day' && (
                 <View style={{ marginTop: 12 }}>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginBottom: 8 }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'right', marginBottom: 8 },
+                    ]}
+                  >
                     اختر يوم الشهر (مثلاً: 1 أو 25):
                   </Text>
                   <View style={styles.numberRow}>
@@ -1023,7 +1088,12 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
 
               {monthlyMode === 'target' && (
                 <View style={{ marginTop: 12 }}>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginBottom: 8 }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'right', marginBottom: 8 },
+                    ]}
+                  >
                     عدد المرات شهرياً:
                   </Text>
                   <View style={styles.numberRow}>
@@ -1070,14 +1140,29 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
           <View style={[styles.sectionDivider, { backgroundColor: theme.borderSubtle }]} />
 
           <View style={styles.groupHeaderRow}>
-            <View style={[styles.groupHeaderIcon, { backgroundColor: `${selectedColor}18`, borderRadius: radius.sm }]}>
+            <View
+              style={[
+                styles.groupHeaderIcon,
+                { backgroundColor: `${selectedColor}18`, borderRadius: radius.sm },
+              ]}
+            >
               <Ionicons name="flag" size={16} color={selectedColor} />
             </View>
             <View style={{ marginRight: 8, flex: 1 }}>
-              <Text style={[typography.subMedium, { color: theme.text, fontWeight: '700', textAlign: 'right' }]}>
+              <Text
+                style={[
+                  typography.subMedium,
+                  { color: theme.text, fontWeight: '700', textAlign: 'right' },
+                ]}
+              >
                 الهدف اليومي والوحدة
               </Text>
-              <Text style={[typography.caption, { color: theme.textMuted, fontSize: 11, textAlign: 'right' }]}>
+              <Text
+                style={[
+                  typography.caption,
+                  { color: theme.textMuted, fontSize: 11, textAlign: 'right' },
+                ]}
+              >
                 الحد الأدنى المطلوب لإتمام العادة
               </Text>
             </View>
@@ -1212,14 +1297,29 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
           {/* Row 1: Reminder */}
           <View style={styles.preferenceRow}>
             <View style={styles.preferenceRightGroup}>
-              <View style={[styles.prefIconBox, { backgroundColor: `${selectedColor}18`, borderRadius: radius.sm }]}>
+              <View
+                style={[
+                  styles.prefIconBox,
+                  { backgroundColor: `${selectedColor}18`, borderRadius: radius.sm },
+                ]}
+              >
                 <Ionicons name="notifications" size={16} color={selectedColor} />
               </View>
               <View style={{ marginRight: 10, flex: 1 }}>
-                <Text style={[typography.bodyMedium, { color: theme.text, fontWeight: '600', textAlign: 'right' }]}>
+                <Text
+                  style={[
+                    typography.bodyMedium,
+                    { color: theme.text, fontWeight: '600', textAlign: 'right' },
+                  ]}
+                >
                   تذكير يومي
                 </Text>
-                <Text style={[typography.caption, { color: theme.textMuted, fontSize: 11, textAlign: 'right' }]}>
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textMuted, fontSize: 11, textAlign: 'right' },
+                  ]}
+                >
                   إشعار ينبهك في الوقت المناسب
                 </Text>
               </View>
@@ -1236,7 +1336,14 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
           </View>
 
           {hasReminder && (
-            <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: theme.borderSubtle }}>
+            <View
+              style={{
+                marginTop: 12,
+                paddingTop: 12,
+                borderTopWidth: 1,
+                borderTopColor: theme.borderSubtle,
+              }}
+            >
               <ClockTimePicker
                 value={reminderTime}
                 color={selectedColor}
@@ -1253,14 +1360,29 @@ export const AddEditHabitScreen: React.FC<AddEditHabitScreenProps> = ({
           {/* Row 2: Pin to Top */}
           <View style={styles.preferenceRow}>
             <View style={styles.preferenceRightGroup}>
-              <View style={[styles.prefIconBox, { backgroundColor: `${selectedColor}18`, borderRadius: radius.sm }]}>
+              <View
+                style={[
+                  styles.prefIconBox,
+                  { backgroundColor: `${selectedColor}18`, borderRadius: radius.sm },
+                ]}
+              >
                 <Ionicons name="pin" size={16} color={selectedColor} />
               </View>
               <View style={{ marginRight: 10, flex: 1 }}>
-                <Text style={[typography.bodyMedium, { color: theme.text, fontWeight: '600', textAlign: 'right' }]}>
+                <Text
+                  style={[
+                    typography.bodyMedium,
+                    { color: theme.text, fontWeight: '600', textAlign: 'right' },
+                  ]}
+                >
                   تثبيت في أعلى القائمة
                 </Text>
-                <Text style={[typography.caption, { color: theme.textMuted, fontSize: 11, textAlign: 'right' }]}>
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textMuted, fontSize: 11, textAlign: 'right' },
+                  ]}
+                >
                   تظهر في مقدمة عاداتك اليومية دائماً
                 </Text>
               </View>

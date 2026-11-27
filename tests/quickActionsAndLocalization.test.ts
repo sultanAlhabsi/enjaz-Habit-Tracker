@@ -41,7 +41,10 @@ test('Quick Actions & Localization - Streak milestone remaining days phrasing', 
   assert.ok(milestone1.nextMilestone);
   assert.strictEqual(milestone1.nextMilestone.remainingDays, 1);
   const remainingPhrase1 = `باقي ${formatArabicDaysCount(milestone1.nextMilestone.remainingDays)} من الاستمرار المتتالي للوصول إلى المحطة التالية.`;
-  assert.strictEqual(remainingPhrase1, 'باقي يوم واحد من الاستمرار المتتالي للوصول إلى المحطة التالية.');
+  assert.strictEqual(
+    remainingPhrase1,
+    'باقي يوم واحد من الاستمرار المتتالي للوصول إلى المحطة التالية.'
+  );
   // Ensure no awkward repetition like "1 يوم واحد"
   assert.ok(!remainingPhrase1.includes('1 يوم واحد'));
   assert.ok(!remainingPhrase1.includes('١ يوم واحد'));
@@ -51,22 +54,25 @@ test('Quick Actions & Localization - Streak milestone remaining days phrasing', 
   assert.ok(milestone2.nextMilestone);
   assert.strictEqual(milestone2.nextMilestone.remainingDays, 2);
   const remainingPhrase2 = `باقي ${formatArabicDaysCount(milestone2.nextMilestone.remainingDays)} من الاستمرار المتتالي للوصول إلى المحطة التالية.`;
-  assert.strictEqual(remainingPhrase2, 'باقي يومان من الاستمرار المتتالي للوصول إلى المحطة التالية.');
+  assert.strictEqual(
+    remainingPhrase2,
+    'باقي يومان من الاستمرار المتتالي للوصول إلى المحطة التالية.'
+  );
 
   // Streak 4 out of 7 days milestone (3 remaining)
   const milestone3 = calculateStreakMilestone(4);
   assert.ok(milestone3.nextMilestone);
   assert.strictEqual(milestone3.nextMilestone.remainingDays, 3);
   const remainingPhrase3 = `باقي ${formatArabicDaysCount(milestone3.nextMilestone.remainingDays)} من الاستمرار المتتالي للوصول إلى المحطة التالية.`;
-  assert.strictEqual(remainingPhrase3, 'باقي ٣ أيام من الاستمرار المتتالي للوصول إلى المحطة التالية.');
+  assert.strictEqual(
+    remainingPhrase3,
+    'باقي ٣ أيام من الاستمرار المتتالي للوصول إلى المحطة التالية.'
+  );
 });
 
 test('Quick Actions & Localization - Quick Actions duplicate and archive configuration', () => {
   // Verify action builder pattern
-  const buildActions = (options: {
-    hasDuplicate?: boolean;
-    hasArchive?: boolean;
-  }) => {
+  const buildActions = (options: { hasDuplicate?: boolean; hasArchive?: boolean }) => {
     const list: string[] = ['checkin', 'pin', 'active', 'note', 'share', 'edit', 'details'];
     if (options.hasDuplicate) list.push('duplicate');
     if (options.hasArchive) list.push('archive');

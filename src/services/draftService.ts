@@ -10,10 +10,7 @@ export const getNoteDraftKey = (habitId: string, date: string): string => {
  * Retrieve an unsaved thought draft for a specific habit and date.
  * Returns null if no draft exists.
  */
-export const getNoteDraft = async (
-  habitId: string,
-  date: string
-): Promise<string | null> => {
+export const getNoteDraft = async (habitId: string, date: string): Promise<string | null> => {
   if (!habitId || !date) return null;
   const key = getNoteDraftKey(habitId, date);
   const draft = await getPreference(key, '');
@@ -41,10 +38,7 @@ export const saveNoteDraft = async (
 /**
  * Delete a draft when officially saved or explicitly discarded.
  */
-export const deleteNoteDraft = async (
-  habitId: string,
-  date: string
-): Promise<void> => {
+export const deleteNoteDraft = async (habitId: string, date: string): Promise<void> => {
   if (!habitId || !date) return;
   const key = getNoteDraftKey(habitId, date);
   await deletePreference(key);
@@ -53,10 +47,7 @@ export const deleteNoteDraft = async (
 /**
  * Check if an unsaved draft exists for a specific habit and date.
  */
-export const hasNoteDraft = async (
-  habitId: string,
-  date: string
-): Promise<boolean> => {
+export const hasNoteDraft = async (habitId: string, date: string): Promise<boolean> => {
   const draft = await getNoteDraft(habitId, date);
   return draft !== null && draft.length > 0;
 };
@@ -95,9 +86,7 @@ export const getHabitDraftKey = (draftId = 'new'): string => {
 /**
  * Retrieve an unsaved habit form draft.
  */
-export const getHabitDraft = async (
-  draftId = 'new'
-): Promise<HabitFormDraft | null> => {
+export const getHabitDraft = async (draftId = 'new'): Promise<HabitFormDraft | null> => {
   const key = getHabitDraftKey(draftId);
   const raw = await getPreference(key, '');
   if (!raw || raw.trim().length === 0) return null;
@@ -114,10 +103,7 @@ export const getHabitDraft = async (
  * Persist an unsaved habit form draft.
  * If draft name and description are completely empty, deletes draft.
  */
-export const saveHabitDraft = async (
-  draft: HabitFormDraft,
-  draftId = 'new'
-): Promise<void> => {
+export const saveHabitDraft = async (draft: HabitFormDraft, draftId = 'new'): Promise<void> => {
   const key = getHabitDraftKey(draftId);
   if (!draft || (!draft.name?.trim() && !draft.description?.trim())) {
     await deletePreference(key);
@@ -145,4 +131,3 @@ export const hasHabitDraft = async (draftId = 'new'): Promise<boolean> => {
   const draft = await getHabitDraft(draftId);
   return draft !== null && Boolean(draft.name?.trim() || draft.description?.trim());
 };
-

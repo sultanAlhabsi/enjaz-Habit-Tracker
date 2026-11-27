@@ -12,9 +12,7 @@ import {
   fetchRecentCheckins,
   getAllPreferences,
 } from '../src/services/database.ts';
-import {
-  createBackupPayload,
-} from '../src/utils/backupUtils.ts';
+import { createBackupPayload } from '../src/utils/backupUtils.ts';
 import {
   toArabicNumerals,
   formatArabicCount,
@@ -165,7 +163,10 @@ test('data integrity: lifetime checkins are preserved in backups and CSV beyond 
   const backup = createBackupPayload(habits, allCheckins, meta);
   const backupDates = backup.checkins.map((c) => c.date);
   assert.ok(backupDates.includes(recentDate), 'Backup contains recent checkin');
-  assert.ok(backupDates.includes(ancientDate), 'Backup preserves 250-day-old checkin (SEC-24-01 fixed!)');
+  assert.ok(
+    backupDates.includes(ancientDate),
+    'Backup preserves 250-day-old checkin (SEC-24-01 fixed!)'
+  );
   assert.equal(backup.checkins.length, 2);
 
   // Full CSV report generated from allCheckins includes ancient record

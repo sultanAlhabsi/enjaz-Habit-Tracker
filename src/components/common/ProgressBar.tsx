@@ -31,7 +31,7 @@ const SPARK_CONFIGS: SparkConfig[] = [
   { id: 3, dx: 24, dy: -3, size: 2.0, color: '#528D6F', delay: 0.15 },
   { id: 4, dx: 12, dy: 7, size: 2.2, color: '#76B392', delay: 0.22 },
   // Second wave of sparks (as glide continues)
-  { id: 5, dx: 16, dy: -8, size: 2.6, color: '#FFFFFF', delay: 0.30 },
+  { id: 5, dx: 16, dy: -8, size: 2.6, color: '#FFFFFF', delay: 0.3 },
   { id: 6, dx: 22, dy: 4, size: 2.2, color: '#A8DAB5', delay: 0.36 },
   { id: 7, dx: 26, dy: -5, size: 1.8, color: '#3D6B53', delay: 0.42 },
   { id: 8, dx: 15, dy: 6, size: 2.0, color: '#76B392', delay: 0.48 },
@@ -61,9 +61,7 @@ const SparkParticle: React.FC<SparkParticleProps> = React.memo(({ progress, conf
     }
 
     // Snappy burst fade in (first 15%), then smooth dissipation fade out
-    const opacity = localP < 0.15
-      ? localP / 0.15
-      : Math.pow(1 - (localP - 0.15) / 0.85, 1.6);
+    const opacity = localP < 0.15 ? localP / 0.15 : Math.pow(1 - (localP - 0.15) / 0.85, 1.6);
 
     const distance = Math.sin(localP * (Math.PI / 2));
 
@@ -72,7 +70,7 @@ const SparkParticle: React.FC<SparkParticleProps> = React.memo(({ progress, conf
       transform: [
         { translateX: distance * config.dx },
         { translateY: distance * config.dy },
-        { scale: (1 - localP * 0.5) },
+        { scale: 1 - localP * 0.5 },
       ],
     };
   });
@@ -188,9 +186,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     'worklet';
     return {
       opacity: sparkIgnition.value * 0.7,
-      transform: [
-        { scale: 0.8 + sparkIgnition.value * 0.35 },
-      ],
+      transform: [{ scale: 0.8 + sparkIgnition.value * 0.35 }],
     };
   });
 
@@ -198,9 +194,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     'worklet';
     return {
       opacity: sparkIgnition.value,
-      transform: [
-        { scale: 0.7 + sparkIgnition.value * 0.3 },
-      ],
+      transform: [{ scale: 0.7 + sparkIgnition.value * 0.3 }],
     };
   });
 

@@ -60,11 +60,7 @@ const ParticleItem: React.FC<{
 
     return {
       opacity,
-      transform: [
-        { translateX },
-        { translateY },
-        { scale },
-      ],
+      transform: [{ translateX }, { translateY }, { scale }],
     };
   });
 
@@ -123,12 +119,7 @@ export const MicroParticleBurst = forwardRef<MicroParticleBurstRef, MicroParticl
     return (
       <View pointerEvents="none" style={styles.container}>
         {PARTICLES.map((config, index) => (
-          <ParticleItem
-            key={index}
-            config={config}
-            progress={progress}
-            baseColor={color}
-          />
+          <ParticleItem key={index} config={config} progress={progress} baseColor={color} />
         ))}
       </View>
     );
@@ -148,4 +139,3 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
 });
-

@@ -114,7 +114,12 @@ export const HabitTemplateModal: React.FC<HabitTemplateModalProps> = ({
               },
             ]}
           >
-            <Ionicons name="search-outline" size={18} color={theme.textMuted} style={{ marginLeft: 8 }} />
+            <Ionicons
+              name="search-outline"
+              size={18}
+              color={theme.textMuted}
+              style={{ marginLeft: 8 }}
+            />
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -153,9 +158,7 @@ export const HabitTemplateModal: React.FC<HabitTemplateModalProps> = ({
             {HABIT_TEMPLATE_CATEGORIES.map((cat) => {
               const isSelected = selectedCategory === cat;
               const count =
-                cat === 'الكل'
-                  ? getHabitTemplates().length
-                  : getHabitTemplates(cat).length;
+                cat === 'الكل' ? getHabitTemplates().length : getHabitTemplates(cat).length;
 
               return (
                 <Pressable
@@ -200,8 +203,15 @@ export const HabitTemplateModal: React.FC<HabitTemplateModalProps> = ({
         >
           {filteredTemplates.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="search-outline" size={36} color={theme.textMuted} style={{ marginBottom: 10 }} />
-              <Text style={[typography.h3, { color: theme.text, textAlign: 'center', marginBottom: 4 }]}>
+              <Ionicons
+                name="search-outline"
+                size={36}
+                color={theme.textMuted}
+                style={{ marginBottom: 10 }}
+              />
+              <Text
+                style={[typography.h3, { color: theme.text, textAlign: 'center', marginBottom: 4 }]}
+              >
                 لم يتم العثور على نماذج
               </Text>
               <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'center' }]}>
@@ -271,7 +281,12 @@ export const HabitTemplateModal: React.FC<HabitTemplateModalProps> = ({
                             },
                           ]}
                         >
-                          <Text style={[typography.caption, { color: item.color, fontSize: 10, fontWeight: '600' }]}>
+                          <Text
+                            style={[
+                              typography.caption,
+                              { color: item.color, fontSize: 10, fontWeight: '600' },
+                            ]}
+                          >
                             {item.category}
                           </Text>
                         </View>
@@ -295,27 +310,60 @@ export const HabitTemplateModal: React.FC<HabitTemplateModalProps> = ({
                   </View>
 
                   {/* Meta Badges */}
-                  <View style={[styles.metaRow, { borderTopColor: theme.borderSubtle, borderTopWidth: 1, marginTop: 10, paddingTop: 8 }]}>
+                  <View
+                    style={[
+                      styles.metaRow,
+                      {
+                        borderTopColor: theme.borderSubtle,
+                        borderTopWidth: 1,
+                        marginTop: 10,
+                        paddingTop: 8,
+                      },
+                    ]}
+                  >
                     <View style={styles.metaItem}>
-                      <Ionicons name="flag-outline" size={13} color={theme.textMuted} style={{ marginLeft: 4 }} />
+                      <Ionicons
+                        name="flag-outline"
+                        size={13}
+                        color={theme.textMuted}
+                        style={{ marginLeft: 4 }}
+                      />
                       <Text style={[typography.caption, { color: theme.textMuted, fontSize: 11 }]}>
                         الهدف: {toArabicNumerals(item.targetCount)} {item.unit}
                       </Text>
                     </View>
 
                     <View style={styles.metaItem}>
-                      <Ionicons name="repeat-outline" size={13} color={theme.textMuted} style={{ marginLeft: 4 }} />
+                      <Ionicons
+                        name="repeat-outline"
+                        size={13}
+                        color={theme.textMuted}
+                        style={{ marginLeft: 4 }}
+                      />
                       <Text style={[typography.caption, { color: theme.textMuted, fontSize: 11 }]}>
                         {item.frequency === 'daily'
                           ? 'يوميًا'
-                          : formatArabicCount(item.frequencyDays.length, 'يوم محدد', 'يومان محددين', 'أيام محددة', 'يوم محدد')}
+                          : formatArabicCount(
+                              item.frequencyDays.length,
+                              'يوم محدد',
+                              'يومان محددين',
+                              'أيام محددة',
+                              'يوم محدد'
+                            )}
                       </Text>
                     </View>
 
                     {Boolean(item.reminderTime) && (
                       <View style={styles.metaItem}>
-                        <Ionicons name="alarm-outline" size={13} color={theme.textMuted} style={{ marginLeft: 4 }} />
-                        <Text style={[typography.caption, { color: theme.textMuted, fontSize: 11 }]}>
+                        <Ionicons
+                          name="alarm-outline"
+                          size={13}
+                          color={theme.textMuted}
+                          style={{ marginLeft: 4 }}
+                        />
+                        <Text
+                          style={[typography.caption, { color: theme.textMuted, fontSize: 11 }]}
+                        >
                           {toArabicNumerals(item.reminderTime!)}
                         </Text>
                       </View>

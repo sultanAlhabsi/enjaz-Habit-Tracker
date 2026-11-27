@@ -4,12 +4,17 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
+import { ObserveRoot } from 'expo-observe';
 
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { useHabitStore } from './src/store/useHabitStore';
 import { CustomAlertModal, ErrorBoundary } from './src/components/common';
 import { AnimatedSplashScreen } from './src/components/splash/AnimatedSplashScreen';
+import { initTelemetryAtBoot, markAppInteractive } from './src/services/telemetryService';
+
+// Configure observability in strict opt-out mode before React tree mounts
+initTelemetryAtBoot();
 
 // Prevent native splash screen from auto-hiding before React tree renders
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -30,6 +35,7 @@ const AppContent: React.FC = () => {
 
   const handleSplashFinish = useCallback(() => {
     setShowSplash(false);
+    markAppInteractive();
   }, []);
 
   return (
@@ -37,27 +43,24 @@ const AppContent: React.FC = () => {
       <StatusBar style={isDark ? 'light' : 'dark'} />
       {!isLoading && <AppNavigator />}
       <CustomAlertModal />
-      {showSplash && (
-        <AnimatedSplashScreen
-          isReady={!isLoading}
-          onFinish={handleSplashFinish}
-        />
-      )}
+      {showSplash && <AnimatedSplashScreen isReady={!isLoading} onFinish={handleSplashFinish} />}
     </View>
   );
 };
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <SafeAreaProvider>
-        <ThemeProvider>
-          <ErrorBoundary>
-            <AppContent />
-          </ErrorBoundary>
-        </ThemeProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <ObserveRoot>
+      <GestureHandlerRootView style={styles.root}>
+        <SafeAreaProvider>
+          <ThemeProvider>
+            <ErrorBoundary>
+              <AppContent />
+            </ErrorBoundary>
+          </ThemeProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ObserveRoot>
   );
 }
 

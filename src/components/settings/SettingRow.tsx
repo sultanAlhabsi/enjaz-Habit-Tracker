@@ -64,7 +64,9 @@ export const SettingRow: React.FC<SettingRowProps> = ({
     : iconColor || (isDark ? theme.text : theme.primary);
 
   const resolvedIconBg = isDestructive
-    ? isDark ? 'rgba(239, 68, 68, 0.15)' : '#FEE2E2'
+    ? isDark
+      ? 'rgba(239, 68, 68, 0.15)'
+      : '#FEE2E2'
     : iconBgColor || (isDark ? 'rgba(255, 255, 255, 0.07)' : theme.primaryLight);
 
   return (

@@ -36,7 +36,10 @@ export const initNotifications = async (): Promise<void> => {
         });
       } catch (channelError) {
         // Channel provider is null in Expo Go Android SDK 57
-        console.warn('[NotificationService] Notification channel creation skipped in Expo Go:', channelError);
+        console.warn(
+          '[NotificationService] Notification channel creation skipped in Expo Go:',
+          channelError
+        );
       }
     }
 
@@ -53,7 +56,10 @@ export const initNotifications = async (): Promise<void> => {
 export const requestNotificationPermissions = async (): Promise<boolean> => {
   try {
     const settings = await Notifications.getPermissionsAsync();
-    if (settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
+    if (
+      settings.granted ||
+      settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+    ) {
       return true;
     }
 
@@ -66,8 +72,7 @@ export const requestNotificationPermissions = async (): Promise<boolean> => {
     });
 
     return (
-      request.granted ||
-      request.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+      request.granted || request.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
     );
   } catch (error) {
     console.warn('[NotificationService] Request permissions error:', error);
@@ -170,7 +175,10 @@ export const scheduleHabitReminder = async (
       }
     }
   } catch (error) {
-    console.warn(`[NotificationService] Error scheduling reminders for habit ${habit.name}:`, error);
+    console.warn(
+      `[NotificationService] Error scheduling reminders for habit ${habit.name}:`,
+      error
+    );
   }
 };
 

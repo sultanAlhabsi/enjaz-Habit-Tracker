@@ -12,12 +12,7 @@ interface HeaderProps {
   rightAction?: React.ReactNode;
 }
 
-export const Header: React.FC<HeaderProps> = ({
-  title,
-  subtitle,
-  onBackPress,
-  rightAction,
-}) => {
+export const Header: React.FC<HeaderProps> = ({ title, subtitle, onBackPress, rightAction }) => {
   const insets = useSafeAreaInsets();
   const { theme, spacing, typography, touchTarget } = useTheme();
 
@@ -58,10 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
         <View style={styles.titleContainer}>
           <Text
             numberOfLines={1}
-            style={[
-              typography.h2,
-              { color: theme.text, textAlign: 'right' },
-            ]}
+            style={[typography.h2, { color: theme.text, textAlign: 'right' }]}
           >
             {title}
           </Text>

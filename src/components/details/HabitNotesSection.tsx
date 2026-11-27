@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Pressable,
-  Share,
-} from 'react-native';
+import { View, TextInput, StyleSheet, Pressable, Share } from 'react-native';
 import { appAlert } from '../../services/alertService';
 import { Text } from '../common/AppText';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +7,11 @@ import { useTheme } from '../../theme/ThemeContext';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import type { Habit, HabitCheckin } from '../../types/habit';
-import { formatArabicDate, formatHabitNotesForShare, toArabicNumerals } from '../../utils/habitUtils';
+import {
+  formatArabicDate,
+  formatHabitNotesForShare,
+  toArabicNumerals,
+} from '../../utils/habitUtils';
 import { getNoteDraft, saveNoteDraft, deleteNoteDraft } from '../../services/draftService';
 
 interface HabitNotesSectionProps {
@@ -25,69 +23,60 @@ interface HabitNotesSectionProps {
   onDeleteNote: (date: string) => Promise<void>;
 }
 
-export const HabitNotesSection: React.FC<HabitNotesSectionProps> = React.memo(({
-  habit,
-  selectedDate,
-  currentCheckin,
-  allNotes,
-  onSaveNote,
-  onDeleteNote,
-}) => {
-  const { theme, radius, spacing, typography, touchTarget } = useTheme();
+export const HabitNotesSection: React.FC<HabitNotesSectionProps> = React.memo(
+  ({ habit, selectedDate, currentCheckin, allNotes, onSaveNote, onDeleteNote }) => {
+    const { theme, radius, spacing, typography, touchTarget } = useTheme();
 
-  const [isComposing, setIsComposing] = useState(false);
-  const [composingDate, setComposingDate] = useState(selectedDate);
-  const [noteText, setNoteText] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
-  const [composingOriginalText, setComposingOriginalText] = useState('');
+    const [isComposing, setIsComposing] = useState(false);
+    const [composingDate, setComposingDate] = useState(selectedDate);
+    const [noteText, setNoteText] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+    const [showHistory, setShowHistory] = useState(false);
+    const [composingOriginalText, setComposingOriginalText] = useState('');
 
-  const activeNote = currentCheckin?.note?.trim();
+    const activeNote = currentCheckin?.note?.trim();
 
-  const startEditing = async (date: string, initialText = '') => {
-    setComposingDate(date);
-    setComposingOriginalText(initialText);
-    const draft = await getNoteDraft(habit.id, date);
-    if (draft !== null && draft.trim() !== initialText.trim()) {
-      setNoteText(draft);
-    } else {
-      setNoteText(initialText);
-    }
-    setIsComposing(true);
-  };
+    const startEditing = async (date: string, initialText = '') => {
+      setComposingDate(date);
+      setComposingOriginalText(initialText);
+      const draft = await getNoteDraft(habit.id, date);
+      if (draft !== null && draft.trim() !== initialText.trim()) {
+        setNoteText(draft);
+      } else {
+        setNoteText(initialText);
+      }
+      setIsComposing(true);
+    };
 
-  const handleTextChange = (text: string) => {
-    setNoteText(text);
-    if (text.trim() === composingOriginalText.trim()) {
-      deleteNoteDraft(habit.id, composingDate).catch(() => {});
-    } else {
-      saveNoteDraft(habit.id, composingDate, text).catch(() => {});
-    }
-  };
+    const handleTextChange = (text: string) => {
+      setNoteText(text);
+      if (text.trim() === composingOriginalText.trim()) {
+        deleteNoteDraft(habit.id, composingDate).catch(() => {});
+      } else {
+        saveNoteDraft(habit.id, composingDate, text).catch(() => {});
+      }
+    };
 
-  const handleCancel = () => {
-    setIsComposing(false);
-    setNoteText('');
-  };
-
-  const handleSave = async () => {
-    if (isSaving) return;
-    try {
-      setIsSaving(true);
-      await deleteNoteDraft(habit.id, composingDate);
-      await onSaveNote(composingDate, noteText);
+    const handleCancel = () => {
       setIsComposing(false);
       setNoteText('');
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    };
 
-  const handleDelete = (date: string) => {
-    appAlert(
-      'حذف الملاحظة',
-      'هل تريد بالتأكيد حذف هذه الخاطرة من سجل العادة؟',
-      [
+    const handleSave = async () => {
+      if (isSaving) return;
+      try {
+        setIsSaving(true);
+        await deleteNoteDraft(habit.id, composingDate);
+        await onSaveNote(composingDate, noteText);
+        setIsComposing(false);
+        setNoteText('');
+      } finally {
+        setIsSaving(false);
+      }
+    };
+
+    const handleDelete = (date: string) => {
+      appAlert('حذف الملاحظة', 'هل تريد بالتأكيد حذف هذه الخاطرة من سجل العادة؟', [
         { text: 'إلغاء', style: 'cancel' },
         {
           text: 'حذف',
@@ -97,332 +86,323 @@ export const HabitNotesSection: React.FC<HabitNotesSectionProps> = React.memo(({
             await onDeleteNote(date);
           },
         },
-      ]
-    );
-  };
+      ]);
+    };
 
-  const handleShareAll = async () => {
-    try {
-      const shareMessage = formatHabitNotesForShare(habit, allNotes);
-      await Share.share({ message: shareMessage });
-    } catch (_) {}
-  };
+    const handleShareAll = async () => {
+      try {
+        const shareMessage = formatHabitNotesForShare(habit, allNotes);
+        await Share.share({ message: shareMessage });
+      } catch (_) {}
+    };
 
-  // Past notes excluding current selectedDate note
-  const pastNotes = allNotes.filter((n) => n.date !== selectedDate);
+    // Past notes excluding current selectedDate note
+    const pastNotes = allNotes.filter((n) => n.date !== selectedDate);
 
-  return (
-    <Card style={[styles.container, { marginBottom: spacing.base, padding: spacing.base }]}>
-      {/* Header Row */}
-      <View style={styles.headerRow}>
-        <View style={styles.headerTitleRow}>
-          <View
-            style={[
-              styles.iconBadge,
-              {
-                backgroundColor: `${habit.color || theme.primary}18`,
-                borderRadius: radius.full,
-              },
-            ]}
-          >
-            <Ionicons
-              name="book-outline"
-              size={18}
-              color={habit.color || theme.primary}
-            />
-          </View>
-          <View style={styles.headerTextGroup}>
-            <Text style={[typography.h3, { color: theme.text, textAlign: 'right' }]}>
-              يوميات وملاحظات العادة
-            </Text>
-            <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'right' }]}>
-              دوّن مشاعرك وإنجازاتك اليومية المرتبطة بهذه العادة
-            </Text>
-          </View>
-        </View>
-
-        {allNotes.length > 0 && (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="مشاركة سجل الخواطر والمذكرات"
-            onPress={handleShareAll}
-            style={({ pressed }) => [
-              styles.shareBtn,
-              {
-                minWidth: touchTarget,
-                minHeight: touchTarget,
-                opacity: pressed ? 0.6 : 1,
-              },
-            ]}
-          >
-            <Ionicons name="share-outline" size={19} color={theme.text} />
-          </Pressable>
-        )}
-      </View>
-
-      {/* Selected Day Note Box / Composer */}
-      <View style={{ marginTop: spacing.md }}>
-        {isComposing ? (
-          /* Editor Box */
-          <View
-            style={[
-              styles.composerBox,
-              {
-                backgroundColor: theme.cardSecondary,
-                borderColor: habit.color || theme.primary,
-                borderRadius: radius.md,
-                padding: spacing.sm,
-              },
-            ]}
-          >
-            <View style={styles.composerHeader}>
-              <Text style={[typography.caption, { color: theme.textSecondary, fontWeight: '600' }]}>
-                {composingDate === selectedDate ? 'خاطرة اليوم' : formatArabicDate(composingDate)}
-              </Text>
-              <Text
-                style={[
-                  typography.caption,
-                  {
-                    color: noteText.length > 220 ? theme.destructive : theme.textMuted,
-                    fontSize: 11,
-                  },
-                ]}
-              >
-                {noteText.length}/250 حرف
-              </Text>
-            </View>
-
-            <TextInput
-              multiline
-              maxLength={250}
-              placeholder="ما الذي ساعدك على الإنجاز اليوم؟ أو أي فكرة تود تذكرها..."
-              placeholderTextColor={theme.textMuted}
-              value={noteText}
-              onChangeText={handleTextChange}
+    return (
+      <Card style={[styles.container, { marginBottom: spacing.base, padding: spacing.base }]}>
+        {/* Header Row */}
+        <View style={styles.headerRow}>
+          <View style={styles.headerTitleRow}>
+            <View
               style={[
-                styles.textInput,
+                styles.iconBadge,
                 {
-                  color: theme.text,
-                  minHeight: 80,
-                  textAlign: 'right',
+                  backgroundColor: `${habit.color || theme.primary}18`,
+                  borderRadius: radius.full,
                 },
               ]}
-              autoFocus
-            />
-
-            <View style={styles.composerActions}>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="إلغاء كتابة الملاحظة"
-                onPress={handleCancel}
-                disabled={isSaving}
-                style={({ pressed }) => [
-                  styles.cancelBtn,
-                  { opacity: pressed ? 0.6 : 1 },
-                ]}
-              >
-                <Text style={[typography.caption, { color: theme.textMuted, fontWeight: '600' }]}>
-                  إلغاء
-                </Text>
-              </Pressable>
-
-              <Button
-                title={isSaving ? 'جارٍ الحفظ...' : 'حفظ الخاطرة'}
-                variant="primary"
-                size="sm"
-                onPress={handleSave}
-                loading={isSaving}
-                disabled={!noteText.trim() || isSaving}
-                iconName="checkmark-outline"
-              />
+            >
+              <Ionicons name="book-outline" size={18} color={habit.color || theme.primary} />
+            </View>
+            <View style={styles.headerTextGroup}>
+              <Text style={[typography.h3, { color: theme.text, textAlign: 'right' }]}>
+                يوميات وملاحظات العادة
+              </Text>
+              <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'right' }]}>
+                دوّن مشاعرك وإنجازاتك اليومية المرتبطة بهذه العادة
+              </Text>
             </View>
           </View>
-        ) : activeNote ? (
-          /* Current Note Display */
-          <View
-            style={[
-              styles.noteCard,
-              {
-                backgroundColor: theme.cardSecondary,
-                borderRightColor: habit.color || theme.primary,
-                borderRadius: radius.md,
-                padding: spacing.sm,
-              },
-            ]}
-          >
-            <View style={styles.noteTopRow}>
-              <View style={styles.quoteBadge}>
-                <Ionicons
-                  name="chatbox-ellipses-outline"
-                  size={14}
-                  color={habit.color || theme.primary}
-                />
+
+          {allNotes.length > 0 && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="مشاركة سجل الخواطر والمذكرات"
+              onPress={handleShareAll}
+              style={({ pressed }) => [
+                styles.shareBtn,
+                {
+                  minWidth: touchTarget,
+                  minHeight: touchTarget,
+                  opacity: pressed ? 0.6 : 1,
+                },
+              ]}
+            >
+              <Ionicons name="share-outline" size={19} color={theme.text} />
+            </Pressable>
+          )}
+        </View>
+
+        {/* Selected Day Note Box / Composer */}
+        <View style={{ marginTop: spacing.md }}>
+          {isComposing ? (
+            /* Editor Box */
+            <View
+              style={[
+                styles.composerBox,
+                {
+                  backgroundColor: theme.cardSecondary,
+                  borderColor: habit.color || theme.primary,
+                  borderRadius: radius.md,
+                  padding: spacing.sm,
+                },
+              ]}
+            >
+              <View style={styles.composerHeader}>
+                <Text
+                  style={[typography.caption, { color: theme.textSecondary, fontWeight: '600' }]}
+                >
+                  {composingDate === selectedDate ? 'خاطرة اليوم' : formatArabicDate(composingDate)}
+                </Text>
                 <Text
                   style={[
                     typography.caption,
-                    { color: habit.color || theme.primary, fontWeight: '700', fontSize: 11 },
-                  ]}
-                >
-                  خاطرة إنجاز اليوم
-                </Text>
-              </View>
-
-              <View style={styles.noteButtons}>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="تعديل ملاحظة اليوم"
-                  onPress={() => startEditing(selectedDate, activeNote)}
-                  style={({ pressed }) => [
-                    styles.actionIconBtn,
-                    { opacity: pressed ? 0.5 : 1 },
-                  ]}
-                >
-                  <Ionicons name="pencil-outline" size={16} color={theme.textSecondary} />
-                </Pressable>
-
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="حذف ملاحظة اليوم"
-                  onPress={() => handleDelete(selectedDate)}
-                  style={({ pressed }) => [
-                    styles.actionIconBtn,
-                    { opacity: pressed ? 0.5 : 1 },
-                  ]}
-                >
-                  <Ionicons name="trash-outline" size={16} color={theme.destructive} />
-                </Pressable>
-              </View>
-            </View>
-
-            <Text
-              style={[
-                typography.body,
-                styles.noteBodyText,
-                { color: theme.text, marginTop: spacing.xs },
-              ]}
-            >
-              "{activeNote}"
-            </Text>
-          </View>
-        ) : (
-          /* Button to add note */
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="تدوين خاطرة أو ملاحظة لإنجاز اليوم"
-            onPress={() => startEditing(selectedDate, '')}
-            style={({ pressed }) => [
-              styles.addNoteBtn,
-              {
-                borderColor: theme.border,
-                borderRadius: radius.md,
-                backgroundColor: pressed ? theme.cardSecondary : 'transparent',
-                padding: spacing.sm,
-              },
-            ]}
-          >
-            <Ionicons name="create-outline" size={18} color={habit.color || theme.primary} />
-            <Text
-              style={[
-                typography.caption,
-                { color: theme.text, fontWeight: '600', marginRight: 6 },
-              ]}
-            >
-              تدوين خاطرة أو ملاحظة لإنجاز اليوم
-            </Text>
-          </Pressable>
-        )}
-      </View>
-
-      {/* Past Notes History */}
-      {pastNotes.length > 0 && (
-        <View style={{ marginTop: spacing.base }}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="عرض سجل الخواطر السابقة"
-            onPress={() => setShowHistory((prev) => !prev)}
-            style={({ pressed }) => [
-              styles.historyToggleRow,
-              {
-                paddingVertical: spacing.xs,
-                opacity: pressed ? 0.7 : 1,
-              },
-            ]}
-          >
-            <View style={styles.historyToggleTitle}>
-              <Ionicons
-                name={showHistory ? 'chevron-up' : 'chevron-down'}
-                size={16}
-                color={theme.textSecondary}
-              />
-              <Text style={[typography.caption, { color: theme.textSecondary, fontWeight: '600' }]}>
-                سجل الخواطر السابقة ({toArabicNumerals(pastNotes.length)})
-              </Text>
-            </View>
-          </Pressable>
-
-          {showHistory && (
-            <View style={{ marginTop: spacing.xs, gap: spacing.xs }}>
-              {pastNotes.map((item) => (
-                <View
-                  key={item.id}
-                  style={[
-                    styles.pastNoteItem,
                     {
-                      backgroundColor: theme.cardSecondary,
-                      borderRadius: radius.sm,
-                      padding: spacing.xs + 2,
+                      color: noteText.length > 220 ? theme.destructive : theme.textMuted,
+                      fontSize: 11,
                     },
                   ]}
                 >
-                  <View style={styles.pastNoteHeader}>
-                    <Text style={[typography.caption, { color: theme.textMuted, fontSize: 11 }]}>
-                      {formatArabicDate(item.date)}
-                    </Text>
+                  {noteText.length}/250 حرف
+                </Text>
+              </View>
 
-                    <View style={styles.pastNoteActions}>
-                      <Pressable
-                        accessibilityRole="button"
-                        accessibilityLabel={`تعديل خاطرة ${formatArabicDate(item.date)}`}
-                        onPress={() => startEditing(item.date, item.note || '')}
-                        style={({ pressed }) => [
-                          styles.smallActionBtn,
-                          { opacity: pressed ? 0.5 : 1 },
-                        ]}
-                      >
-                        <Ionicons name="pencil-outline" size={14} color={theme.textSecondary} />
-                      </Pressable>
+              <TextInput
+                multiline
+                maxLength={250}
+                placeholder="ما الذي ساعدك على الإنجاز اليوم؟ أو أي فكرة تود تذكرها..."
+                placeholderTextColor={theme.textMuted}
+                value={noteText}
+                onChangeText={handleTextChange}
+                style={[
+                  styles.textInput,
+                  {
+                    color: theme.text,
+                    minHeight: 80,
+                    textAlign: 'right',
+                  },
+                ]}
+                autoFocus
+              />
 
-                      <Pressable
-                        accessibilityRole="button"
-                        accessibilityLabel={`حذف خاطرة ${formatArabicDate(item.date)}`}
-                        onPress={() => handleDelete(item.date)}
-                        style={({ pressed }) => [
-                          styles.smallActionBtn,
-                          { opacity: pressed ? 0.5 : 1 },
-                        ]}
-                      >
-                        <Ionicons name="trash-outline" size={14} color={theme.destructive} />
-                      </Pressable>
-                    </View>
-                  </View>
+              <View style={styles.composerActions}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="إلغاء كتابة الملاحظة"
+                  onPress={handleCancel}
+                  disabled={isSaving}
+                  style={({ pressed }) => [styles.cancelBtn, { opacity: pressed ? 0.6 : 1 }]}
+                >
+                  <Text style={[typography.caption, { color: theme.textMuted, fontWeight: '600' }]}>
+                    إلغاء
+                  </Text>
+                </Pressable>
 
+                <Button
+                  title={isSaving ? 'جارٍ الحفظ...' : 'حفظ الخاطرة'}
+                  variant="primary"
+                  size="sm"
+                  onPress={handleSave}
+                  loading={isSaving}
+                  disabled={!noteText.trim() || isSaving}
+                  iconName="checkmark-outline"
+                />
+              </View>
+            </View>
+          ) : activeNote ? (
+            /* Current Note Display */
+            <View
+              style={[
+                styles.noteCard,
+                {
+                  backgroundColor: theme.cardSecondary,
+                  borderRightColor: habit.color || theme.primary,
+                  borderRadius: radius.md,
+                  padding: spacing.sm,
+                },
+              ]}
+            >
+              <View style={styles.noteTopRow}>
+                <View style={styles.quoteBadge}>
+                  <Ionicons
+                    name="chatbox-ellipses-outline"
+                    size={14}
+                    color={habit.color || theme.primary}
+                  />
                   <Text
                     style={[
                       typography.caption,
-                      { color: theme.text, textAlign: 'right', marginTop: 3, lineHeight: 18 },
+                      { color: habit.color || theme.primary, fontWeight: '700', fontSize: 11 },
                     ]}
                   >
-                    "{item.note?.trim()}"
+                    خاطرة إنجاز اليوم
                   </Text>
                 </View>
-              ))}
+
+                <View style={styles.noteButtons}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="تعديل ملاحظة اليوم"
+                    onPress={() => startEditing(selectedDate, activeNote)}
+                    style={({ pressed }) => [styles.actionIconBtn, { opacity: pressed ? 0.5 : 1 }]}
+                  >
+                    <Ionicons name="pencil-outline" size={16} color={theme.textSecondary} />
+                  </Pressable>
+
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="حذف ملاحظة اليوم"
+                    onPress={() => handleDelete(selectedDate)}
+                    style={({ pressed }) => [styles.actionIconBtn, { opacity: pressed ? 0.5 : 1 }]}
+                  >
+                    <Ionicons name="trash-outline" size={16} color={theme.destructive} />
+                  </Pressable>
+                </View>
+              </View>
+
+              <Text
+                style={[
+                  typography.body,
+                  styles.noteBodyText,
+                  { color: theme.text, marginTop: spacing.xs },
+                ]}
+              >
+                «{activeNote}»
+              </Text>
             </View>
+          ) : (
+            /* Button to add note */
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="تدوين خاطرة أو ملاحظة لإنجاز اليوم"
+              onPress={() => startEditing(selectedDate, '')}
+              style={({ pressed }) => [
+                styles.addNoteBtn,
+                {
+                  borderColor: theme.border,
+                  borderRadius: radius.md,
+                  backgroundColor: pressed ? theme.cardSecondary : 'transparent',
+                  padding: spacing.sm,
+                },
+              ]}
+            >
+              <Ionicons name="create-outline" size={18} color={habit.color || theme.primary} />
+              <Text
+                style={[
+                  typography.caption,
+                  { color: theme.text, fontWeight: '600', marginRight: 6 },
+                ]}
+              >
+                تدوين خاطرة أو ملاحظة لإنجاز اليوم
+              </Text>
+            </Pressable>
           )}
         </View>
-      )}
-    </Card>
-  );
-});
+
+        {/* Past Notes History */}
+        {pastNotes.length > 0 && (
+          <View style={{ marginTop: spacing.base }}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="عرض سجل الخواطر السابقة"
+              onPress={() => setShowHistory((prev) => !prev)}
+              style={({ pressed }) => [
+                styles.historyToggleRow,
+                {
+                  paddingVertical: spacing.xs,
+                  opacity: pressed ? 0.7 : 1,
+                },
+              ]}
+            >
+              <View style={styles.historyToggleTitle}>
+                <Ionicons
+                  name={showHistory ? 'chevron-up' : 'chevron-down'}
+                  size={16}
+                  color={theme.textSecondary}
+                />
+                <Text
+                  style={[typography.caption, { color: theme.textSecondary, fontWeight: '600' }]}
+                >
+                  سجل الخواطر السابقة ({toArabicNumerals(pastNotes.length)})
+                </Text>
+              </View>
+            </Pressable>
+
+            {showHistory && (
+              <View style={{ marginTop: spacing.xs, gap: spacing.xs }}>
+                {pastNotes.map((item) => (
+                  <View
+                    key={item.id}
+                    style={[
+                      styles.pastNoteItem,
+                      {
+                        backgroundColor: theme.cardSecondary,
+                        borderRadius: radius.sm,
+                        padding: spacing.xs + 2,
+                      },
+                    ]}
+                  >
+                    <View style={styles.pastNoteHeader}>
+                      <Text style={[typography.caption, { color: theme.textMuted, fontSize: 11 }]}>
+                        {formatArabicDate(item.date)}
+                      </Text>
+
+                      <View style={styles.pastNoteActions}>
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel={`تعديل خاطرة ${formatArabicDate(item.date)}`}
+                          onPress={() => startEditing(item.date, item.note || '')}
+                          style={({ pressed }) => [
+                            styles.smallActionBtn,
+                            { opacity: pressed ? 0.5 : 1 },
+                          ]}
+                        >
+                          <Ionicons name="pencil-outline" size={14} color={theme.textSecondary} />
+                        </Pressable>
+
+                        <Pressable
+                          accessibilityRole="button"
+                          accessibilityLabel={`حذف خاطرة ${formatArabicDate(item.date)}`}
+                          onPress={() => handleDelete(item.date)}
+                          style={({ pressed }) => [
+                            styles.smallActionBtn,
+                            { opacity: pressed ? 0.5 : 1 },
+                          ]}
+                        >
+                          <Ionicons name="trash-outline" size={14} color={theme.destructive} />
+                        </Pressable>
+                      </View>
+                    </View>
+
+                    <Text
+                      style={[
+                        typography.caption,
+                        { color: theme.text, textAlign: 'right', marginTop: 3, lineHeight: 18 },
+                      ]}
+                    >
+                      «{item.note?.trim()}»
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        )}
+      </Card>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {

@@ -45,7 +45,11 @@ test('DateStripSkeleton: generates exactly 7 day placeholder capsules', () => {
   const capsuleBorderRadius = 21;
 
   assert.equal(DAYS_IN_WEEK, 7);
-  assert.equal(capsuleBorderRadius * 2, capsuleWidth, 'Capsule should be fully rounded (pill shaped)');
+  assert.equal(
+    capsuleBorderRadius * 2,
+    capsuleWidth,
+    'Capsule should be fully rounded (pill shaped)'
+  );
   assert.ok(capsuleHeight > capsuleWidth, 'Day capsule should be vertically oriented');
 });
 

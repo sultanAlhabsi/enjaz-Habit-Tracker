@@ -8,7 +8,6 @@ import {
 import type { BackupPayload } from '../src/utils/backupUtils.ts';
 import type { Habit, HabitCheckin } from '../src/types/habit.ts';
 
-
 const mockHabit1: Habit = {
   id: 'h1',
   name: 'قراءة القرآن',
@@ -45,11 +44,11 @@ const mockCheckin1: HabitCheckin = {
 };
 
 test('createBackupPayload: constructs standard schema envelope', () => {
-  const payload = createBackupPayload(
-    [mockHabit1],
-    [mockCheckin1],
-    { theme_mode: 'dark', haptics_enabled: 'true', sound_enabled: 'false' }
-  );
+  const payload = createBackupPayload([mockHabit1], [mockCheckin1], {
+    theme_mode: 'dark',
+    haptics_enabled: 'true',
+    sound_enabled: 'false',
+  });
 
   assert.equal(payload.version, 1);
   assert.equal(payload.appName, 'enjaz-habits');
@@ -110,10 +109,7 @@ test('mergeBackupData: deduplicates habits and preserves existing ones', () => {
     version: 1,
     appName: 'enjaz-habits',
     exportedAt: '2026-09-10T00:00:00.000Z',
-    habits: [
-      { ...mockHabit1, name: 'قراءة القرآن المعدلة' },
-      mockHabit2,
-    ],
+    habits: [{ ...mockHabit1, name: 'قراءة القرآن المعدلة' }, mockHabit2],
     checkins: [],
   };
 
@@ -257,18 +253,9 @@ test('CSV export filename: sanitizes Arabic and special characters safely', () =
   const sanitize = (title: string) =>
     (title || 'تقرير_إنجاز').replace(/[^a-zA-Z0-9\u0600-\u06FF_-]/g, '_');
 
-  assert.equal(
-    sanitize('سجلات إنجاز - تقرير شامل'),
-    'سجلات_إنجاز_-_تقرير_شامل'
-  );
-  assert.equal(
-    sanitize('عادة: "قراءة القرآن" / يومياً!'),
-    'عادة___قراءة_القرآن____يومياً_'
-  );
-  assert.equal(
-    sanitize(''),
-    'تقرير_إنجاز'
-  );
+  assert.equal(sanitize('سجلات إنجاز - تقرير شامل'), 'سجلات_إنجاز_-_تقرير_شامل');
+  assert.equal(sanitize('عادة: "قراءة القرآن" / يومياً!'), 'عادة___قراءة_القرآن____يومياً_');
+  assert.equal(sanitize(''), 'تقرير_إنجاز');
 });
 
 test('Backup export filename: generates standardized date-based file name', () => {
@@ -295,6 +282,3 @@ test('validateBackupJson: gracefully tolerates UTF-8 BOM prefix (\\uFEFF)', () =
     assert.equal(result.data.habits[0].name, 'قراءة القرآن');
   }
 });
-
-
-

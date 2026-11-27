@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import { Modal, View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../theme/ThemeContext';
 import {
@@ -150,13 +143,7 @@ export const CustomAlertModal: React.FC = () => {
           </View>
 
           {/* Title & Message */}
-          <Text
-            style={[
-              typography.h3,
-              styles.title,
-              { color: theme.text, marginTop: spacing.md },
-            ]}
-          >
+          <Text style={[typography.h3, styles.title, { color: theme.text, marginTop: spacing.md }]}>
             {alert.title}
           </Text>
 
@@ -167,13 +154,7 @@ export const CustomAlertModal: React.FC = () => {
               showsVerticalScrollIndicator={false}
               bounces={false}
             >
-              <Text
-                style={[
-                  typography.body,
-                  styles.message,
-                  { color: theme.textSecondary },
-                ]}
-              >
+              <Text style={[typography.body, styles.message, { color: theme.textSecondary }]}>
                 {alert.message}
               </Text>
             </ScrollView>

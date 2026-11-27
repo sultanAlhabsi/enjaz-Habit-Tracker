@@ -25,7 +25,13 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   const { theme, spacing, typography } = useTheme();
 
   return (
-    <View style={[styles.container, { paddingVertical: spacing.xxl, paddingHorizontal: spacing.xl }, style]}>
+    <View
+      style={[
+        styles.container,
+        { paddingVertical: spacing.xxl, paddingHorizontal: spacing.xl },
+        style,
+      ]}
+    >
       <Ionicons
         name={icon}
         size={32}

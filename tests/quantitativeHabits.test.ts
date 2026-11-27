@@ -108,7 +108,14 @@ test('calculateTotalLoggedUnits: sums exact quantities across dates accurately',
     { id: '1', habitId: habit.id, date: '2026-06-10', count: 15, completed: true, updatedAt: '' },
     { id: '2', habitId: habit.id, date: '2026-06-11', count: 25, completed: true, updatedAt: '' },
     { id: '3', habitId: habit.id, date: '2026-06-12', count: 5, completed: false, updatedAt: '' },
-    { id: '4', habitId: 'another-habit', date: '2026-06-12', count: 100, completed: true, updatedAt: '' },
+    {
+      id: '4',
+      habitId: 'another-habit',
+      date: '2026-06-12',
+      count: 100,
+      completed: true,
+      updatedAt: '',
+    },
   ];
 
   const total = calculateTotalLoggedUnits(habit.id, checkins);
@@ -164,4 +171,3 @@ test('generateDemoCheckins: leaves today clean/pending at count 0', () => {
   const yesterdayCheckins = demoCheckins.filter((c) => c.date === yesterdayStr);
   assert.ok(yesterdayCheckins.length > 0);
 });
-

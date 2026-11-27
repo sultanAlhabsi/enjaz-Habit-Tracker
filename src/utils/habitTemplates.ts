@@ -416,11 +416,6 @@ export const searchHabitTemplates = (query: string, category?: string): HabitTem
     const matchTags = t.tags.some((tag) => normalizeArabicText(tag).includes(normQuery));
     const matchCat = normalizeArabicText(t.category).includes(normQuery);
 
-    return (
-      normName.includes(normQuery) ||
-      normDesc.includes(normQuery) ||
-      matchTags ||
-      matchCat
-    );
+    return normName.includes(normQuery) || normDesc.includes(normQuery) || matchTags || matchCat;
   });
 };

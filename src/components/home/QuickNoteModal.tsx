@@ -90,12 +90,7 @@ export const QuickNoteModal: React.FC<QuickNoteModalProps> = ({
   const hasExistingNote = Boolean(initialNote && initialNote.trim().length > 0);
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.modalOverlay}
@@ -136,7 +131,12 @@ export const QuickNoteModal: React.FC<QuickNoteModalProps> = ({
                   <Text style={[typography.h3, { color: theme.text, textAlign: 'right' }]}>
                     {habit.name}
                   </Text>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginTop: 2 }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'right', marginTop: 2 },
+                    ]}
+                  >
                     ملاحظة يوم: {formatArabicDate(date)}
                   </Text>
                 </View>
@@ -211,12 +211,7 @@ export const QuickNoteModal: React.FC<QuickNoteModalProps> = ({
                 />
               )}
 
-              <Button
-                title="إلغاء"
-                variant="outline"
-                onPress={onClose}
-                disabled={isSaving}
-              />
+              <Button title="إلغاء" variant="outline" onPress={onClose} disabled={isSaving} />
             </View>
           </ScrollView>
         </View>

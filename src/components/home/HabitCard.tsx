@@ -1,9 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-} from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { Text } from '../common/AppText';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
@@ -106,10 +102,7 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
   const translateX = useSharedValue(0);
 
   const animatedCardMotionStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: translateX.value },
-      { scale: cardScale.value },
-    ],
+    transform: [{ translateX: translateX.value }, { scale: cardScale.value }],
   }));
 
   const animatedCheckBgStyle = useAnimatedStyle(() => ({
@@ -127,12 +120,7 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
       [0.5, 0.85, 1.15],
       Extrapolation.CLAMP
     );
-    const opacity = interpolate(
-      translateX.value,
-      [0, 15, 50],
-      [0, 0.7, 1],
-      Extrapolation.CLAMP
-    );
+    const opacity = interpolate(translateX.value, [0, 15, 50], [0, 0.7, 1], Extrapolation.CLAMP);
     return {
       transform: [{ scale }],
       opacity,
@@ -146,12 +134,7 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
       [0.5, 0.85, 1.15],
       Extrapolation.CLAMP
     );
-    const opacity = interpolate(
-      -translateX.value,
-      [0, 15, 50],
-      [0, 0.7, 1],
-      Extrapolation.CLAMP
-    );
+    const opacity = interpolate(-translateX.value, [0, 15, 50], [0, 0.7, 1], Extrapolation.CLAMP);
     return {
       transform: [{ scale }],
       opacity,
@@ -253,9 +236,7 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
           styles.swipeActionBackground,
           styles.checkActionBg,
           {
-            backgroundColor: effectiveCompleted
-              ? theme.textMuted
-              : (habit.color || theme.primary),
+            backgroundColor: effectiveCompleted ? theme.textMuted : habit.color || theme.primary,
             borderRadius: radius.md,
           },
           animatedCheckBgStyle,
@@ -287,9 +268,7 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
       >
         <Animated.View style={[styles.actionContent, animatedNoteIconStyle]}>
           <Ionicons name="document-text" size={22} color="#FFFFFF" />
-          <Text style={[typography.caption, styles.actionText]}>
-            ملاحظة
-          </Text>
+          <Text style={[typography.caption, styles.actionText]}>ملاحظة</Text>
         </Animated.View>
       </Animated.View>
 
@@ -322,351 +301,381 @@ const HabitCardBase: React.FC<HabitCardProps> = ({
             ]}
           >
             <View style={styles.cardContent}>
-          {/* Right side in RTL: Unified Check / Quantity Target Circle */}
-          <Pressable
-            disabled={isFuture}
-            accessibilityRole={isMultiTarget ? 'button' : 'checkbox'}
-            accessibilityState={isMultiTarget ? undefined : { checked: effectiveCompleted, disabled: isFuture }}
-            accessibilityLabel={
-              isFuture
-                ? `لا يمكن تسجيل إنجاز لتاريخ مستقبلي (${habit.name})`
-                : isMultiTarget
-                ? `تسجيل كمية ${habit.name} (${safeCount}/${habit.targetCount} ${habit.unit})`
-                : effectiveCompleted
-                ? `إلغاء إتمام ${habit.name}`
-                : `تسجيل إتمام ${habit.name}`
-            }
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            onPress={handlePressCircle}
-            android_disableSound={false}
-            style={({ pressed }) => [
-              styles.checkTarget,
-              {
-                minWidth: touchTarget,
-                minHeight: touchTarget,
-                opacity: isFuture ? 0.35 : pressed ? 0.6 : 1,
-              },
-            ]}
-          >
-            {/* Celebratory micro particle burst around the fixed button circle */}
-            <MicroParticleBurst ref={particleRef} color={habit.color || theme.primary} />
-
-            <View
-              style={[
-                styles.checkCircle,
-                {
-                  borderColor: isTargetMet
-                    ? (habit.color || theme.primary)
-                    : isMultiTarget && safeCount > 0
-                    ? (habit.color || theme.primary)
-                    : isFuture
-                    ? theme.border
-                    : theme.isDark
-                    ? '#3E444E'
-                    : theme.textMuted,
-                  backgroundColor: isTargetMet
-                    ? (habit.color || theme.primary)
-                    : isMultiTarget && safeCount > 0
-                    ? `${habit.color || theme.primary}18`
-                    : theme.isDark
-                    ? 'rgba(255, 255, 255, 0.03)'
-                    : 'transparent',
-                },
-              ]}
-            >
-              {isTargetMet ? (
-                <Ionicons name="checkmark" size={14} color="#FFFFFF" />
-              ) : isMultiTarget ? (
-                safeCount > 0 ? (
-                  <Ionicons name="add" size={14} color={habit.color || theme.primary} />
-                ) : (
-                  <Ionicons name="add" size={14} color={theme.textMuted} />
-                )
-              ) : null}
-            </View>
-          </Pressable>
-
-
-        {/* Center: Habit Details */}
-        <View style={styles.textDetails}>
-          <View style={styles.nameRow}>
-            <Text
-              numberOfLines={1}
-              style={[
-                typography.bodyMedium,
-                {
-                  color: isTargetMet ? theme.textMuted : theme.text,
-                  textAlign: 'right',
-                  textDecorationLine: isTargetMet ? 'line-through' : 'none',
-                  flexShrink: 1,
-                },
-              ]}
-            >
-              {habit.name}
-            </Text>
-            {habit.isPinned && (
-              <View
-                accessibilityLabel="عادة مثبتة ذات أولوية"
-                style={[
-                  styles.pinnedBadge,
-                  {
-                    backgroundColor: theme.cardSecondary,
-                    borderColor: theme.border,
-                    borderRadius: radius.xs,
-                  },
-                ]}
-              >
-                <Ionicons name="pin" size={10} color={theme.primary} />
-              </View>
-            )}
-          </View>
-
-          {/* Multi-target Progress Track */}
-          {isMultiTarget && (
-            <ProgressBar
-              progress={Math.min(100, Math.max(0, progressRatio * 100))}
-              height={3}
-              color={habit.color || theme.primary}
-              style={{ marginTop: 4 }}
-            />
-          )}
-
-          <View style={styles.metaRow}>
-            {streak > 0 ? (
-              <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginLeft: 8 }}>
-                <Ionicons name="flame" size={12} color={habit.color || theme.primary} style={{ marginLeft: 3 }} />
-                <Text
-                  style={[
-                    typography.caption,
-                    {
-                      color: theme.textSecondary,
-                      textAlign: 'right',
-                    },
-                  ]}
-                >
-                  {formatHabitStreakArabic(streak, habit.frequency)}
-                </Text>
-              </View>
-            ) : (
-              <View style={{ flexDirection: 'row-reverse', alignItems: 'center', marginLeft: 8, opacity: 0.5 }}>
-                <Ionicons name="flame" size={12} color={theme.textMuted} style={{ marginLeft: 3 }} />
-                <Text
-                  style={[
-                    typography.caption,
-                    {
-                      color: theme.textMuted,
-                      textAlign: 'right',
-                    },
-                  ]}
-                >
-                  {habit.frequency === 'weekly_target'
-                    ? '٠ أسابيع متتالية'
-                    : habit.frequency === 'monthly_target'
-                    ? '٠ أشهر متتالية'
-                    : '٠ أيام متتالية'}
-                </Text>
-              </View>
-            )}
-
-            {periodicBadgeText && (
-              <View
-                style={[
-                  styles.periodicBadge,
-                  {
-                    backgroundColor: theme.cardSecondary,
-                    borderColor: theme.border,
-                    borderRadius: radius.xs,
-                  },
-                ]}
-              >
-                <Ionicons name="repeat-outline" size={11} color={theme.textSecondary} style={{ marginLeft: 3 }} />
-                <Text
-                  style={[
-                    typography.caption,
-                    {
-                      color: theme.textSecondary,
-                      fontWeight: '600',
-                      fontSize: 10,
-                    },
-                  ]}
-                >
-                  {periodicBadgeText}
-                </Text>
-              </View>
-            )}
-
-            {scheduleBadgeText && !periodicBadgeText && (
-              <View
-                style={[
-                  styles.periodicBadge,
-                  {
-                    backgroundColor: theme.cardSecondary,
-                    borderColor: theme.border,
-                    borderRadius: radius.xs,
-                  },
-                ]}
-              >
-                <Ionicons name="calendar-outline" size={10} color={theme.textSecondary} style={{ marginLeft: 3 }} />
-                <Text
-                  style={[
-                    typography.caption,
-                    {
-                      color: theme.textSecondary,
-                      fontWeight: '600',
-                      fontSize: 10,
-                    },
-                  ]}
-                >
-                  {scheduleBadgeText}
-                </Text>
-              </View>
-            )}
-
-            {isMultiTarget && (
+              {/* Right side in RTL: Unified Check / Quantity Target Circle */}
               <Pressable
-                disabled={isFuture || !onPressQuantity}
-                accessibilityRole="button"
-                accessibilityLabel="تعديل الكمية المسجلة"
-                onPress={onPressQuantity}
-                hitSlop={4}
-                style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
-              >
-                <Text
-                  style={[
-                    typography.caption,
-                    {
-                      color: isTargetMet
-                        ? (habit.color || theme.primary)
-                        : safeCount > 0
-                        ? (habit.color || theme.primary)
-                        : theme.textMuted,
-                      fontWeight: isTargetMet || safeCount > 0 ? '600' : '400',
-                      textAlign: 'right',
-                    },
-                  ]}
-                >
-                  {`${toArabicNumerals(safeCount)} من ${toArabicNumerals(habit.targetCount)} ${habit.unit}${safeCount >= habit.targetCount ? ' ✓' : ''}`}
-                </Text>
-              </Pressable>
-            )}
-
-            {!habit.isActive && (
-              <Text
-                style={[
-                  typography.caption,
-                  {
-                    color: theme.textMuted,
-                    textAlign: 'right',
-                    marginRight: 8,
-                  },
-                ]}
-              >
-                • متوقفة
-              </Text>
-            )}
-
-            {isOffSchedule && (
-              <Text
-                style={[
-                  typography.caption,
-                  {
-                    color: theme.textSecondary,
-                    textAlign: 'right',
-                    marginRight: 6,
-                    fontSize: 11,
-                  },
-                ]}
-              >
-                • استراحة اليوم
-              </Text>
-            )}
-
-            {hasNote && (
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="عرض أو تعديل ملاحظة اليوم"
-                onPress={onPressNote}
-                hitSlop={6}
+                disabled={isFuture}
+                accessibilityRole={isMultiTarget ? 'button' : 'checkbox'}
+                accessibilityState={
+                  isMultiTarget ? undefined : { checked: effectiveCompleted, disabled: isFuture }
+                }
+                accessibilityLabel={
+                  isFuture
+                    ? `لا يمكن تسجيل إنجاز لتاريخ مستقبلي (${habit.name})`
+                    : isMultiTarget
+                      ? `تسجيل كمية ${habit.name} (${safeCount}/${habit.targetCount} ${habit.unit})`
+                      : effectiveCompleted
+                        ? `إلغاء إتمام ${habit.name}`
+                        : `تسجيل إتمام ${habit.name}`
+                }
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                onPress={handlePressCircle}
+                android_disableSound={false}
                 style={({ pressed }) => [
-                  styles.noteBadgePressable,
+                  styles.checkTarget,
                   {
-                    backgroundColor: habit.color
-                      ? theme.isDark
-                        ? `${habit.color}2A`
-                        : `${habit.color}1E`
-                      : theme.primaryLight,
-                    borderWidth: theme.isDark ? 1 : 0,
-                    borderColor: habit.color ? `${habit.color}40` : theme.border,
-                    borderRadius: radius.sm,
-                    opacity: pressed ? 0.6 : 1,
+                    minWidth: touchTarget,
+                    minHeight: touchTarget,
+                    opacity: isFuture ? 0.35 : pressed ? 0.6 : 1,
                   },
                 ]}
               >
-                <Ionicons name="document-text" size={11} color={habit.color || theme.primary} />
-                <Text
+                {/* Celebratory micro particle burst around the fixed button circle */}
+                <MicroParticleBurst ref={particleRef} color={habit.color || theme.primary} />
+
+                <View
                   style={[
-                    typography.caption,
+                    styles.checkCircle,
                     {
-                      color: habit.color || theme.primary,
-                      fontSize: 10,
-                      marginRight: 3,
-                      fontWeight: '600',
+                      borderColor: isTargetMet
+                        ? habit.color || theme.primary
+                        : isMultiTarget && safeCount > 0
+                          ? habit.color || theme.primary
+                          : isFuture
+                            ? theme.border
+                            : theme.isDark
+                              ? '#3E444E'
+                              : theme.textMuted,
+                      backgroundColor: isTargetMet
+                        ? habit.color || theme.primary
+                        : isMultiTarget && safeCount > 0
+                          ? `${habit.color || theme.primary}18`
+                          : theme.isDark
+                            ? 'rgba(255, 255, 255, 0.03)'
+                            : 'transparent',
                     },
                   ]}
                 >
-                  ملاحظة
-                </Text>
+                  {isTargetMet ? (
+                    <Ionicons name="checkmark" size={14} color="#FFFFFF" />
+                  ) : isMultiTarget ? (
+                    safeCount > 0 ? (
+                      <Ionicons name="add" size={14} color={habit.color || theme.primary} />
+                    ) : (
+                      <Ionicons name="add" size={14} color={theme.textMuted} />
+                    )
+                  ) : null}
+                </View>
               </Pressable>
-            )}
-          </View>
-        </View>
 
-        {/* Left side in RTL: Category Icon & Quick Actions Button */}
-        <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
-          {onPressQuickActions && (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`خيارات سريعة لعادة ${habit.name}`}
-              hitSlop={8}
-              onPress={onPressQuickActions}
-              style={({ pressed }) => [
-                styles.quickActionsBtn,
-                {
-                  opacity: pressed ? 0.4 : 0.8,
-                },
-              ]}
-            >
-              <Ionicons name="ellipsis-vertical" size={16} color={theme.textMuted} />
-            </Pressable>
-          )}
+              {/* Center: Habit Details */}
+              <View style={styles.textDetails}>
+                <View style={styles.nameRow}>
+                  <Text
+                    numberOfLines={1}
+                    style={[
+                      typography.bodyMedium,
+                      {
+                        color: isTargetMet ? theme.textMuted : theme.text,
+                        textAlign: 'right',
+                        textDecorationLine: isTargetMet ? 'line-through' : 'none',
+                        flexShrink: 1,
+                      },
+                    ]}
+                  >
+                    {habit.name}
+                  </Text>
+                  {habit.isPinned && (
+                    <View
+                      accessibilityLabel="عادة مثبتة ذات أولوية"
+                      style={[
+                        styles.pinnedBadge,
+                        {
+                          backgroundColor: theme.cardSecondary,
+                          borderColor: theme.border,
+                          borderRadius: radius.xs,
+                        },
+                      ]}
+                    >
+                      <Ionicons name="pin" size={10} color={theme.primary} />
+                    </View>
+                  )}
+                </View>
 
-          <View
-            style={[
-              styles.iconContainer,
-              {
-                backgroundColor: isTargetMet
-                  ? theme.cardSecondary
-                  : habit.color
-                  ? theme.isDark
-                    ? `${habit.color}2C`
-                    : `${habit.color}15`
-                  : theme.cardSecondary,
-                borderRadius: radius.sm,
-              },
-            ]}
-          >
-            <Ionicons
-              name={(habit.icon as any) || 'ellipse-outline'}
-              size={18}
-              color={
-                isTargetMet
-                  ? theme.textMuted
-                  : habit.color || theme.textSecondary
-              }
-            />
-          </View>
-        </View>
-      </View>
+                {/* Multi-target Progress Track */}
+                {isMultiTarget && (
+                  <ProgressBar
+                    progress={Math.min(100, Math.max(0, progressRatio * 100))}
+                    height={3}
+                    color={habit.color || theme.primary}
+                    style={{ marginTop: 4 }}
+                  />
+                )}
+
+                <View style={styles.metaRow}>
+                  {streak > 0 ? (
+                    <View
+                      style={{ flexDirection: 'row-reverse', alignItems: 'center', marginLeft: 8 }}
+                    >
+                      <Ionicons
+                        name="flame"
+                        size={12}
+                        color={habit.color || theme.primary}
+                        style={{ marginLeft: 3 }}
+                      />
+                      <Text
+                        style={[
+                          typography.caption,
+                          {
+                            color: theme.textSecondary,
+                            textAlign: 'right',
+                          },
+                        ]}
+                      >
+                        {formatHabitStreakArabic(streak, habit.frequency)}
+                      </Text>
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        flexDirection: 'row-reverse',
+                        alignItems: 'center',
+                        marginLeft: 8,
+                        opacity: 0.5,
+                      }}
+                    >
+                      <Ionicons
+                        name="flame"
+                        size={12}
+                        color={theme.textMuted}
+                        style={{ marginLeft: 3 }}
+                      />
+                      <Text
+                        style={[
+                          typography.caption,
+                          {
+                            color: theme.textMuted,
+                            textAlign: 'right',
+                          },
+                        ]}
+                      >
+                        {habit.frequency === 'weekly_target'
+                          ? '٠ أسابيع متتالية'
+                          : habit.frequency === 'monthly_target'
+                            ? '٠ أشهر متتالية'
+                            : '٠ أيام متتالية'}
+                      </Text>
+                    </View>
+                  )}
+
+                  {periodicBadgeText && (
+                    <View
+                      style={[
+                        styles.periodicBadge,
+                        {
+                          backgroundColor: theme.cardSecondary,
+                          borderColor: theme.border,
+                          borderRadius: radius.xs,
+                        },
+                      ]}
+                    >
+                      <Ionicons
+                        name="repeat-outline"
+                        size={11}
+                        color={theme.textSecondary}
+                        style={{ marginLeft: 3 }}
+                      />
+                      <Text
+                        style={[
+                          typography.caption,
+                          {
+                            color: theme.textSecondary,
+                            fontWeight: '600',
+                            fontSize: 10,
+                          },
+                        ]}
+                      >
+                        {periodicBadgeText}
+                      </Text>
+                    </View>
+                  )}
+
+                  {scheduleBadgeText && !periodicBadgeText && (
+                    <View
+                      style={[
+                        styles.periodicBadge,
+                        {
+                          backgroundColor: theme.cardSecondary,
+                          borderColor: theme.border,
+                          borderRadius: radius.xs,
+                        },
+                      ]}
+                    >
+                      <Ionicons
+                        name="calendar-outline"
+                        size={10}
+                        color={theme.textSecondary}
+                        style={{ marginLeft: 3 }}
+                      />
+                      <Text
+                        style={[
+                          typography.caption,
+                          {
+                            color: theme.textSecondary,
+                            fontWeight: '600',
+                            fontSize: 10,
+                          },
+                        ]}
+                      >
+                        {scheduleBadgeText}
+                      </Text>
+                    </View>
+                  )}
+
+                  {isMultiTarget && (
+                    <Pressable
+                      disabled={isFuture || !onPressQuantity}
+                      accessibilityRole="button"
+                      accessibilityLabel="تعديل الكمية المسجلة"
+                      onPress={onPressQuantity}
+                      hitSlop={4}
+                      style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+                    >
+                      <Text
+                        style={[
+                          typography.caption,
+                          {
+                            color: isTargetMet
+                              ? habit.color || theme.primary
+                              : safeCount > 0
+                                ? habit.color || theme.primary
+                                : theme.textMuted,
+                            fontWeight: isTargetMet || safeCount > 0 ? '600' : '400',
+                            textAlign: 'right',
+                          },
+                        ]}
+                      >
+                        {`${toArabicNumerals(safeCount)} من ${toArabicNumerals(habit.targetCount)} ${habit.unit}${safeCount >= habit.targetCount ? ' ✓' : ''}`}
+                      </Text>
+                    </Pressable>
+                  )}
+
+                  {!habit.isActive && (
+                    <Text
+                      style={[
+                        typography.caption,
+                        {
+                          color: theme.textMuted,
+                          textAlign: 'right',
+                          marginRight: 8,
+                        },
+                      ]}
+                    >
+                      • متوقفة
+                    </Text>
+                  )}
+
+                  {isOffSchedule && (
+                    <Text
+                      style={[
+                        typography.caption,
+                        {
+                          color: theme.textSecondary,
+                          textAlign: 'right',
+                          marginRight: 6,
+                          fontSize: 11,
+                        },
+                      ]}
+                    >
+                      • استراحة اليوم
+                    </Text>
+                  )}
+
+                  {hasNote && (
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="عرض أو تعديل ملاحظة اليوم"
+                      onPress={onPressNote}
+                      hitSlop={6}
+                      style={({ pressed }) => [
+                        styles.noteBadgePressable,
+                        {
+                          backgroundColor: habit.color
+                            ? theme.isDark
+                              ? `${habit.color}2A`
+                              : `${habit.color}1E`
+                            : theme.primaryLight,
+                          borderWidth: theme.isDark ? 1 : 0,
+                          borderColor: habit.color ? `${habit.color}40` : theme.border,
+                          borderRadius: radius.sm,
+                          opacity: pressed ? 0.6 : 1,
+                        },
+                      ]}
+                    >
+                      <Ionicons
+                        name="document-text"
+                        size={11}
+                        color={habit.color || theme.primary}
+                      />
+                      <Text
+                        style={[
+                          typography.caption,
+                          {
+                            color: habit.color || theme.primary,
+                            fontSize: 10,
+                            marginRight: 3,
+                            fontWeight: '600',
+                          },
+                        ]}
+                      >
+                        ملاحظة
+                      </Text>
+                    </Pressable>
+                  )}
+                </View>
+              </View>
+
+              {/* Left side in RTL: Category Icon & Quick Actions Button */}
+              <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
+                {onPressQuickActions && (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`خيارات سريعة لعادة ${habit.name}`}
+                    hitSlop={8}
+                    onPress={onPressQuickActions}
+                    style={({ pressed }) => [
+                      styles.quickActionsBtn,
+                      {
+                        opacity: pressed ? 0.4 : 0.8,
+                      },
+                    ]}
+                  >
+                    <Ionicons name="ellipsis-vertical" size={16} color={theme.textMuted} />
+                  </Pressable>
+                )}
+
+                <View
+                  style={[
+                    styles.iconContainer,
+                    {
+                      backgroundColor: isTargetMet
+                        ? theme.cardSecondary
+                        : habit.color
+                          ? theme.isDark
+                            ? `${habit.color}2C`
+                            : `${habit.color}15`
+                          : theme.cardSecondary,
+                      borderRadius: radius.sm,
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name={(habit.icon as any) || 'ellipse-outline'}
+                    size={18}
+                    color={isTargetMet ? theme.textMuted : habit.color || theme.textSecondary}
+                  />
+                </View>
+              </View>
+            </View>
           </Pressable>
         </Animated.View>
       </GestureDetector>

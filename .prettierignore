@@ -1,0 +1,16 @@
+node_modules/
+android/
+ios/
+dist/
+.expo/
+.agents/
+.claude/
+.scratch/
+package-lock.json
+.mcp.json
+docker-compose.sonarqube.yml
+*.md
+*.html
+*.db
+store_assets/
+صور التطبيق في جوجل بلاي/

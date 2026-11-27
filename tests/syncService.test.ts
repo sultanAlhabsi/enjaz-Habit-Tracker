@@ -182,13 +182,15 @@ test('sync reconciliation: local untoggle (completed: false) overrides older rem
 
   // Reconcile logic matching syncWithNeon:
   // 1. Should remote overwrite local?
-  const shouldPullFromRemote =
-    new Date(remoteCheckin.updatedAt) > new Date(localCheckin.updatedAt);
-  assert.equal(shouldPullFromRemote, false, 'Remote checkin must NOT overwrite newer local untoggle');
+  const shouldPullFromRemote = new Date(remoteCheckin.updatedAt) > new Date(localCheckin.updatedAt);
+  assert.equal(
+    shouldPullFromRemote,
+    false,
+    'Remote checkin must NOT overwrite newer local untoggle'
+  );
 
   // 2. Should local untoggle push to remote?
-  const shouldPushToRemote =
-    new Date(localCheckin.updatedAt) > new Date(remoteCheckin.updatedAt);
+  const shouldPushToRemote = new Date(localCheckin.updatedAt) > new Date(remoteCheckin.updatedAt);
   assert.equal(shouldPushToRemote, true, 'Local untoggle must push completed: false to remote');
 
   // 3. Final state is completed: false
@@ -308,9 +310,17 @@ test('neon serialization: habit parameters use boolean primitives and preserve m
   assert.equal(params[8], 3); // weekly_target_count
   assert.equal(params[9], 12); // monthly_target_count
   assert.equal(params[10], 15); // monthly_day
-  assert.equal(typeof params[12], 'boolean', 'is_active must be a boolean primitive for PostgreSQL');
+  assert.equal(
+    typeof params[12],
+    'boolean',
+    'is_active must be a boolean primitive for PostgreSQL'
+  );
   assert.equal(params[12], true);
-  assert.equal(typeof params[14], 'boolean', 'is_pinned must be a boolean primitive for PostgreSQL');
+  assert.equal(
+    typeof params[14],
+    'boolean',
+    'is_pinned must be a boolean primitive for PostgreSQL'
+  );
   assert.equal(params[14], true);
   assert.equal(params[15], 4); // order_index
 });
@@ -410,8 +420,13 @@ test('sync reconciliation: remote habit archival propagates to local habit', () 
   const remoteTime = new Date(remoteHabitArchived.updatedAt!).getTime();
   const localTime = new Date(localHabitActive.updatedAt!).getTime();
   const isRemoteArchivalNewer =
-    Boolean(remoteHabitArchived.archivedAt) && !localHabitActive.archivedAt && remoteTime >= localTime;
+    Boolean(remoteHabitArchived.archivedAt) &&
+    !localHabitActive.archivedAt &&
+    remoteTime >= localTime;
 
-  assert.equal(isRemoteArchivalNewer, true, 'Remote archival must be recognized as newer and pulled');
+  assert.equal(
+    isRemoteArchivalNewer,
+    true,
+    'Remote archival must be recognized as newer and pulled'
+  );
 });
-

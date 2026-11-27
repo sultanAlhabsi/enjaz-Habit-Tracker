@@ -1,12 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Pressable,
-  Vibration,
-  Platform,
-} from 'react-native';
+import { StyleSheet, View, Text, Pressable, Vibration, Platform } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -80,15 +73,8 @@ const BarColumn: React.FC<BarColumnProps> = ({
 
   return (
     <View style={styles.barColumn}>
-      <View
-        style={[
-          styles.barTrack,
-          { backgroundColor: isDark ? '#292926' : '#ECE8DE' },
-        ]}
-      >
-        <Animated.View
-          style={[styles.barFill, { backgroundColor: primaryColor }, barStyle]}
-        />
+      <View style={[styles.barTrack, { backgroundColor: isDark ? '#292926' : '#ECE8DE' }]}>
+        <Animated.View style={[styles.barFill, { backgroundColor: primaryColor }, barStyle]} />
       </View>
       <Text style={[styles.dayLabel, { color: mutedColor }]}>{day}</Text>
     </View>
@@ -164,20 +150,14 @@ export const OnboardingInteractiveCard2: React.FC<OnboardingInteractiveCard2Prop
   const cardAnimatedStyle = useAnimatedStyle(() => {
     'worklet';
     return {
-      transform: [
-        { translateY: floatTranslateY.value },
-        { scale: cardScale.value },
-      ],
+      transform: [{ translateY: floatTranslateY.value }, { scale: cardScale.value }],
     };
   });
 
   const flameAnimatedStyle = useAnimatedStyle(() => {
     'worklet';
     return {
-      transform: [
-        { scale: flameScale.value },
-        { rotate: `${flameRotate.value}deg` },
-      ],
+      transform: [{ scale: flameScale.value }, { rotate: `${flameRotate.value}deg` }],
     };
   });
 
@@ -238,9 +218,7 @@ export const OnboardingInteractiveCard2: React.FC<OnboardingInteractiveCard2Prop
             <Text style={[styles.chartTitle, { color: theme.textSecondary }]}>
               الالتزام هذا الأسبوع
             </Text>
-            <Text style={[styles.chartScore, { color: theme.primary }]}>
-              ٧ / ٧ أيام 🎯
-            </Text>
+            <Text style={[styles.chartScore, { color: theme.primary }]}>٧ / ٧ أيام 🎯</Text>
           </View>
 
           <View style={styles.barsContainer}>

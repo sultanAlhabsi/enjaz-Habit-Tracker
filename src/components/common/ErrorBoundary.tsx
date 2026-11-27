@@ -6,6 +6,7 @@ import {
   initialErrorBoundaryState,
   getDerivedStateFromError as coreGetDerivedState,
 } from './errorBoundaryCore';
+import { captureTelemetryException } from '../../services/telemetryService';
 
 interface Props {
   children: ReactNode;
@@ -28,6 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('[ErrorBoundary] Caught unhandled error:', error, errorInfo);
+    captureTelemetryException(error);
   }
 
   private handleReset = () => {
@@ -50,24 +52,35 @@ export class ErrorBoundary extends Component<Props, State> {
             <Text style={styles.title}>حدث خطأ غير متوقع</Text>
 
             <Text style={styles.description}>
-              نعتذر عن هذا الخطأ المؤقت. بيانات عاداتك وإنجازاتك محفوظة بأمان تام في الذاكرة المحلية لجهازك.
+              نعتذر عن هذا الخطأ المؤقت. بيانات عاداتك وإنجازاتك محفوظة بأمان تام في الذاكرة المحلية
+              لجهازك.
             </Text>
             {__DEV__ && this.state.error ? (
-              <Text style={{ fontSize: 11, color: '#888', marginTop: 4, marginBottom: 8, textAlign: 'center' }}>
+              <Text
+                style={{
+                  fontSize: 11,
+                  color: '#888',
+                  marginTop: 4,
+                  marginBottom: 8,
+                  textAlign: 'center',
+                }}
+              >
                 {this.state.error.message}
               </Text>
             ) : null}
 
             <Pressable
-              style={({ pressed }) => [
-                styles.button,
-                { opacity: pressed ? 0.8 : 1 },
-              ]}
+              style={({ pressed }) => [styles.button, { opacity: pressed ? 0.8 : 1 }]}
               onPress={this.handleReset}
               accessibilityRole="button"
               accessibilityLabel="إعادة تشغيل ومحاولة مجددة"
             >
-              <Ionicons name="refresh-outline" size={18} color="#FFFFFF" style={{ marginLeft: 8 }} />
+              <Ionicons
+                name="refresh-outline"
+                size={18}
+                color="#FFFFFF"
+                style={{ marginLeft: 8 }}
+              />
               <Text style={styles.buttonText}>إعادة المحاولة الآن</Text>
             </Pressable>
           </View>

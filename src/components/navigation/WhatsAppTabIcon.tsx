@@ -50,13 +50,7 @@ export const WhatsAppTabIcon: React.FC<WhatsAppTabIconProps> = ({
 
   return (
     <View style={styles.container}>
-      <Animated.View
-        style={[
-          styles.pill,
-          { backgroundColor: theme.tabPill },
-          pillAnimatedStyle,
-        ]}
-      />
+      <Animated.View style={[styles.pill, { backgroundColor: theme.tabPill }, pillAnimatedStyle]} />
       <View style={styles.iconWrapper}>
         <Ionicons name={iconName} size={size} color={iconColor} />
       </View>

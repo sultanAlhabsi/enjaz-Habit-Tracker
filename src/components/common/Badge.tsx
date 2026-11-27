@@ -28,14 +28,10 @@ export const Badge: React.FC<BadgeProps> = ({
   const bg = isDanger
     ? theme.destructiveLight
     : isPrimary
-    ? theme.primaryLight
-    : theme.cardSecondary;
+      ? theme.primaryLight
+      : theme.cardSecondary;
 
-  const textColor = isDanger
-    ? theme.destructive
-    : isPrimary
-    ? theme.primary
-    : theme.textSecondary;
+  const textColor = isDanger ? theme.destructive : isPrimary ? theme.primary : theme.textSecondary;
 
   const isSm = size === 'sm';
 

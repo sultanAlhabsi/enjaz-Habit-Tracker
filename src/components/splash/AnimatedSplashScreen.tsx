@@ -78,18 +78,10 @@ export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({
   return (
     <Animated.View
       pointerEvents={isExiting ? 'none' : 'auto'}
-      style={[
-        StyleSheet.absoluteFill,
-        styles.container,
-        { backgroundColor },
-        animatedStyle,
-      ]}
+      style={[StyleSheet.absoluteFill, styles.container, { backgroundColor }, animatedStyle]}
     >
       {/* Centered Minimalist Animated Ring Logo (matches native splash proportion) */}
-      <AnimatedLogoRing
-        size={135}
-        duration={1200}
-      />
+      <AnimatedLogoRing size={135} duration={1200} />
     </Animated.View>
   );
 };

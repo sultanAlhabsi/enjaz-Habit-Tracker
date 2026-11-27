@@ -15,11 +15,11 @@ import { useTheme } from '../../theme/ThemeContext';
 // Derived from icon.png pixel analysis (avg radii across all 12 segments)
 // All units in 0-100 coordinate space (viewBox="0 0 100 100")
 const SEGMENT_COUNT = 12;
-const SEGMENT_SPAN_DEG = 26;   // arc span per segment (leaves ~4 deg gap)
-const R_INNER = 25.4;          // inner radius (≈ 260px / 512 * 50)
-const R_OUTER = 31.5;          // outer radius (≈ 322px / 512 * 50)
-const GLOW_R_INNER = 23.2;     // slightly expanded inner for glow halo
-const GLOW_R_OUTER = 33.8;     // slightly expanded outer for glow halo
+const SEGMENT_SPAN_DEG = 26; // arc span per segment (leaves ~4 deg gap)
+const R_INNER = 25.4; // inner radius (≈ 260px / 512 * 50)
+const R_OUTER = 31.5; // outer radius (≈ 322px / 512 * 50)
+const GLOW_R_INNER = 23.2; // slightly expanded inner for glow halo
+const GLOW_R_OUTER = 33.8; // slightly expanded outer for glow halo
 const CX = 50;
 const CY = 50;
 const VIEW_BOX = '0 0 100 100';
@@ -58,7 +58,7 @@ const SEGMENTS = Array.from({ length: SEGMENT_COUNT }, (_, i) => {
 });
 
 // All 12 dark segments rendered in a single SVG path string (most efficient)
-const DARK_RING_PATH = SEGMENTS.map(s => s.core).join(' ');
+const DARK_RING_PATH = SEGMENTS.map((s) => s.core).join(' ');
 
 // ─── AnimatedGlowSegment ──────────────────────────────────────────────────────
 interface AnimatedGlowSegmentProps {
@@ -160,14 +160,8 @@ export const AnimatedLogoRing: React.FC<AnimatedLogoRingProps> = ({
 
   return (
     <View style={[styles.container, { width: size, height: size }, style]}>
-
       {/* ── Layer 1: Static charcoal base ring (one single SVG, zero overhead) ── */}
-      <Svg
-        viewBox={VIEW_BOX}
-        width={size}
-        height={size}
-        style={StyleSheet.absoluteFill}
-      >
+      <Svg viewBox={VIEW_BOX} width={size} height={size} style={StyleSheet.absoluteFill}>
         <Path d={DARK_RING_PATH} fill={effectiveInactive} />
       </Svg>
 
@@ -182,7 +176,6 @@ export const AnimatedLogoRing: React.FC<AnimatedLogoRingProps> = ({
           glowColor={effectiveGlow}
         />
       ))}
-
     </View>
   );
 };

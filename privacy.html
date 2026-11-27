@@ -191,28 +191,34 @@
     <div class="header">
       <div class="logo-badge">إنجاز • Enjaz</div>
       <h1>سياسة الخصوصية وأمان البيانات</h1>
-      <div class="meta">آخر تحديث: 24 سبتمبر 2026 | Last Updated: September 24, 2026</div>
+      <div class="meta">آخر تحديث: 27 نوفمبر 2026 | Last Updated: November 27, 2026</div>
     </div>
 
     <div class="highlight-box">
-      تطبيق <strong>"إنجاز"</strong> مبني وفق مبدأ أساسي راسخ: <strong>الخصوصية أولاً (Privacy-First)</strong> والتخزين المحلي المباشر (<strong>100% Local-First &amp; Offline</strong>). نحن نؤمن بأن عاداتك اليومية وسجلاتك وأفكارك هي بياناتك الشخصية البحتة التي لا يحق لأحد الاطلاع عليها.
+      تطبيق <strong>"إنجاز"</strong> مبني وفق مبدأ أساسي راسخ: <strong>الخصوصية أولاً (Privacy-First)</strong> والتخزين المحلي المباشر (<strong>Local-First</strong>). نحن نؤمن بأن عاداتك اليومية وسجلاتك وأفكارك هي بياناتك الشخصية البحتة التي لا يحق لأحد الاطلاع عليها.
     </div>
 
     <h2>1. ما البيانات التي يجمعها التطبيق؟</h2>
     <ul>
       <li><strong>البيانات المحلية:</strong> جميع العادات المسجلة، التواريخ، السجلات اليومية، والملاحظات والخواطر، تُخزن محلياً داخل جهازك بشكل كامل في قاعدة بيانات SQLite في المساحة المعزولة الخاصة بالتطبيق (App Sandboxed Storage).</li>
       <li><strong>لا توجد بيانات شخصية إلزامية:</strong> لا يتطلب التطبيق منك تسجيل الاسم، البريد الإلكتروني، رقم الهاتف، أو إنشاء حساب للبدء في استخدامه.</li>
-      <li><strong>لا تتبع ولا إعلانات:</strong> التطبيق خالٍ تماماً 100% من أي برمجيات إعلانية (No Advertising SDKs)، أو برمجيات تتبع سلوكي (No Third-Party Analytics)، أو أدوات جمع البيانات التعريفية للأجهزة (No Device Fingerprinting).</li>
+      <li><strong>لا إعلانات ولا تتبع سلوكي:</strong> التطبيق خالٍ تماماً 100% من أي برمجيات إعلانية (No Advertising SDKs)، أو برمجيات تتبع سلوكي (No Behavioral Analytics)، أو أدوات جمع البيانات التعريفية للأجهزة (No Device Fingerprinting).</li>
     </ul>
 
-    <h2>2. لا توجد خوادم ولا مزامنة سحابية (100% Offline &amp; Local-First)</h2>
+    <h2>2. تقارير الأعطال والأداء الاختيارية (Opt-In Diagnostics)</h2>
     <ul>
-      <li><strong>تطبيق محلي بالكامل:</strong> يعمل تطبيق "إنجاز" بشكل مستقل ومحلي بنسبة 100% على جهازك دون الحاجة إلى أي خوادم سحابية (No Cloud Servers) أو قواعد بيانات خارجية.</li>
-      <li><strong>عاداتك لا تغادر هاتفك:</strong> لا يتم إرسال أو رفع أو تخزين أي من عاداتك، سجلاتك، تواريخك، أو ملاحظاتك الشخصية على أي سيرفر أو خادم إطلاقاً.</li>
-      <li><strong>لا توجد معالجة خارجية:</strong> جميع العمليات الحسابية، تتبع السلاسل (Streaks)، والإحصائيات تتم معالجتها بالكامل داخل معالج جهازك وبشكل فوري.</li>
+      <li><strong>معطّلة افتراضياً:</strong> لا يرسل التطبيق أي تقارير أعطال أو مقاييس أداء خارج جهازك بشكل افتراضي.</li>
+      <li><strong>خيار طوعي في الإعدادات:</strong> فقط عند تفعيلك لخيار <strong>"إرسال تقارير الأعطال لتحسين التطبيق"</strong> من الإعدادات، قد تُرسل تقارير تقنية مجهولة للأعطال (عبر <code>Sentry</code>) ومقاييس سرعة الإقلاع والتنقل (عبر <code>Expo Observe</code>) لغرض تحسين الاستقرار والأداء.</li>
+      <li><strong>عدم إرسال محتواك:</strong> يتم تعطيل جمع البيانات الشخصية (PII) وتنقيتها قبل الإرسال؛ لا يتم إطلاقاً إرسال أسماء عاداتك أو ملاحظاتك أو سجلاتك اليومية، ويمكنك إيقاف الخيار في أي وقت.</li>
     </ul>
 
-    <h2>3. الأذونات والصلاحيات (Permissions)</h2>
+    <h2>3. التخزين المحلي لبيانات عاداتك (Local-First)</h2>
+    <ul>
+      <li><strong>عاداتك لا تغادر هاتفك:</strong> لا يتم إرسال أو رفع أو تخزين أي من عاداتك، سجلاتك، تواريخك، أو ملاحظاتك الشخصية على أي سيرفر أو خادم إطلاقاً.</li>
+      <li><strong>لا توجد معالجة خارجية لبياناتك:</strong> جميع العمليات الحسابية، تتبع السلاسل (Streaks)، والإحصائيات تتم معالجتها بالكامل داخل معالج جهازك وبشكل فوري.</li>
+    </ul>
+
+    <h2>4. الأذونات والصلاحيات (Permissions)</h2>
     <p>يطلب التطبيق فقط الحد الأدنى الصارم من الأذونات التي تخدم وظائفه التشغيلية المباشرة:</p>
     <table>
       <thead>
@@ -232,7 +238,7 @@
         </tr>
         <tr>
           <td><strong>الإنترنت (<code>INTERNET</code>)</strong></td>
-          <td>فقط لفتح الروابط الخارجية (مثل مستودع المشروع والتواصل) عبر المتصفح الخارجي عند طلب المستخدم، ولا يُستخدم لنقل أي بيانات عادات.</td>
+          <td>لفتح الروابط الخارجية (مثل مستودع المشروع والتواصل) عبر المتصفح الخارجي، ولإرسال تقارير الأعطال والأداء التقنية <strong>فقط</strong> عند تفعيل الخيار الطوعي في الإعدادات.</td>
         </tr>
       </tbody>
     </table>
@@ -240,16 +246,16 @@
       🚫 <strong>تأكيد:</strong> التطبيق <strong>لا يطلب ولا يستخدم</strong> أذونات التخزين المشترك (<code>READ/WRITE_EXTERNAL_STORAGE</code>)، ولا إذن تعديل إعدادات الصوت (<code>MODIFY_AUDIO_SETTINGS</code>)، ولا إذن الميكروفون (<code>RECORD_AUDIO</code>)، ولا يطلب موقعك الجغرافي (<code>ACCESS_FINE_LOCATION</code>)، ولا جهات اتصالك، ولا يطلب صلاحية النوافذ العائمة (<code>SYSTEM_ALERT_WINDOW</code>).
     </div>
 
-    <h2>4. ملكية البيانات والتحكم الكامل</h2>
+    <h2>5. ملكية البيانات والتحكم الكامل</h2>
     <ul>
       <li><strong>تصدير البيانات:</strong> يتيح لك التطبيق في أي وقت تصدير نسخة كاملة من عاداتك وسجلاتك بصيغة <strong>JSON</strong> أو جداول <strong>CSV</strong> ومشاركتها أو حفظها أينما شئت.</li>
       <li><strong>حذف البيانات نهائياً:</strong> يمكنك من شاشة "الإعدادات &gt; مسح كافة البيانات نهائياً" مسح كل عاداتك وسجلاتك بنقرة واحدة من جهازك بشكل فوري ودائم لا رجعة فيه.</li>
     </ul>
 
-    <h2>5. خصوصية الأطفال</h2>
+    <h2>6. خصوصية الأطفال</h2>
     <p>التطبيق أداة إنتاجية وتطوير ذاتي مناسبة لجميع الفئات العمرية (13 سنة فما فوق) ولا يجمع أي معلومات شخصية موجهة للأطفال أو القاصرين.</p>
 
-    <h2>6. التواصل والاستفسارات</h2>
+    <h2>7. التواصل والاستفسارات</h2>
     <p>إذا كان لديك أي سؤال أو استفسار حول سياسة الخصوصية وأمان البيانات في تطبيق "إنجاز"، يمكنك التواصل معنا عبر:</p>
     <ul>
       <li><strong>البريد الإلكتروني:</strong> <a href="mailto:ssultan.j2@gmail.com" class="contact-link">ssultan.j2@gmail.com</a></li>
@@ -260,41 +266,47 @@
     <div class="en-section">
       <div class="logo-badge">English Summary</div>
       <h1>Privacy Policy &amp; Data Safety — Enjaz Habit Tracker</h1>
-      <div class="meta">Effective Date: September 24, 2026</div>
+      <div class="meta">Effective Date: November 27, 2026</div>
 
       <div class="highlight-box">
-        <strong>Enjaz Habit Tracker</strong> is engineered with a strict <strong>100% Offline, Privacy-First, Local-First</strong> architecture. All habit logs, streaks, and personal reflections belong solely to you.
+        <strong>Enjaz Habit Tracker</strong> is engineered with a strict <strong>Privacy-First, Local-First</strong> architecture. All habit logs, streaks, and personal reflections belong solely to you.
       </div>
 
       <h2>1. Data Collection &amp; Storage</h2>
       <ul>
         <li><strong>Local-First Storage:</strong> All habits, logs, checkins, and diary notes reside strictly in an on-device sandboxed SQLite database.</li>
         <li><strong>No Account Required:</strong> No registration, name, email address, phone number, or login credentials are required to use the app.</li>
-        <li><strong>Zero Ads &amp; Zero Tracking:</strong> The application contains 0% advertising SDKs, 0% third-party behavior tracking, and no device fingerprinting tools.</li>
+        <li><strong>Zero Ads &amp; Zero Behavioral Tracking:</strong> The application contains 0% advertising SDKs, 0% third-party behavior tracking, and no device fingerprinting tools.</li>
       </ul>
 
-      <h2>2. No Cloud &amp; Offline Architecture</h2>
+      <h2>2. Optional Opt-In Crash &amp; Performance Diagnostics</h2>
       <ul>
-        <li>The application operates completely offline with NO cloud servers, NO cloud databases, and no remote data storage.</li>
-        <li>Your personal habit data never leaves your device under any circumstance.</li>
-        <li>We never sell, rent, monetize, or transmit your records to any third party.</li>
+        <li>Crash reporting and performance diagnostics are <strong>disabled by default</strong>.</li>
+        <li>Only when you explicitly opt in via Settings ("إرسال تقارير الأعطال لتحسين التطبيق"), anonymized crash logs (<code>Sentry</code>) and startup/navigation performance metrics (<code>Expo Observe</code>) may be sent solely to diagnose bugs and improve app stability.</li>
+        <li>Personal identifiable information (PII) collection is disabled, and user-entered habit names, notes, or check-in records are scrubbed and never transmitted.</li>
       </ul>
 
-      <h2>3. Device Permissions</h2>
+      <h2>3. Local-First Habit Data</h2>
+      <ul>
+        <li>Your personal habit data, notes, and schedules never leave your device under any circumstance.</li>
+        <li>We never sell, rent, or monetize your records to any third party.</li>
+      </ul>
+
+      <h2>4. Device Permissions</h2>
       <ul>
         <li><code>POST_NOTIFICATIONS</code>: Delivers locally-scheduled habit reminders and evening reflections configured by the user.</li>
         <li><code>VIBRATE</code>: Provides tactile haptic feedback upon habit check-ins.</li>
-        <li><code>INTERNET</code>: Standard network access solely for launching external documentation/support links in the device browser.</li>
-        <li><em>No microphone recording, no geographic location, and no background services.</em></li>
+        <li><code>INTERNET</code>: Used for launching external documentation/support links in the device browser and, strictly when opted in by the user, sending anonymized crash/performance diagnostics.</li>
+        <li><em>No microphone recording, no geographic location, and no background tracking services.</em></li>
       </ul>
 
-      <h2>4. Data Ownership &amp; Erasure</h2>
+      <h2>5. Data Ownership &amp; Erasure</h2>
       <ul>
         <li><strong>Export:</strong> Users can export complete data archives at any time as JSON or CSV spreadsheets.</li>
         <li><strong>Deletion:</strong> A one-click permanent erasure tool is provided within Settings ("مسح كافة البيانات نهائياً") to purge all local data immediately.</li>
       </ul>
 
-      <h2>5. Contact Us</h2>
+      <h2>6. Contact Us</h2>
       <p>For any privacy inquiries or policy questions, please contact:</p>
       <ul>
         <li><strong>Developer Email:</strong> <a href="mailto:ssultan.j2@gmail.com" class="contact-link">ssultan.j2@gmail.com</a></li>

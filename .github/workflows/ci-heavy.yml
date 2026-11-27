@@ -1,0 +1,87 @@
+name: 'CI Heavy (Trivy & npm audit)'
+
+on:
+  push:
+    branches: ['main']
+  schedule:
+    - cron: '0 3 * * *' # Runs daily at 03:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  trivy:
+    name: Trivy (CVEs, Secrets & Misconfigs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Run Trivy filesystem & dependency scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          scanners: 'vuln,misconfig,secret'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          skip-dirs: 'node_modules,android,.expo,dist,.agents,.claude'
+
+      - name: Upload Trivy SARIF to GitHub Security
+        if: always() && hashFiles('trivy-results.sarif') != ''
+        uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+        with:
+          sarif_file: trivy-results.sarif
+          category: trivy
+
+  npm-audit:
+    name: npm audit Vulnerability Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Run npm audit summary
+        run: |
+          set +e
+          npm audit --json > npm-audit.json
+          AUDIT_EXIT=$?
+          set -e
+          node -e '
+            const fs = require("fs");
+            const data = JSON.parse(fs.readFileSync("npm-audit.json", "utf8"));
+            const v = data.metadata?.vulnerabilities || {};
+            const lines = [
+              "### npm audit summary",
+              "",
+              "| Severity | Count |",
+              "| :--- | ---: |",
+              `| Critical | ${v.critical ?? 0} |`,
+              `| High | ${v.high ?? 0} |`,
+              `| Moderate | ${v.moderate ?? 0} |`,
+              `| Low | ${v.low ?? 0} |`,
+              `| Info | ${v.info ?? 0} |`,
+              `| **Total** | **${v.total ?? 0}** |`,
+            ];
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join("\n") + "\n");
+          '
+          echo "npm audit exit code: $AUDIT_EXIT (details in Job Summary and Trivy SARIF)"

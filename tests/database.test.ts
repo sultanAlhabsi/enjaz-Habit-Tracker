@@ -671,7 +671,3 @@ test('database: deduplicateLocalHabits consolidates duplicate habits and reassig
   // Both checkins should now point to canonical habit 'h_dup_1'
   assert.ok(checkinsAfter.every((c) => c.habitId === 'h_dup_1'));
 });
-
-
-
-

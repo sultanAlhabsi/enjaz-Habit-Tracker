@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { ObserveNavigationContainer } from 'expo-observe/integrations/react-navigation';
 import {
   createBottomTabNavigator,
   BottomTabNavigationOptions,
@@ -69,7 +69,7 @@ export const AppNavigator: React.FC = () => {
   const hasCompletedOnboarding = useHabitStore((state) => state.hasCompletedOnboarding);
 
   return (
-    <NavigationContainer
+    <ObserveNavigationContainer
       theme={{
         dark: isDark,
         colors: {
@@ -133,8 +133,6 @@ export const AppNavigator: React.FC = () => {
           }}
         />
       </Stack.Navigator>
-    </NavigationContainer>
+    </ObserveNavigationContainer>
   );
 };
-
-

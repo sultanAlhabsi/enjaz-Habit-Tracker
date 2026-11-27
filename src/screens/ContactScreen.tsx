@@ -67,7 +67,11 @@ export const ContactScreen: React.FC<ContactScreenProps> = ({ navigation }) => {
     ].join('\n');
   };
 
-  const buildFullMessage = (): { emailSubject: string; emailBody: string; fullShareText: string } => {
+  const buildFullMessage = (): {
+    emailSubject: string;
+    emailBody: string;
+    fullShareText: string;
+  } => {
     const formattedSubject = subject.trim()
       ? `[إنجاز - ${activeCategory.label}] ${subject.trim()}`
       : `[إنجاز] ${activeCategory.prefix}`;
@@ -176,11 +180,7 @@ export const ContactScreen: React.FC<ContactScreenProps> = ({ navigation }) => {
         style={({ pressed }) => [
           styles.categoryChip,
           {
-            backgroundColor: isSelected
-              ? isDark
-                ? '#1F2E25'
-                : '#EBF2EE'
-              : theme.cardSecondary,
+            backgroundColor: isSelected ? (isDark ? '#1F2E25' : '#EBF2EE') : theme.cardSecondary,
             borderColor: isSelected ? theme.primary : theme.border,
             borderRadius: radius.md,
             opacity: pressed ? 0.75 : 1,
@@ -231,17 +231,39 @@ export const ContactScreen: React.FC<ContactScreenProps> = ({ navigation }) => {
         >
           {/* Feedback Form Section */}
           <View style={styles.sectionHeader}>
-            <Text style={[typography.subMedium, { color: theme.text, fontWeight: '700', textAlign: 'right' }]}>
+            <Text
+              style={[
+                typography.subMedium,
+                { color: theme.text, fontWeight: '700', textAlign: 'right' },
+              ]}
+            >
               نموذج إرسال ملاحظة أو اقتراح
             </Text>
-            <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginTop: 2 }]}>
+            <Text
+              style={[
+                typography.caption,
+                { color: theme.textSecondary, textAlign: 'right', marginTop: 2 },
+              ]}
+            >
               اختر نوع الرسالة واكتب ما ترغب في مشاركته
             </Text>
           </View>
 
-          <Card style={[styles.formCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Card
+            style={[styles.formCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+          >
             {/* 2x2 Balanced Category Grid */}
-            <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginBottom: 8, fontWeight: '600' }]}>
+            <Text
+              style={[
+                typography.caption,
+                {
+                  color: theme.textSecondary,
+                  textAlign: 'right',
+                  marginBottom: 8,
+                  fontWeight: '600',
+                },
+              ]}
+            >
               نوع الرسالة
             </Text>
 
@@ -258,7 +280,17 @@ export const ContactScreen: React.FC<ContactScreenProps> = ({ navigation }) => {
 
             {/* Subject Input */}
             <View style={styles.inputGroup}>
-              <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginBottom: 6, fontWeight: '600' }]}>
+              <Text
+                style={[
+                  typography.caption,
+                  {
+                    color: theme.textSecondary,
+                    textAlign: 'right',
+                    marginBottom: 6,
+                    fontWeight: '600',
+                  },
+                ]}
+              >
                 عنوان الرسالة (اختياري)
               </Text>
               <TextInput
@@ -282,7 +314,17 @@ export const ContactScreen: React.FC<ContactScreenProps> = ({ navigation }) => {
 
             {/* Message Body Input */}
             <View style={styles.inputGroup}>
-              <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginBottom: 6, fontWeight: '600' }]}>
+              <Text
+                style={[
+                  typography.caption,
+                  {
+                    color: theme.textSecondary,
+                    textAlign: 'right',
+                    marginBottom: 6,
+                    fontWeight: '600',
+                  },
+                ]}
+              >
                 نص الرسالة والملاحظات
               </Text>
               <TextInput
@@ -321,7 +363,12 @@ export const ContactScreen: React.FC<ContactScreenProps> = ({ navigation }) => {
                 thumbColor={includeDiagnostics ? theme.primary : '#F4F3EF'}
               />
               <View style={styles.switchTextContainer}>
-                <Text style={[typography.caption, { color: theme.text, fontWeight: '600', textAlign: 'right' }]}>
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.text, fontWeight: '600', textAlign: 'right' },
+                  ]}
+                >
                   تضمين معلومات النظام والإصدار
                 </Text>
                 <Text
@@ -330,7 +377,8 @@ export const ContactScreen: React.FC<ContactScreenProps> = ({ navigation }) => {
                     { color: theme.textMuted, fontSize: 11, textAlign: 'right', marginTop: 2 },
                   ]}
                 >
-                  إرفاق تلقائي ({Platform.OS === 'ios' ? 'iOS' : 'Android'} • v{APP_VERSION}) للمساعدة في فحص المشاكل
+                  إرفاق تلقائي ({Platform.OS === 'ios' ? 'iOS' : 'Android'} • v{APP_VERSION})
+                  للمساعدة في فحص المشاكل
                 </Text>
               </View>
             </View>
@@ -364,7 +412,13 @@ export const ContactScreen: React.FC<ContactScreenProps> = ({ navigation }) => {
             <Text
               style={[
                 typography.caption,
-                { color: theme.textMuted, fontSize: 11.5, textAlign: 'center', marginHorizontal: 6, lineHeight: 18 },
+                {
+                  color: theme.textMuted,
+                  fontSize: 11.5,
+                  textAlign: 'center',
+                  marginHorizontal: 6,
+                  lineHeight: 18,
+                },
               ]}
             >
               خصوصيتك محفوظة؛ الرسائل تُرسل مباشرة عبر بريدك المفضل دون أي خوادم أو وسطاء.

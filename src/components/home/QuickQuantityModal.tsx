@@ -14,7 +14,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Habit } from '../../types/habit';
 import { useTheme } from '../../theme/ThemeContext';
 import { Button } from '../common/Button';
-import { formatArabicDate, normalizeArabicNumerals, toArabicNumerals } from '../../utils/habitUtils';
+import {
+  formatArabicDate,
+  normalizeArabicNumerals,
+  toArabicNumerals,
+} from '../../utils/habitUtils';
 import { triggerLightHaptic, triggerSuccessHaptic } from '../../utils/haptics';
 
 interface QuickQuantityModalProps {
@@ -35,7 +39,9 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
   onSave,
 }) => {
   const { theme, radius, spacing, typography, touchTarget } = useTheme();
-  const [inputText, setInputText] = useState<string>(currentCount > 0 ? toArabicNumerals(currentCount) : '');
+  const [inputText, setInputText] = useState<string>(
+    currentCount > 0 ? toArabicNumerals(currentCount) : ''
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -87,12 +93,7 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
   ];
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.modalOverlay}
@@ -133,7 +134,12 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
                   <Text style={[typography.h3, { color: theme.text, textAlign: 'right' }]}>
                     {habit.name}
                   </Text>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginTop: 2 }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'right', marginTop: 2 },
+                    ]}
+                  >
                     تسجيل كمية: {formatArabicDate(date)}
                   </Text>
                 </View>
@@ -169,14 +175,30 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
                 },
               ]}
             >
-              <View style={{ flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View
+                style={{
+                  flexDirection: 'row-reverse',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
-                  <Ionicons name="flag-outline" size={14} color={habit.color || theme.primary} style={{ marginLeft: 6 }} />
+                  <Ionicons
+                    name="flag-outline"
+                    size={14}
+                    color={habit.color || theme.primary}
+                    style={{ marginLeft: 6 }}
+                  />
                   <Text style={[typography.subMedium, { color: theme.text, fontWeight: '700' }]}>
                     الحد الأدنى المطلوب:
                   </Text>
                 </View>
-                <Text style={[typography.subMedium, { color: habit.color || theme.primary, fontWeight: '700' }]}>
+                <Text
+                  style={[
+                    typography.subMedium,
+                    { color: habit.color || theme.primary, fontWeight: '700' },
+                  ]}
+                >
                   {toArabicNumerals(targetCount)} {habit.unit}
                 </Text>
               </View>
@@ -224,7 +246,12 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
                     },
                   ]}
                 />
-                <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'center', marginTop: 4 }]}>
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textMuted, textAlign: 'center', marginTop: 4 },
+                  ]}
+                >
                   {habit.unit}
                 </Text>
               </View>
@@ -280,7 +307,9 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
                 style={({ pressed }) => [
                   styles.chipBtn,
                   {
-                    backgroundColor: isCompleted ? theme.cardSecondary : `${habit.color || theme.primary}15`,
+                    backgroundColor: isCompleted
+                      ? theme.cardSecondary
+                      : `${habit.color || theme.primary}15`,
                     borderColor: isCompleted ? theme.border : habit.color || theme.primary,
                     borderRadius: radius.sm,
                     opacity: pressed ? 0.6 : 1,
@@ -290,7 +319,10 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
                 <Text
                   style={[
                     typography.caption,
-                    { color: isCompleted ? theme.textSecondary : habit.color || theme.primary, fontWeight: '700' },
+                    {
+                      color: isCompleted ? theme.textSecondary : habit.color || theme.primary,
+                      fontWeight: '700',
+                    },
                   ]}
                 >
                   الحد الأدنى ({targetCount})
@@ -312,7 +344,12 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
                     },
                   ]}
                 >
-                  <Text style={[typography.caption, { color: theme.destructive || '#E74C3C', fontWeight: '600' }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.destructive || '#E74C3C', fontWeight: '600' },
+                    ]}
+                  >
                     تصفير
                   </Text>
                 </Pressable>
@@ -331,7 +368,13 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
                 },
               ]}
             >
-              <View style={{ flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View
+                style={{
+                  flexDirection: 'row-reverse',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
                   <Ionicons
                     name={isCompleted ? 'checkmark-circle' : 'time-outline'}
@@ -389,8 +432,14 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
               </View>
 
               {!isCompleted && parsedCount > 0 && (
-                <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'right', marginTop: 6, fontSize: 11 }]}>
-                  * يتبقى {Math.max(0, targetCount - parsedCount)} {habit.unit} لتحقيق الحد الأدنى واحتساب العادة مكتملة.
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textMuted, textAlign: 'right', marginTop: 6, fontSize: 11 },
+                  ]}
+                >
+                  * يتبقى {Math.max(0, targetCount - parsedCount)} {habit.unit} لتحقيق الحد الأدنى
+                  واحتساب العادة مكتملة.
                 </Text>
               )}
             </View>
@@ -405,12 +454,7 @@ export const QuickQuantityModal: React.FC<QuickQuantityModalProps> = ({
                 style={{ marginBottom: spacing.xs }}
               />
 
-              <Button
-                title="إلغاء"
-                variant="outline"
-                onPress={onClose}
-                disabled={isSaving}
-              />
+              <Button title="إلغاء" variant="outline" onPress={onClose} disabled={isSaving} />
             </View>
           </ScrollView>
         </View>

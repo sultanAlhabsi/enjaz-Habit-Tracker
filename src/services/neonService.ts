@@ -66,10 +66,7 @@ export interface NeonQueryResult<T = any> {
  * Execute a parameterized query against the Neon PostgreSQL HTTP endpoint.
  * Throws immediately if DATABASE_URL was not provided via EAS Secrets.
  */
-export const runNeonQuery = async <T = any>(
-  query: string,
-  params: any[] = []
-): Promise<T[]> => {
+export const runNeonQuery = async <T = any>(query: string, params: any[] = []): Promise<T[]> => {
   const connString = getNeonConnectionString() || NEON_CONNECTION_STRING;
   const host = _getHost(connString);
   const endpoint = host ? `https://${host}/sql` : null;
@@ -233,17 +230,13 @@ export const fetchNeonHabits = async (): Promise<Habit[]> => {
           ? Number(r.monthly_target_count)
           : undefined,
       monthlyDay:
-        r.monthly_day !== null && r.monthly_day !== undefined
-          ? Number(r.monthly_day)
-          : undefined,
+        r.monthly_day !== null && r.monthly_day !== undefined ? Number(r.monthly_day) : undefined,
       unit: String(r.unit || 'مرة'),
       isActive: r.is_active === 1 || r.is_active === true || r.is_active === '1',
       reminderTime: r.reminder_time ? String(r.reminder_time) : undefined,
       isPinned: r.is_pinned === 1 || r.is_pinned === true || r.is_pinned === '1',
       order:
-        r.order_index !== null && r.order_index !== undefined
-          ? Number(r.order_index)
-          : undefined,
+        r.order_index !== null && r.order_index !== undefined ? Number(r.order_index) : undefined,
       createdAt: new Date(r.created_at).toISOString(),
       archivedAt: r.archived_at ? new Date(r.archived_at).toISOString() : undefined,
       updatedAt: r.updated_at ? new Date(r.updated_at).toISOString() : undefined,
@@ -326,9 +319,7 @@ export const upsertNeonHabit = async (habit: Habit): Promise<void> => {
  * Fetch all checkins from Neon cloud.
  */
 export const fetchNeonCheckins = async (): Promise<HabitCheckin[]> => {
-  const rows = await runNeonQuery<any>(
-    'SELECT * FROM checkins ORDER BY date DESC;'
-  );
+  const rows = await runNeonQuery<any>('SELECT * FROM checkins ORDER BY date DESC;');
 
   return rows.map((r) => ({
     id: String(r.id),
@@ -363,9 +354,7 @@ export const upsertNeonCheckin = async (checkin: HabitCheckin): Promise<void> =>
  * Fetch all meta preferences from Neon.
  */
 export const fetchNeonMeta = async (): Promise<Record<string, string>> => {
-  const rows = await runNeonQuery<{ key: string; value: string }>(
-    'SELECT key, value FROM meta;'
-  );
+  const rows = await runNeonQuery<{ key: string; value: string }>('SELECT key, value FROM meta;');
   const result: Record<string, string> = {};
   for (const r of rows) {
     result[r.key] = r.value;
@@ -415,4 +404,3 @@ export const fetchNeonDeletedHabits = async (): Promise<string[]> => {
 export const deleteNeonCheckin = async (habitId: string, date: string): Promise<void> => {
   await runNeonQuery('DELETE FROM checkins WHERE habit_id = $1 AND date = $2;', [habitId, date]);
 };
-

@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Share,
-} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, Share } from 'react-native';
 import { appAlert } from '../services/alertService';
 import { Text } from '../components/common/AppText';
 import { Ionicons } from '@expo/vector-icons';
@@ -48,10 +42,7 @@ interface HabitDetailsScreenProps {
   navigation: any;
 }
 
-export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
-  route,
-  navigation,
-}) => {
+export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({ route, navigation }) => {
   const insets = useSafeAreaInsets();
   const { theme, spacing, radius, typography, touchTarget } = useTheme();
   const {
@@ -95,8 +86,111 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
     initialDate && dayjs(initialDate).isValid() ? initialDate : todayStr
   );
   const [isQuantityModalVisible, setIsQuantityModalVisible] = useState(false);
+  const [habitHistoricalCheckins, setHabitHistoricalCheckins] = useState<HabitCheckin[]>([]);
 
-  if (!habit) {
+  const targetHabitId = habit?.id ?? '';
+
+  const activeCheckin = useMemo(
+    () =>
+      targetHabitId
+        ? checkins.find((c) => c.habitId === targetHabitId && c.date === selectedDate)
+        : undefined,
+    [checkins, targetHabitId, selectedDate]
+  );
+
+  useEffect(() => {
+    if (!targetHabitId) return;
+    let isMounted = true;
+    fetchCheckinsForHabit(targetHabitId).then((records) => {
+      if (isMounted) {
+        setHabitHistoricalCheckins(records);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [targetHabitId]);
+
+  // Merge full historical database checkins with live store checkins for instant reactivity
+  const effectiveHabitCheckins = useMemo(() => {
+    if (!targetHabitId) return [];
+    const map = new Map<string, HabitCheckin>();
+    for (let i = 0; i < habitHistoricalCheckins.length; i++) {
+      const c = habitHistoricalCheckins[i];
+      map.set(c.date, c);
+    }
+    for (let i = 0; i < checkins.length; i++) {
+      const c = checkins[i];
+      if (c.habitId === targetHabitId) {
+        map.set(c.date, c);
+      }
+    }
+    return Array.from(map.values());
+  }, [habitHistoricalCheckins, checkins, targetHabitId]);
+
+  const completedDates = useMemo(
+    () => new Set(effectiveHabitCheckins.filter((c) => c.completed).map((c) => c.date)),
+    [effectiveHabitCheckins]
+  );
+
+  const stats = useMemo(
+    () => (habit ? calculateHabitStats(habit, effectiveHabitCheckins) : null),
+    [habit, effectiveHabitCheckins]
+  );
+
+  const totalLoggedUnits = useMemo(
+    () => (targetHabitId ? calculateTotalLoggedUnits(targetHabitId, effectiveHabitCheckins) : 0),
+    [targetHabitId, effectiveHabitCheckins]
+  );
+
+  const category = useMemo(() => (habit ? getHabitCategory(habit.icon) : null), [habit]);
+
+  const streakStatus = useMemo(
+    () => (habit ? getHabitStreakStatus(habit, effectiveHabitCheckins, selectedDate) : null),
+    [habit, effectiveHabitCheckins, selectedDate]
+  );
+
+  const milestoneInfo = useMemo(
+    () => calculateStreakMilestone(stats?.currentStreak ?? 0),
+    [stats?.currentStreak]
+  );
+
+  const consistencyPattern = useMemo(
+    () =>
+      habit ? calculateHabitConsistencyPattern(habit, effectiveHabitCheckins, todayStr) : null,
+    [habit, effectiveHabitCheckins, todayStr]
+  );
+
+  const allHabitNotes = useMemo(
+    () => (targetHabitId ? getHabitCheckinNotes(effectiveHabitCheckins, targetHabitId) : []),
+    [effectiveHabitCheckins, targetHabitId]
+  );
+
+  const handleShare = useCallback(async () => {
+    if (!habit || !stats) return;
+    try {
+      const latestNote = allHabitNotes.length > 0 ? allHabitNotes[0].note : undefined;
+      const shareMessage = formatHabitStatsForShare(habit, stats, milestoneInfo, latestNote);
+      await Share.share({ message: shareMessage });
+    } catch {
+      // Gracefully handle dismissed share dialog
+    }
+  }, [habit, stats, milestoneInfo, allHabitNotes]);
+
+  const handleExportCsv = useCallback(async () => {
+    if (!habit) return;
+    try {
+      const csv = exportSingleHabitToCsv(habit, effectiveHabitCheckins);
+      const success = await exportCsvViaShare(csv, `سجل عادة - ${habit.name}`);
+      if (!success) {
+        appAlert('تنبيه', 'تعذر فتح نافذة مشاركة الملف، يرجى المحاولة لاحقًا.');
+      }
+    } catch {
+      appAlert('خطأ', 'حدث خطأ أثناء إعداد ملف التصدير.');
+    }
+  }, [habit, effectiveHabitCheckins]);
+
+  if (!habit || !stats || !category || !streakStatus || !consistencyPattern) {
     return (
       <View style={[styles.container, { backgroundColor: theme.background }]}>
         <Header title="تفاصيل العادة" onBackPress={() => navigation.goBack()} />
@@ -111,107 +205,8 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
 
   const isArchived = Boolean(habit.archivedAt);
   const isViewingToday = selectedDate === todayStr;
-
-  const activeCheckin = useMemo(
-    () => checkins.find((c) => c.habitId === habit.id && c.date === selectedDate),
-    [checkins, habit.id, selectedDate]
-  );
   const activeCount = activeCheckin ? activeCheckin.count : 0;
   const isCompletedOnDate = Boolean(activeCheckin?.completed);
-
-  const [habitHistoricalCheckins, setHabitHistoricalCheckins] = useState<HabitCheckin[]>([]);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchCheckinsForHabit(habit.id).then((records) => {
-      if (isMounted) {
-        setHabitHistoricalCheckins(records);
-      }
-    });
-    return () => {
-      isMounted = false;
-    };
-  }, [habit.id]);
-
-  // Merge full historical database checkins with live store checkins for instant reactivity
-  const effectiveHabitCheckins = useMemo(() => {
-    const map = new Map<string, HabitCheckin>();
-    for (let i = 0; i < habitHistoricalCheckins.length; i++) {
-      const c = habitHistoricalCheckins[i];
-      map.set(c.date, c);
-    }
-    for (let i = 0; i < checkins.length; i++) {
-      const c = checkins[i];
-      if (c.habitId === habit.id) {
-        map.set(c.date, c);
-      }
-    }
-    return Array.from(map.values());
-  }, [habitHistoricalCheckins, checkins, habit.id]);
-
-  const completedDates = useMemo(
-    () =>
-      new Set(
-        effectiveHabitCheckins
-          .filter((c) => c.completed)
-          .map((c) => c.date)
-      ),
-    [effectiveHabitCheckins]
-  );
-
-  const stats = useMemo(
-    () => calculateHabitStats(habit, effectiveHabitCheckins),
-    [habit, effectiveHabitCheckins]
-  );
-
-  const totalLoggedUnits = useMemo(
-    () => calculateTotalLoggedUnits(habit.id, effectiveHabitCheckins),
-    [habit.id, effectiveHabitCheckins]
-  );
-
-  const category = useMemo(() => getHabitCategory(habit.icon), [habit.icon]);
-
-  const streakStatus = useMemo(
-    () => getHabitStreakStatus(habit, effectiveHabitCheckins, selectedDate),
-    [habit, effectiveHabitCheckins, selectedDate]
-  );
-
-  const milestoneInfo = useMemo(
-    () => calculateStreakMilestone(stats.currentStreak),
-    [stats.currentStreak]
-  );
-
-  const consistencyPattern = useMemo(
-    () => calculateHabitConsistencyPattern(habit, effectiveHabitCheckins, todayStr),
-    [habit, effectiveHabitCheckins, todayStr]
-  );
-
-  const allHabitNotes = useMemo(
-    () => getHabitCheckinNotes(effectiveHabitCheckins, habit.id),
-    [effectiveHabitCheckins, habit.id]
-  );
-
-  const handleShare = useCallback(async () => {
-    try {
-      const latestNote = allHabitNotes.length > 0 ? allHabitNotes[0].note : undefined;
-      const shareMessage = formatHabitStatsForShare(habit, stats, milestoneInfo, latestNote);
-      await Share.share({ message: shareMessage });
-    } catch {
-      // Gracefully handle dismissed share dialog
-    }
-  }, [habit, stats, milestoneInfo, allHabitNotes]);
-
-  const handleExportCsv = useCallback(async () => {
-    try {
-      const csv = exportSingleHabitToCsv(habit, effectiveHabitCheckins);
-      const success = await exportCsvViaShare(csv, `سجل عادة - ${habit.name}`);
-      if (!success) {
-        appAlert('تنبيه', 'تعذر فتح نافذة مشاركة الملف، يرجى المحاولة لاحقًا.');
-      }
-    } catch {
-      appAlert('خطأ', 'حدث خطأ أثناء إعداد ملف التصدير.');
-    }
-  }, [habit, effectiveHabitCheckins]);
 
   const handleArchiveConfirm = () => {
     appAlert(
@@ -354,7 +349,14 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
         <Card style={[styles.heroCard, { marginBottom: spacing.base }]}>
           <View style={styles.heroTopRow}>
             <View style={styles.heroTitles}>
-              <View style={{ flexDirection: 'row-reverse', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <View
+                style={{
+                  flexDirection: 'row-reverse',
+                  alignItems: 'center',
+                  gap: 8,
+                  flexWrap: 'wrap',
+                }}
+              >
                 <Text style={[typography.h2, { color: theme.text, textAlign: 'right' }]}>
                   {habit.name}
                 </Text>
@@ -367,7 +369,12 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
                     },
                   ]}
                 >
-                  <Text style={[typography.caption, { color: theme.textSecondary, fontSize: 11, fontWeight: '600' }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, fontSize: 11, fontWeight: '600' },
+                    ]}
+                  >
                     {category}
                   </Text>
                 </View>
@@ -489,7 +496,9 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
                     style={[
                       typography.caption,
                       {
-                        color: isCompletedOnDate ? (habit.color || theme.primary) : theme.textSecondary,
+                        color: isCompletedOnDate
+                          ? habit.color || theme.primary
+                          : theme.textSecondary,
                         fontWeight: isCompletedOnDate ? '700' : '500',
                       },
                     ]}
@@ -514,8 +523,8 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
                         isCompletedOnDate
                           ? `تعديل الكمية (${activeCount} ${habit.unit})`
                           : activeCount > 0
-                          ? `متابعة التسجيل (${activeCount}/${habit.targetCount})`
-                          : 'تسجيل كمية اليوم'
+                            ? `متابعة التسجيل (${activeCount}/${habit.targetCount})`
+                            : 'تسجيل كمية اليوم'
                       }
                       iconName="create-outline"
                       variant={isCompletedOnDate ? 'outline' : 'primary'}
@@ -591,8 +600,8 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
                         ? 'مكتملة اليوم'
                         : 'مكتملة بهذا التاريخ'
                       : isViewingToday
-                      ? 'تسجيل إنجاز اليوم'
-                      : 'تسجيل إنجاز لهذا التاريخ'
+                        ? 'تسجيل إنجاز اليوم'
+                        : 'تسجيل إنجاز لهذا التاريخ'
                   }
                   iconName={isCompletedOnDate ? 'checkmark-circle' : 'checkmark-outline'}
                   variant={isCompletedOnDate ? 'outline' : 'primary'}
@@ -649,7 +658,7 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
                 size={18}
                 color={
                   streakStatus.status === 'completed'
-                    ? (habit.color || theme.primary)
+                    ? habit.color || theme.primary
                     : theme.textSecondary
                 }
                 style={{ marginLeft: 8 }}
@@ -660,7 +669,7 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
                   {
                     color:
                       streakStatus.status === 'completed'
-                        ? (habit.color || theme.primary)
+                        ? habit.color || theme.primary
                         : theme.textSecondary,
                     fontWeight: '600',
                     flex: 1,
@@ -705,10 +714,7 @@ export const HabitDetailsScreen: React.FC<HabitDetailsScreenProps> = ({
         />
 
         {/* Day-of-Week Consistency Pattern */}
-        <HabitConsistencyCard
-          consistencyPattern={consistencyPattern}
-          habitColor={habit.color}
-        />
+        <HabitConsistencyCard consistencyPattern={consistencyPattern} habitColor={habit.color} />
 
         {/* Heatmap Calendar */}
         <HabitHeatmap
@@ -907,4 +913,3 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
 });
-

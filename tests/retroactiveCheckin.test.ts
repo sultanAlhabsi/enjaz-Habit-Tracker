@@ -75,7 +75,11 @@ test('retroactiveCheckin: getHabitsForDate includes scheduled habits on past day
     },
   ];
 
-  const pendingAfterCompletion = getPendingDueHabitsForDate([habit], completedCheckins, wednesdayDate);
+  const pendingAfterCompletion = getPendingDueHabitsForDate(
+    [habit],
+    completedCheckins,
+    wednesdayDate
+  );
   assert.equal(pendingAfterCompletion.length, 0);
 
   const completedAfter = getCompletedDueHabitsForDate([habit], completedCheckins, wednesdayDate);
@@ -113,7 +117,11 @@ test('retroactiveCheckin: stats and streaks properly calculate when createdAt is
   assert.equal(stats.bestStreak, 3);
   assert.equal(stats.completionRate, 100);
 
-  const streak = calculateCurrentStreakFromDates(habit, new Set(['2026-09-23', '2026-09-24', '2026-09-25']), fridayDate);
+  const streak = calculateCurrentStreakFromDates(
+    habit,
+    new Set(['2026-09-23', '2026-09-24', '2026-09-25']),
+    fridayDate
+  );
   assert.equal(streak, 3);
 });
 

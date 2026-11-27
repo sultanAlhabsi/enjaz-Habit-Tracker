@@ -48,11 +48,7 @@ import {
   scheduleEveningReviewReminder,
   cancelEveningReviewReminder,
 } from '../services/notificationService.ts';
-import {
-  BackupPayload,
-  createBackupPayload,
-  mergeBackupData,
-} from '../services/backupService.ts';
+import { BackupPayload, createBackupPayload, mergeBackupData } from '../services/backupService.ts';
 import {
   reorderArray,
   getPendingDueHabitsForDate,
@@ -74,6 +70,8 @@ import {
 import { isCloudSyncConfigured } from '../services/neonService.ts';
 import { playCompletionSound, initSound } from '../services/soundService.ts';
 import { maybeRequestReview } from '../services/reviewService.ts';
+import { DIAGNOSTICS_PREFERENCE_KEY } from '../utils/telemetrySanitizer.ts';
+import { setDiagnosticsEnabled } from '../services/telemetryService.ts';
 
 interface HabitState {
   habits: Habit[];
@@ -87,6 +85,7 @@ interface HabitState {
   hapticsEnabled: boolean;
   soundEnabled: boolean;
   notificationsEnabled: boolean;
+  diagnosticsEnabled: boolean;
   eveningReminderEnabled: boolean;
   eveningReminderTime: string;
 
@@ -106,6 +105,7 @@ interface HabitState {
   toggleHaptics: () => void;
   toggleSound: () => void;
   toggleNotifications: () => Promise<void>;
+  toggleDiagnostics: () => Promise<void>;
   setEveningReminder: (enabled: boolean, time?: string) => Promise<void>;
   addHabit: (data: Omit<Habit, 'id' | 'createdAt'>) => Promise<Habit>;
   updateHabit: (habit: Habit) => Promise<void>;
@@ -136,7 +136,10 @@ interface HabitState {
   deduplicateHabits: () => Promise<{ mergedHabitsCount: number; migratedCheckinsCount: number }>;
   getStorageMetrics: () => Promise<StorageMetrics>;
   loadAllCheckins: () => Promise<void>;
-  deleteImportedLoopHabits: () => Promise<{ deletedHabitsCount: number; deletedCheckinsCount: number }>;
+  deleteImportedLoopHabits: () => Promise<{
+    deletedHabitsCount: number;
+    deletedCheckinsCount: number;
+  }>;
   hasCompletedOnboarding: boolean;
   completeOnboarding: (starterHabits?: Omit<Habit, 'id' | 'createdAt'>[]) => Promise<void>;
   resetOnboarding: () => Promise<void>;
@@ -154,6 +157,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
   hapticsEnabled: true,
   soundEnabled: true,
   notificationsEnabled: true,
+  diagnosticsEnabled: false,
   eveningReminderEnabled: false,
   eveningReminderTime: '21:00',
   cloudSyncState: 'idle',
@@ -176,11 +180,14 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       const hapticsPref = allPrefs['haptics_enabled'] ?? 'true';
       const soundPref = allPrefs['sound_enabled'] ?? 'true';
       const notifPref = allPrefs['notifications_enabled'] ?? 'true';
+      const diagnosticsPref = allPrefs[DIAGNOSTICS_PREFERENCE_KEY] ?? 'false';
       const sortPref = allPrefs['habit_sort_preference'] ?? 'default';
       const eveningNotifPref = allPrefs['evening_reminder_enabled'] ?? 'false';
       const eveningTimePref = allPrefs['evening_reminder_time'] ?? '21:00';
 
       const notificationsEnabled = notifPref !== 'false';
+      const diagnosticsEnabled = diagnosticsPref === 'true';
+      setDiagnosticsEnabled(diagnosticsEnabled);
       const eveningReminderEnabled = eveningNotifPref === 'true';
       const eveningReminderTime = eveningTimePref;
 
@@ -240,6 +247,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         hapticsEnabled: hapticsPref !== 'false',
         soundEnabled: soundPref !== 'false',
         notificationsEnabled,
+        diagnosticsEnabled,
         eveningReminderEnabled,
         eveningReminderTime,
         sortOption,
@@ -266,7 +274,9 @@ export const useHabitStore = create<HabitState>((set, get) => ({
 
         // Trigger automatic background sync with Cloud only if configured (Owner build)
         if (isCloudSyncConfigured()) {
-          get().syncWithCloud().catch(() => {});
+          get()
+            .syncWithCloud()
+            .catch(() => {});
         }
 
         // Periodic automatic database optimization (every 7 days) in background without user intervention
@@ -327,15 +337,14 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     try {
       set({ isRefreshing: true });
       // 1. Fetch latest local SQLite records in parallel immediately
-      const [habits, checkins] = await Promise.all([
-        fetchAllHabits(),
-        fetchRecentCheckins(90),
-      ]);
+      const [habits, checkins] = await Promise.all([fetchAllHabits(), fetchRecentCheckins(90)]);
       set({ habits, checkins, isRefreshing: false });
 
       // 2. Run cloud sync in background non-blockingly if configured
       if (isCloudSyncConfigured()) {
-        get().syncWithCloud().catch(() => {});
+        get()
+          .syncWithCloud()
+          .catch(() => {});
       }
     } catch (error) {
       console.warn('[Store] refreshHabits error:', error);
@@ -374,6 +383,13 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     set({ soundEnabled: nextVal });
     setPreference('sound_enabled', String(nextVal));
     pushMetaChangeAsync('sound_enabled', String(nextVal));
+  },
+
+  toggleDiagnostics: async () => {
+    const nextVal = !get().diagnosticsEnabled;
+    set({ diagnosticsEnabled: nextVal });
+    setDiagnosticsEnabled(nextVal);
+    await setPreference(DIAGNOSTICS_PREFERENCE_KEY, String(nextVal));
   },
 
   toggleNotifications: async () => {
@@ -493,7 +509,12 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     await saveHabitRecord(updated);
     pushHabitChangeAsync(updated);
 
-    if (get().notificationsEnabled && updated.isActive && !updated.archivedAt && updated.reminderTime) {
+    if (
+      get().notificationsEnabled &&
+      updated.isActive &&
+      !updated.archivedAt &&
+      updated.reminderTime
+    ) {
       await scheduleHabitReminder(updated);
     } else {
       await cancelHabitReminders(habitId);
@@ -596,9 +617,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       return false;
     }
 
-    const existingCheckin = get().checkins.find(
-      (c) => c.habitId === habitId && c.date === date
-    );
+    const existingCheckin = get().checkins.find((c) => c.habitId === habitId && c.date === date);
 
     if (existingCheckin && existingCheckin.completed) {
       if (get().hapticsEnabled) {
@@ -615,9 +634,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         note: existingCheckin.note,
       };
       set((state) => {
-        const idx = state.checkins.findIndex(
-          (c) => c.habitId === habitId && c.date === date
-        );
+        const idx = state.checkins.findIndex((c) => c.habitId === habitId && c.date === date);
         if (idx >= 0) {
           const next = [...state.checkins];
           next[idx] = updatedCheckin;
@@ -650,9 +667,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       };
 
       set((state) => {
-        const idx = state.checkins.findIndex(
-          (c) => c.habitId === habitId && c.date === date
-        );
+        const idx = state.checkins.findIndex((c) => c.habitId === habitId && c.date === date);
         if (idx >= 0) {
           const next = [...state.checkins];
           next[idx] = newCheckin;
@@ -805,9 +820,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       return;
     }
 
-    const existing = get().checkins.find(
-      (c) => c.habitId === habitId && c.date === date
-    );
+    const existing = get().checkins.find((c) => c.habitId === habitId && c.date === date);
     const targetCount = Math.max(1, habit.targetCount || 1);
     const currentCount = existing ? existing.count : 0;
     const newCount = currentCount + Math.max(1, step);
@@ -824,9 +837,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     };
 
     set((state) => {
-      const idx = state.checkins.findIndex(
-        (c) => c.habitId === habitId && c.date === date
-      );
+      const idx = state.checkins.findIndex((c) => c.habitId === habitId && c.date === date);
       if (idx >= 0) {
         const next = [...state.checkins];
         next[idx] = updatedCheckin;
@@ -874,9 +885,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     const habit = get().habits.find((h) => h.id === habitId);
     if (!habit) return;
 
-    const existing = get().checkins.find(
-      (c) => c.habitId === habitId && c.date === date
-    );
+    const existing = get().checkins.find((c) => c.habitId === habitId && c.date === date);
     if (!existing || existing.count <= 0) return;
 
     const newCount = existing.count - Math.max(1, step);
@@ -891,9 +900,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         note: existing.note,
       };
       set((state) => {
-        const idx = state.checkins.findIndex(
-          (c) => c.habitId === habitId && c.date === date
-        );
+        const idx = state.checkins.findIndex((c) => c.habitId === habitId && c.date === date);
         if (idx >= 0) {
           const next = [...state.checkins];
           next[idx] = updatedCheckin;
@@ -912,9 +919,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         updatedAt: dayjs().toISOString(),
       };
       set((state) => {
-        const idx = state.checkins.findIndex(
-          (c) => c.habitId === habitId && c.date === date
-        );
+        const idx = state.checkins.findIndex((c) => c.habitId === habitId && c.date === date);
         if (idx >= 0) {
           const next = [...state.checkins];
           next[idx] = updatedCheckin;
@@ -949,9 +954,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     const targetCount = Math.max(1, habit.targetCount || 1);
     const isCompleted = safeCount >= targetCount;
 
-    const existing = get().checkins.find(
-      (c) => c.habitId === habitId && c.date === date
-    );
+    const existing = get().checkins.find((c) => c.habitId === habitId && c.date === date);
 
     const updatedCheckin: HabitCheckin = {
       id: existing ? existing.id : `chk_${habitId}_${date}`,
@@ -964,9 +967,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     };
 
     set((state) => {
-      const idx = state.checkins.findIndex(
-        (c) => c.habitId === habitId && c.date === date
-      );
+      const idx = state.checkins.findIndex((c) => c.habitId === habitId && c.date === date);
       if (idx >= 0) {
         const next = [...state.checkins];
         next[idx] = updatedCheckin;
@@ -1019,9 +1020,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       return;
     }
 
-    const existing = get().checkins.find(
-      (c) => c.habitId === habitId && c.date === date
-    );
+    const existing = get().checkins.find((c) => c.habitId === habitId && c.date === date);
 
     const updatedCheckin: HabitCheckin = {
       id: existing ? existing.id : `chk_${habitId}_${date}`,
@@ -1035,9 +1034,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
 
     set((state) => ({
       checkins: [
-        ...state.checkins.filter(
-          (c) => !(c.habitId === habitId && c.date === date)
-        ),
+        ...state.checkins.filter((c) => !(c.habitId === habitId && c.date === date)),
         updatedCheckin,
       ],
     }));
@@ -1047,9 +1044,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
   },
 
   deleteCheckinNote: async (habitId: string, date: string) => {
-    const existing = get().checkins.find(
-      (c) => c.habitId === habitId && c.date === date
-    );
+    const existing = get().checkins.find((c) => c.habitId === habitId && c.date === date);
     if (!existing) return;
 
     // Clear note, update timestamp, save and sync with cloud
@@ -1060,9 +1055,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     };
     set((state) => ({
       checkins: [
-        ...state.checkins.filter(
-          (c) => !(c.habitId === habitId && c.date === date)
-        ),
+        ...state.checkins.filter((c) => !(c.habitId === habitId && c.date === date)),
         updatedCheckin,
       ],
     }));
@@ -1087,15 +1080,13 @@ export const useHabitStore = create<HabitState>((set, get) => ({
   resetAllData: async () => {
     set({ isLoading: true });
     await resetDatabase();
-    set({ habits: [], checkins: [], isLoading: false });
+    setDiagnosticsEnabled(false);
+    set({ habits: [], checkins: [], diagnosticsEnabled: false, isLoading: false });
     await rescheduleAllHabitReminders([], false, false);
   },
 
   exportBackup: async () => {
-    const [allCheckins, meta] = await Promise.all([
-      fetchAllCheckins(),
-      getAllPreferences(),
-    ]);
+    const [allCheckins, meta] = await Promise.all([fetchAllCheckins(), getAllPreferences()]);
     return createBackupPayload(get().habits, allCheckins, meta);
   },
 
@@ -1255,5 +1246,3 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     pushMetaChangeAsync('has_completed_onboarding', 'false');
   },
 }));
-
-

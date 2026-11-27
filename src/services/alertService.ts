@@ -54,13 +54,21 @@ export function hideAppAlert() {
   listeners.forEach((listener) => listener(null));
 }
 
-function inferTypeAndIcon(options: AlertOptions): { type: AlertType; icon: keyof typeof Ionicons.glyphMap } {
+function inferTypeAndIcon(options: AlertOptions): {
+  type: AlertType;
+  icon: keyof typeof Ionicons.glyphMap;
+} {
   const title = options.title || '';
   const message = options.message || '';
   const fullText = `${title} ${message}`.toLowerCase();
 
   const hasDestructiveBtn = options.buttons?.some((b) => b.style === 'destructive');
-  if (hasDestructiveBtn || fullText.includes('حذف') || fullText.includes('مسح') || fullText.includes('إعادة تعيين')) {
+  if (
+    hasDestructiveBtn ||
+    fullText.includes('حذف') ||
+    fullText.includes('مسح') ||
+    fullText.includes('إعادة تعيين')
+  ) {
     return { type: 'destructive', icon: 'trash-outline' };
   }
 

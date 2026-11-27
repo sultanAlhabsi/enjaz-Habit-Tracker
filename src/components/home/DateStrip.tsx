@@ -1,10 +1,5 @@
 import React, { useRef, useEffect, useMemo, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -22,13 +17,12 @@ interface DateStripProps {
   onSelectDate: (date: string) => void;
 }
 
-const DateStripComponent: React.FC<DateStripProps> = ({
-  selectedDate,
-  onSelectDate,
-}) => {
+const DateStripComponent: React.FC<DateStripProps> = ({ selectedDate, onSelectDate }) => {
   const { theme, radius, spacing, typography, touchTarget } = useTheme();
   const scrollRef = useRef<ScrollView>(null);
-  const itemLayouts = useRef<{ [key: string]: { x: number; y: number; width: number; height: number } }>({});
+  const itemLayouts = useRef<{
+    [key: string]: { x: number; y: number; width: number; height: number };
+  }>({});
   const isInitialMount = useRef(true);
 
   // Local active date for zero-latency, instant response
@@ -48,16 +42,17 @@ const DateStripComponent: React.FC<DateStripProps> = ({
   const centerDate = Math.abs(diffFromToday) <= 7 ? today : selDay;
   const centerDateStr = centerDate.format('YYYY-MM-DD');
 
-  const days = useMemo(() =>
-    Array.from({ length: 15 }).map((_, index) => {
-      const d = centerDate.subtract(7 - index, 'day');
-      return {
-        dateStr: d.format('YYYY-MM-DD'),
-        dayNum: d.date(),
-        dayShort: ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'][d.day()],
-        isToday: d.isSame(today, 'day'),
-      };
-    }),
+  const days = useMemo(
+    () =>
+      Array.from({ length: 15 }).map((_, index) => {
+        const d = centerDate.subtract(7 - index, 'day');
+        return {
+          dateStr: d.format('YYYY-MM-DD'),
+          dayNum: d.date(),
+          dayShort: ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'][d.day()],
+          isToday: d.isSame(today, 'day'),
+        };
+      }),
     [centerDateStr]
   );
 
@@ -119,10 +114,7 @@ const DateStripComponent: React.FC<DateStripProps> = ({
       opacity: capsuleOpacity.value,
       width: capsuleWidth.value,
       height: capsuleHeight.value,
-      transform: [
-        { translateX: capsuleX.value },
-        { translateY: capsuleY.value },
-      ],
+      transform: [{ translateX: capsuleX.value }, { translateY: capsuleY.value }],
     };
   });
 
@@ -157,12 +149,23 @@ const DateStripComponent: React.FC<DateStripProps> = ({
               <Text
                 style={[
                   typography.caption,
-                  { color: theme.primary, fontSize: 11, fontWeight: '600', paddingHorizontal: 6, paddingVertical: 1 },
+                  {
+                    color: theme.primary,
+                    fontSize: 11,
+                    fontWeight: '600',
+                    paddingHorizontal: 6,
+                    paddingVertical: 1,
+                  },
                 ]}
               >
                 اليوم
               </Text>
-              <Ionicons name="return-up-back" size={12} color={theme.primary} style={{ marginRight: 2 }} />
+              <Ionicons
+                name="return-up-back"
+                size={12}
+                color={theme.primary}
+                style={{ marginRight: 2 }}
+              />
             </Pressable>
           )}
         </View>
@@ -171,11 +174,10 @@ const DateStripComponent: React.FC<DateStripProps> = ({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="الأسبوع السابق"
-            onPress={() => handleDayPress(dayjs(activeDate).subtract(7, 'day').format('YYYY-MM-DD'))}
-            style={({ pressed }) => [
-              styles.navBtn,
-              { opacity: pressed ? 0.5 : 1 },
-            ]}
+            onPress={() =>
+              handleDayPress(dayjs(activeDate).subtract(7, 'day').format('YYYY-MM-DD'))
+            }
+            style={({ pressed }) => [styles.navBtn, { opacity: pressed ? 0.5 : 1 }]}
           >
             <Ionicons name="chevron-forward" size={16} color={theme.textMuted} />
           </Pressable>
@@ -261,9 +263,7 @@ const DateStripComponent: React.FC<DateStripProps> = ({
                 style={[
                   typography.caption,
                   {
-                    color: isSelected
-                      ? '#FFFFFF'
-                      : theme.textSecondary,
+                    color: isSelected ? '#FFFFFF' : theme.textSecondary,
                     fontSize: 11,
                     fontWeight: isSelected ? '600' : '400',
                     opacity: isSelected ? 0.9 : 1,
@@ -277,11 +277,7 @@ const DateStripComponent: React.FC<DateStripProps> = ({
                 style={[
                   typography.subMedium,
                   {
-                    color: isSelected
-                      ? '#FFFFFF'
-                      : item.isToday
-                      ? theme.primary
-                      : theme.text,
+                    color: isSelected ? '#FFFFFF' : item.isToday ? theme.primary : theme.text,
                     fontWeight: isSelected ? '700' : item.isToday ? '600' : '400',
                     marginTop: 2,
                   },
@@ -295,9 +291,7 @@ const DateStripComponent: React.FC<DateStripProps> = ({
                   style={[
                     styles.todayDot,
                     {
-                      backgroundColor: isSelected
-                        ? '#FFFFFF'
-                        : theme.primary,
+                      backgroundColor: isSelected ? '#FFFFFF' : theme.primary,
                       opacity: isSelected ? 0.95 : 1,
                     },
                   ]}

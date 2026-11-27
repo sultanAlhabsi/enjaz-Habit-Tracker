@@ -1,17 +1,9 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  PanResponder,
-} from 'react-native';
+import { View, StyleSheet, Pressable, PanResponder } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Text } from './AppText';
 import { useTheme } from '../../theme/ThemeContext';
-import {
-  parseReminderTime,
-  formatReminderTime,
-} from '../../utils/notificationUtils';
+import { parseReminderTime, formatReminderTime } from '../../utils/notificationUtils';
 import { toArabicNumerals } from '../../utils/habitUtils';
 import { triggerLightHaptic } from '../../utils/haptics';
 
@@ -226,7 +218,8 @@ export const ClockTimePicker: React.FC<ClockTimePickerProps> = ({
           style={[
             styles.digitalBox,
             {
-              backgroundColor: clockMode === 'hour' ? `${activeColor}18` : isDark ? '#1C1F24' : theme.background,
+              backgroundColor:
+                clockMode === 'hour' ? `${activeColor}18` : isDark ? '#1C1F24' : theme.background,
               borderColor: clockMode === 'hour' ? activeColor : theme.border,
               borderRadius: radius.md,
             },
@@ -259,9 +252,7 @@ export const ClockTimePicker: React.FC<ClockTimePickerProps> = ({
           </Text>
         </Pressable>
 
-        <Text style={[typography.h2, { color: theme.textMuted, marginHorizontal: 6 }]}>
-          :
-        </Text>
+        <Text style={[typography.h2, { color: theme.textMuted, marginHorizontal: 6 }]}>:</Text>
 
         {/* Minute Digit Box */}
         <Pressable
@@ -274,7 +265,8 @@ export const ClockTimePicker: React.FC<ClockTimePickerProps> = ({
           style={[
             styles.digitalBox,
             {
-              backgroundColor: clockMode === 'minute' ? `${activeColor}18` : isDark ? '#1C1F24' : theme.background,
+              backgroundColor:
+                clockMode === 'minute' ? `${activeColor}18` : isDark ? '#1C1F24' : theme.background,
               borderColor: clockMode === 'minute' ? activeColor : theme.border,
               borderRadius: radius.md,
             },
@@ -453,7 +445,10 @@ export const ClockTimePicker: React.FC<ClockTimePickerProps> = ({
               accessibilityLabel="زيادة دقيقة"
               onPress={() => handleStepMinute(1)}
               hitSlop={8}
-              style={[styles.stepBtn, { borderColor: theme.border, backgroundColor: theme.card, marginRight: 4 }]}
+              style={[
+                styles.stepBtn,
+                { borderColor: theme.border, backgroundColor: theme.card, marginRight: 4 },
+              ]}
             >
               <Ionicons name="add" size={14} color={theme.text} />
             </Pressable>
@@ -613,7 +608,12 @@ export const ClockTimePicker: React.FC<ClockTimePickerProps> = ({
 
       {/* 4. Quick Smart Presets */}
       <View style={styles.presetsContainer}>
-        <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'right', marginBottom: 6, fontSize: 11 }]}>
+        <Text
+          style={[
+            typography.caption,
+            { color: theme.textMuted, textAlign: 'right', marginBottom: 6, fontSize: 11 },
+          ]}
+        >
           مواعيد شائعة سريعة
         </Text>
         <View style={styles.presetsRow}>
@@ -631,7 +631,11 @@ export const ClockTimePicker: React.FC<ClockTimePickerProps> = ({
                 style={[
                   styles.presetChip,
                   {
-                    backgroundColor: isSelected ? activeColor : isDark ? '#1C1F24' : theme.background,
+                    backgroundColor: isSelected
+                      ? activeColor
+                      : isDark
+                        ? '#1C1F24'
+                        : theme.background,
                     borderColor: isSelected ? activeColor : theme.border,
                     borderRadius: radius.sm,
                   },

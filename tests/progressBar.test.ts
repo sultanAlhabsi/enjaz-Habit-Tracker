@@ -80,7 +80,7 @@ test('normalizeProgressBarValue: simulation of 200-count habit monotonic progres
 
 test('normalizeProgressBarValue: simulation of 5000-step habit progression', () => {
   const targetCount = 5000;
-  
+
   // 1 step out of 5000
   const norm1 = normalizeProgressBarValue((1 / targetCount) * 100);
   assert.ok(norm1 > 0 && norm1 < 0.001);

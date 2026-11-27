@@ -66,7 +66,11 @@ const withProductionHardening = (config) => {
   config = withDangerousMod(config, [
     'android',
     async (modConfig) => {
-      const proguardPath = path.join(modConfig.modRequest.platformProjectRoot, 'app', 'proguard-rules.pro');
+      const proguardPath = path.join(
+        modConfig.modRequest.platformProjectRoot,
+        'app',
+        'proguard-rules.pro'
+      );
       try {
         const rules = `
 # React Native & Expo production keep rules
@@ -87,7 +91,11 @@ const withProductionHardening = (config) => {
       }
 
       // Ensure release signingConfig is present in app/build.gradle
-      const buildGradlePath = path.join(modConfig.modRequest.platformProjectRoot, 'app', 'build.gradle');
+      const buildGradlePath = path.join(
+        modConfig.modRequest.platformProjectRoot,
+        'app',
+        'build.gradle'
+      );
       try {
         let content = fs.readFileSync(buildGradlePath, 'utf8');
         if (!content.includes('MYAPP_UPLOAD_STORE_FILE')) {
@@ -163,10 +171,7 @@ module.exports = ({ config }) => {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#F6F5F0',
       },
-      permissions: [
-        'android.permission.VIBRATE',
-        'android.permission.POST_NOTIFICATIONS',
-      ],
+      permissions: ['android.permission.VIBRATE', 'android.permission.POST_NOTIFICATIONS'],
     },
     web: {
       favicon: './assets/favicon.png',
@@ -195,6 +200,17 @@ module.exports = ({ config }) => {
           enableBackgroundRecording: false,
         },
       ],
+      ...(process.env.SENTRY_ORG && process.env.SENTRY_PROJECT && process.env.SENTRY_AUTH_TOKEN
+        ? [
+            [
+              '@sentry/react-native/expo',
+              {
+                organization: process.env.SENTRY_ORG,
+                project: process.env.SENTRY_PROJECT,
+              },
+            ],
+          ]
+        : []),
     ],
     extra: {
       eas: {
@@ -203,6 +219,7 @@ module.exports = ({ config }) => {
       // Google Play release is strictly 100% offline & local-first (No remote/cloud database).
       // Remote cloud database (Neon) is disabled completely.
       databaseUrl: null,
+      sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN || null,
     },
     owner: 'sultanalhabsi',
   };

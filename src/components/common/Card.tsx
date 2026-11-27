@@ -8,12 +8,7 @@ interface CardProps extends ViewProps {
   variant?: 'elevated' | 'flat' | 'outline';
 }
 
-export const Card: React.FC<CardProps> = ({
-  children,
-  style,
-  variant = 'flat',
-  ...rest
-}) => {
+export const Card: React.FC<CardProps> = ({ children, style, variant = 'flat', ...rest }) => {
   const { theme, radius, spacing } = useTheme();
 
   return (

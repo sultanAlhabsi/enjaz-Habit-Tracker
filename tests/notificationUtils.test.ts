@@ -75,7 +75,6 @@ test('generateHabitReminderTriggers: returns daily trigger for daily habit', () 
   assert.equal(triggers[0].minute, 0);
 });
 
-
 test('generateHabitReminderTriggers: returns weekly triggers for specific days', () => {
   const habit = createTestHabit({
     frequency: 'specific_days',
@@ -170,5 +169,3 @@ test('generateHabitReminderTriggers: safely handles missing or invalid monthlyDa
   assert.equal(triggersInvalid[0].type, 'monthly');
   assert.equal(triggersInvalid[0].day, 1);
 });
-
-

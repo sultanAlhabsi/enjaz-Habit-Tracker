@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Modal,
-  Pressable,
-  ScrollView,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet, Modal, Pressable, ScrollView, Platform } from 'react-native';
 import { Text } from '../common/AppText';
 import { Ionicons } from '@expo/vector-icons';
 import { Habit } from '../../types/habit';
@@ -204,12 +197,7 @@ export const HabitQuickActionsModal: React.FC<HabitQuickActionsModalProps> = ({
   ];
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
         <Pressable style={styles.backdropPressable} onPress={onClose} />
 
@@ -267,9 +255,7 @@ export const HabitQuickActionsModal: React.FC<HabitQuickActionsModalProps> = ({
                 </View>
 
                 <View style={styles.subMetaRow}>
-                  <Text style={[typography.caption, { color: theme.textMuted }]}>
-                    {category}
-                  </Text>
+                  <Text style={[typography.caption, { color: theme.textMuted }]}>{category}</Text>
 
                   {streak > 0 && (
                     <View style={styles.streakBadge}>

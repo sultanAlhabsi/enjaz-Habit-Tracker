@@ -121,9 +121,11 @@ test('calculateWeeklyStreak: accurately calculates consecutive weeks achieving w
   // Previous week 2: 2026-06-07 to 2026-06-13 (2 completions: met)
   // Previous week 3: 2026-05-31 to 2026-06-06 (1 completion: not met)
   const completedDates = new Set([
-    '2026-06-08', '2026-06-10', // week 2: 2
-    '2026-06-15', '2026-06-17', // week 1: 2
-    '2026-06-21',               // current week: 1 (not met yet, but week is in progress)
+    '2026-06-08',
+    '2026-06-10', // week 2: 2
+    '2026-06-15',
+    '2026-06-17', // week 1: 2
+    '2026-06-21', // current week: 1 (not met yet, but week is in progress)
   ]);
 
   const streak = calculateWeeklyStreak(habit, completedDates, '2026-06-22');
@@ -146,9 +148,12 @@ test('calculateMonthlyStreak: accurately calculates consecutive months achieving
   // Month 2 (May 2026): 2 completions
   // Month 3 (June 2026): 2 completions
   const completedDates = new Set([
-    '2026-04-05', '2026-04-12',
-    '2026-05-10', '2026-05-20',
-    '2026-06-02', '2026-06-15',
+    '2026-04-05',
+    '2026-04-12',
+    '2026-05-10',
+    '2026-05-20',
+    '2026-06-02',
+    '2026-06-15',
   ]);
 
   const streak = calculateMonthlyStreak(habit, completedDates, '2026-06-20');
@@ -208,33 +213,47 @@ test('formatHabitFrequencyLabel: formats schedule descriptions with authentic Ar
     'يوم واحد أسبوعيًا'
   );
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'specific_days', frequencyDays: [1, 4] })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'specific_days', frequencyDays: [1, 4] })
+    ),
     'يومان أسبوعيًا'
   );
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'specific_days', frequencyDays: [0, 2, 4] })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'specific_days', frequencyDays: [0, 2, 4] })
+    ),
     '٣ أيام أسبوعيًا'
   );
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'specific_days', frequencyDays: [0, 1, 2, 3, 4, 5, 6] })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'specific_days', frequencyDays: [0, 1, 2, 3, 4, 5, 6] })
+    ),
     'يوميًا'
   );
 
   // Weekly target
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'weekly_target', weeklyTargetCount: 1 })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'weekly_target', weeklyTargetCount: 1 })
+    ),
     'مرة واحدة أسبوعيًا'
   );
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'weekly_target', weeklyTargetCount: 2 })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'weekly_target', weeklyTargetCount: 2 })
+    ),
     'مرتان أسبوعيًا'
   );
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'weekly_target', weeklyTargetCount: 3 })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'weekly_target', weeklyTargetCount: 3 })
+    ),
     '٣ مرات أسبوعيًا'
   );
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'weekly_target', weeklyTargetCount: 5 })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'weekly_target', weeklyTargetCount: 5 })
+    ),
     '٥ مرات أسبوعيًا'
   );
 
@@ -246,19 +265,27 @@ test('formatHabitFrequencyLabel: formats schedule descriptions with authentic Ar
 
   // Monthly target
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'monthly_target', monthlyTargetCount: 1 })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'monthly_target', monthlyTargetCount: 1 })
+    ),
     'مرة واحدة شهريًا'
   );
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'monthly_target', monthlyTargetCount: 2 })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'monthly_target', monthlyTargetCount: 2 })
+    ),
     'مرتان شهريًا'
   );
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'monthly_target', monthlyTargetCount: 4 })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'monthly_target', monthlyTargetCount: 4 })
+    ),
     '٤ مرات شهريًا'
   );
   assert.equal(
-    formatHabitFrequencyLabel(createMockHabit({ frequency: 'monthly_target', monthlyTargetCount: 12 })),
+    formatHabitFrequencyLabel(
+      createMockHabit({ frequency: 'monthly_target', monthlyTargetCount: 12 })
+    ),
     '١٢ مرة شهريًا'
   );
 });
@@ -309,7 +336,9 @@ test('formatHabitStreakArabic: formats specific_days as consecutive completions 
 
 test('formatHabitScheduleShort: produces concise badges for specific days and monthly day', () => {
   assert.equal(
-    formatHabitScheduleShort(createMockHabit({ frequency: 'specific_days', frequencyDays: [1, 4] })),
+    formatHabitScheduleShort(
+      createMockHabit({ frequency: 'specific_days', frequencyDays: [1, 4] })
+    ),
     'إثنين • خميس'
   );
   assert.equal(
@@ -317,13 +346,12 @@ test('formatHabitScheduleShort: produces concise badges for specific days and mo
     'جمعة'
   );
   assert.equal(
-    formatHabitScheduleShort(createMockHabit({ frequency: 'specific_days', frequencyDays: [0, 2, 4] })),
+    formatHabitScheduleShort(
+      createMockHabit({ frequency: 'specific_days', frequencyDays: [0, 2, 4] })
+    ),
     'أحد • ثلاثاء • خميس'
   );
-  assert.equal(
-    formatHabitScheduleShort(createMockHabit({ frequency: 'daily' })),
-    undefined
-  );
+  assert.equal(formatHabitScheduleShort(createMockHabit({ frequency: 'daily' })), undefined);
   assert.equal(
     formatHabitScheduleShort(createMockHabit({ frequency: 'monthly_day', monthlyDay: 1 })),
     'يوم ١ شهرياً'

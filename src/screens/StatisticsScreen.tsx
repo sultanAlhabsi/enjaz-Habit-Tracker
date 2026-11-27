@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import {View, StyleSheet, ScrollView, Pressable, Share} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, Share } from 'react-native';
 import { Text } from '../components/common/AppText';
 import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
@@ -121,9 +121,7 @@ export const StatisticsScreen: React.FC = () => {
           },
         ]}
       >
-        <Text style={[typography.h1, { color: theme.text, textAlign: 'right' }]}>
-          الإحصائيات
-        </Text>
+        <Text style={[typography.h1, { color: theme.text, textAlign: 'right' }]}>الإحصائيات</Text>
 
         <Pressable
           accessibilityRole="button"
@@ -164,10 +162,14 @@ export const StatisticsScreen: React.FC = () => {
                   },
                 ]}
               >
-                <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right' }]}>
+                <Text
+                  style={[typography.caption, { color: theme.textSecondary, textAlign: 'right' }]}
+                >
                   {kpi.title}
                 </Text>
-                <Text style={[typography.h2, { color: theme.text, marginTop: 4, textAlign: 'right' }]}>
+                <Text
+                  style={[typography.h2, { color: theme.text, marginTop: 4, textAlign: 'right' }]}
+                >
                   {kpi.value}
                 </Text>
               </View>
@@ -193,7 +195,12 @@ export const StatisticsScreen: React.FC = () => {
           </View>
 
           {rankedHabits.length === 0 ? (
-            <Text style={[typography.sub, { color: theme.textMuted, textAlign: 'center', marginVertical: 8 }]}>
+            <Text
+              style={[
+                typography.sub,
+                { color: theme.textMuted, textAlign: 'center', marginVertical: 8 },
+              ]}
+            >
               لا توجد عادات نشطة مسجلة
             </Text>
           ) : (
@@ -203,17 +210,13 @@ export const StatisticsScreen: React.FC = () => {
                   key={item.habit.id}
                   accessibilityRole="button"
                   accessibilityLabel={`عرض تفاصيل عادة ${item.habit.name}`}
-                  onPress={() =>
-                    navigation.navigate('HabitDetails', { habitId: item.habit.id })
-                  }
+                  onPress={() => navigation.navigate('HabitDetails', { habitId: item.habit.id })}
                   style={({ pressed }) => [
                     styles.rankRow,
                     {
                       borderBottomColor: theme.border,
                       borderBottomWidth:
-                        index === displayedHabits.length - 1 && remainingHabitsCount === 0
-                          ? 0
-                          : 1,
+                        index === displayedHabits.length - 1 && remainingHabitsCount === 0 ? 0 : 1,
                       opacity: pressed ? 0.65 : 1,
                     },
                   ]}
@@ -238,10 +241,17 @@ export const StatisticsScreen: React.FC = () => {
                     </View>
 
                     <View style={{ flex: 1 }}>
-                      <Text style={[typography.bodyMedium, { color: theme.text, textAlign: 'right' }]}>
+                      <Text
+                        style={[typography.bodyMedium, { color: theme.text, textAlign: 'right' }]}
+                      >
                         {item.habit.name}
                       </Text>
-                      <Text style={[typography.caption, { color: theme.textMuted, textAlign: 'right', marginTop: 2 }]}>
+                      <Text
+                        style={[
+                          typography.caption,
+                          { color: theme.textMuted, textAlign: 'right', marginTop: 2 },
+                        ]}
+                      >
                         نسبة الالتزام: {toArabicNumerals(item.stats.completionRate)}٪
                       </Text>
                     </View>
@@ -252,7 +262,11 @@ export const StatisticsScreen: React.FC = () => {
                       <Ionicons
                         name="flame"
                         size={14}
-                        color={item.stats.currentStreak > 0 ? (item.habit.color || theme.primary) : theme.textMuted}
+                        color={
+                          item.stats.currentStreak > 0
+                            ? item.habit.color || theme.primary
+                            : theme.textMuted
+                        }
                         style={{ marginLeft: 4 }}
                       />
                       <Text style={[typography.subMedium, { color: theme.text }]}>

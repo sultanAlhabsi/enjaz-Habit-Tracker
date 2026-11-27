@@ -20,19 +20,31 @@ test('habitTemplates: HABIT_TEMPLATES collection integrity and data validity', (
 
   for (const t of HABIT_TEMPLATES) {
     // Unique ID
-    assert.ok(t.id && t.id.startsWith('template_'), `Template id must start with template_: ${t.id}`);
+    assert.ok(
+      t.id && t.id.startsWith('template_'),
+      `Template id must start with template_: ${t.id}`
+    );
     assert.equal(templateIds.has(t.id), false, `Template id must be unique: ${t.id}`);
     templateIds.add(t.id);
 
     // Name & description
     assert.ok(t.name && t.name.trim().length > 0, `Template name required: ${t.id}`);
-    assert.ok(t.description && t.description.trim().length > 0, `Template description required: ${t.id}`);
+    assert.ok(
+      t.description && t.description.trim().length > 0,
+      `Template description required: ${t.id}`
+    );
 
     // Category
-    assert.ok(validCategories.has(t.category), `Template category must be valid: ${t.category} in ${t.id}`);
+    assert.ok(
+      validCategories.has(t.category),
+      `Template category must be valid: ${t.category} in ${t.id}`
+    );
 
     // Icon
-    assert.ok(validIconNames.has(t.icon), `Template icon must exist in AVAILABLE_ICONS: ${t.icon} in ${t.id}`);
+    assert.ok(
+      validIconNames.has(t.icon),
+      `Template icon must exist in AVAILABLE_ICONS: ${t.icon} in ${t.id}`
+    );
 
     // Color
     assert.ok(
@@ -53,7 +65,10 @@ test('habitTemplates: HABIT_TEMPLATES collection integrity and data validity', (
 
     // Reminder time validation
     if (t.reminderTime) {
-      assert.ok(isValidReminderTime(t.reminderTime), `Valid reminder time required: ${t.reminderTime} in ${t.id}`);
+      assert.ok(
+        isValidReminderTime(t.reminderTime),
+        `Valid reminder time required: ${t.reminderTime} in ${t.id}`
+      );
     }
 
     // Tags

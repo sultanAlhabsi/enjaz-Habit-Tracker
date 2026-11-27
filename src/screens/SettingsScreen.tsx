@@ -34,10 +34,7 @@ import {
   pickAndReadBackupFile,
 } from '../services/backupService';
 import { toArabicNumerals, formatArabicCount } from '../utils/habitUtils';
-import {
-  inspectAndParseLoopDatabase,
-  ConvertedLoopData,
-} from '../services/loopImportService';
+import { inspectAndParseLoopDatabase, ConvertedLoopData } from '../services/loopImportService';
 import { triggerLightHaptic } from '../utils/haptics';
 
 export const SettingsScreen: React.FC = () => {
@@ -52,6 +49,8 @@ export const SettingsScreen: React.FC = () => {
     toggleSound,
     notificationsEnabled,
     toggleNotifications,
+    diagnosticsEnabled,
+    toggleDiagnostics,
     eveningReminderEnabled,
     eveningReminderTime,
     setEveningReminder,
@@ -183,10 +182,7 @@ export const SettingsScreen: React.FC = () => {
   const handleTestNotification = async () => {
     const success = await sendTestNotification();
     if (success) {
-      appAlert(
-        'تم الإرسال',
-        'تمت جدولة إشعار تجريبي وسيصلك خلال ثانيتين!'
-      );
+      appAlert('تم الإرسال', 'تمت جدولة إشعار تجريبي وسيصلك خلال ثانيتين!');
     } else {
       appAlert(
         'تعذر الإرسال • الإذن معطل',
@@ -204,40 +200,36 @@ export const SettingsScreen: React.FC = () => {
       const payload = await exportBackup();
 
       if (Platform.OS === 'android') {
-        appAlert(
-          'تصدير النسخة الاحتياطية',
-          'اختر طريقة تصدير النسخة الاحتياطية الخاصة بك:',
-          [
-            {
-              text: 'تنزيل وحفظ في الهاتف (JSON)',
-              onPress: async () => {
-                try {
-                  const res = await exportBackupToDevice(payload);
-                  if (res.success) {
-                    appAlert(
-                      'تم التنزيل بنجاح',
-                      `تم حفظ ملف النسخة الاحتياطية (${res.fileName || 'enjaz_backup.json'}) في المجلد المحدد بنجاح.`
-                    );
-                  } else if (!res.canceled) {
-                    appAlert('خطأ', res.error || 'تعذر حفظ ملف النسخة الاحتياطية على الجهاز.');
-                  }
-                } catch (e: any) {
-                  appAlert('خطأ', e?.message || 'حدث خطأ أثناء تنزيل الملف.');
+        appAlert('تصدير النسخة الاحتياطية', 'اختر طريقة تصدير النسخة الاحتياطية الخاصة بك:', [
+          {
+            text: 'تنزيل وحفظ في الهاتف (JSON)',
+            onPress: async () => {
+              try {
+                const res = await exportBackupToDevice(payload);
+                if (res.success) {
+                  appAlert(
+                    'تم التنزيل بنجاح',
+                    `تم حفظ ملف النسخة الاحتياطية (${res.fileName || 'enjaz_backup.json'}) في المجلد المحدد بنجاح.`
+                  );
+                } else if (!res.canceled) {
+                  appAlert('خطأ', res.error || 'تعذر حفظ ملف النسخة الاحتياطية على الجهاز.');
                 }
-              },
+              } catch (e: any) {
+                appAlert('خطأ', e?.message || 'حدث خطأ أثناء تنزيل الملف.');
+              }
             },
-            {
-              text: 'مشاركة عبر التطبيقات',
-              onPress: async () => {
-                await exportBackupViaShare(payload);
-              },
+          },
+          {
+            text: 'مشاركة عبر التطبيقات',
+            onPress: async () => {
+              await exportBackupViaShare(payload);
             },
-            {
-              text: 'إلغاء',
-              style: 'cancel',
-            },
-          ]
-        );
+          },
+          {
+            text: 'إلغاء',
+            style: 'cancel',
+          },
+        ]);
       } else {
         const res = await exportBackupToDevice(payload);
         if (!res.success && !res.canceled) {
@@ -258,40 +250,36 @@ export const SettingsScreen: React.FC = () => {
       const csvData = await exportFullReportCsv();
 
       if (Platform.OS === 'android') {
-        appAlert(
-          'تصدير تقرير السجلات',
-          'اختر طريقة تصدير تقرير الإنجاز (CSV / Excel):',
-          [
-            {
-              text: 'تنزيل وحفظ في الهاتف (CSV)',
-              onPress: async () => {
-                try {
-                  const res = await exportCsvToDevice(csvData, 'تقرير عادات وسجلات إنجاز');
-                  if (res.success) {
-                    appAlert(
-                      'تم التنزيل بنجاح',
-                      `تم حفظ ملف التقرير (${res.fileName || 'تقرير_إنجاز.csv'}) في المجلد المحدد بنجاح.`
-                    );
-                  } else if (!res.canceled) {
-                    appAlert('خطأ', res.error || 'تعذر حفظ ملف التقرير على الجهاز.');
-                  }
-                } catch (e: any) {
-                  appAlert('خطأ', e?.message || 'حدث خطأ أثناء تنزيل التقرير.');
+        appAlert('تصدير تقرير السجلات', 'اختر طريقة تصدير تقرير الإنجاز (CSV / Excel):', [
+          {
+            text: 'تنزيل وحفظ في الهاتف (CSV)',
+            onPress: async () => {
+              try {
+                const res = await exportCsvToDevice(csvData, 'تقرير عادات وسجلات إنجاز');
+                if (res.success) {
+                  appAlert(
+                    'تم التنزيل بنجاح',
+                    `تم حفظ ملف التقرير (${res.fileName || 'تقرير_إنجاز.csv'}) في المجلد المحدد بنجاح.`
+                  );
+                } else if (!res.canceled) {
+                  appAlert('خطأ', res.error || 'تعذر حفظ ملف التقرير على الجهاز.');
                 }
-              },
+              } catch (e: any) {
+                appAlert('خطأ', e?.message || 'حدث خطأ أثناء تنزيل التقرير.');
+              }
             },
-            {
-              text: 'مشاركة عبر التطبيقات',
-              onPress: async () => {
-                await exportCsvViaShare(csvData, 'تقرير عادات وسجلات إنجاز');
-              },
+          },
+          {
+            text: 'مشاركة عبر التطبيقات',
+            onPress: async () => {
+              await exportCsvViaShare(csvData, 'تقرير عادات وسجلات إنجاز');
             },
-            {
-              text: 'إلغاء',
-              style: 'cancel',
-            },
-          ]
-        );
+          },
+          {
+            text: 'إلغاء',
+            style: 'cancel',
+          },
+        ]);
       } else {
         const res = await exportCsvToDevice(csvData, 'تقرير عادات وسجلات إنجاز');
         if (!res.success && !res.canceled) {
@@ -332,7 +320,8 @@ export const SettingsScreen: React.FC = () => {
     }
 
     const { habits: bHabits, checkins: bCheckins } = payloadToImport;
-    const modeLabel = importMode === 'replace' ? 'استبدال كافة البيانات' : 'الدمج مع البيانات الحالية';
+    const modeLabel =
+      importMode === 'replace' ? 'استبدال كافة البيانات' : 'الدمج مع البيانات الحالية';
 
     appAlert(
       'تأكيد الاستعادة',
@@ -494,7 +483,12 @@ export const SettingsScreen: React.FC = () => {
           },
         ]}
       >
-        <Text style={[typography.h1, { color: theme.text, textAlign: 'right', fontSize: 22, lineHeight: 28 }]}>
+        <Text
+          style={[
+            typography.h1,
+            { color: theme.text, textAlign: 'right', fontSize: 22, lineHeight: 28 },
+          ]}
+        >
           الإعدادات
         </Text>
       </View>
@@ -509,13 +503,29 @@ export const SettingsScreen: React.FC = () => {
         {/* Group 1: General Experience & Appearance */}
         <SettingGroup title="المظهر والتفضيلات">
           <View style={styles.themeRowContainer}>
-            <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginBottom: 6, fontWeight: '600', fontSize: 11.5 }]}>
+            <Text
+              style={[
+                typography.caption,
+                {
+                  color: theme.textSecondary,
+                  textAlign: 'right',
+                  marginBottom: 6,
+                  fontWeight: '600',
+                  fontSize: 11.5,
+                },
+              ]}
+            >
               نمط العرض المفضل
             </Text>
             <SegmentedThemeControl currentMode={themeMode} onChange={setThemeMode} />
           </View>
 
-          <View style={[styles.inlineDivider, { backgroundColor: isDark ? '#23272E' : theme.borderSubtle }]} />
+          <View
+            style={[
+              styles.inlineDivider,
+              { backgroundColor: isDark ? '#23272E' : theme.borderSubtle },
+            ]}
+          />
 
           <SettingRow
             iconName="finger-print-outline"
@@ -591,7 +601,9 @@ export const SettingsScreen: React.FC = () => {
         </SettingGroup>
 
         {/* Group 3: Cloud Sync & Data Management */}
-        <SettingGroup title={isCloudEnabled ? 'البيانات والمزامنة السحابية' : 'إدارة البيانات والنسخ الاحتياطي'}>
+        <SettingGroup
+          title={isCloudEnabled ? 'البيانات والمزامنة السحابية' : 'إدارة البيانات والنسخ الاحتياطي'}
+        >
           {isCloudEnabled && (
             <CloudSyncStatusCard
               cloudSyncState={cloudSyncState}
@@ -685,9 +697,18 @@ export const SettingsScreen: React.FC = () => {
           />
 
           <SettingRow
+            iconName="bug-outline"
+            title="إرسال تقارير الأعطال لتحسين التطبيق"
+            description="تقارير تقنية اختيارية للأعطال والأداء دون إرسال أسماء عاداتك أو ملاحظاتك"
+            type="switch"
+            value={diagnosticsEnabled}
+            onValueChange={toggleDiagnostics}
+          />
+
+          <SettingRow
             iconName="shield-checkmark-outline"
             title="سياسة الخصوصية وأمان البيانات"
-            description="بياناتك مشفرة ومحفوظة محلياً دون أي إعلانات أو تتبع"
+            description="بياناتك محفوظة محلياً دون إعلانات أو تتبع، مع خيار طوعي لتقارير الأعطال"
             type="link"
             onPress={() => {
               triggerLightHaptic();
@@ -718,12 +739,14 @@ export const SettingsScreen: React.FC = () => {
                   triggerLightHaptic();
                   setIsAdvancedDevOpen(!isAdvancedDevOpen);
                 }}
-                style={({ pressed }) => [
-                  styles.devToolsToggle,
-                  { opacity: pressed ? 0.7 : 1 },
-                ]}
+                style={({ pressed }) => [styles.devToolsToggle, { opacity: pressed ? 0.7 : 1 }]}
               >
-                <Text style={[typography.caption, { color: theme.textSecondary, fontWeight: '600', marginLeft: 6 }]}>
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textSecondary, fontWeight: '600', marginLeft: 6 },
+                  ]}
+                >
                   أدوات الصيانة وقاعدة البيانات (متقدم)
                 </Text>
                 <Ionicons
@@ -735,7 +758,12 @@ export const SettingsScreen: React.FC = () => {
 
               {isAdvancedDevOpen && (
                 <>
-                  <View style={[styles.inlineDivider, { backgroundColor: isDark ? '#23272E' : theme.borderSubtle }]} />
+                  <View
+                    style={[
+                      styles.inlineDivider,
+                      { backgroundColor: isDark ? '#23272E' : theme.borderSubtle },
+                    ]}
+                  />
 
                   <SettingRow
                     iconName="shield-checkmark-outline"
@@ -776,7 +804,16 @@ export const SettingsScreen: React.FC = () => {
 
         {/* App Version Footer */}
         <View style={styles.footer}>
-          <Text style={[typography.caption, { color: isDark ? '#94A3B8' : theme.textSecondary, textAlign: 'center', fontWeight: '500' }]}>
+          <Text
+            style={[
+              typography.caption,
+              {
+                color: isDark ? '#94A3B8' : theme.textSecondary,
+                textAlign: 'center',
+                fontWeight: '500',
+              },
+            ]}
+          >
             إنجاز • الإصدار ١.٠.٠
           </Text>
           <Text
@@ -796,7 +833,6 @@ export const SettingsScreen: React.FC = () => {
         </View>
       </ScrollView>
 
-
       {/* Modern Backup Restore Modal */}
       <Modal
         visible={isImportModalOpen}
@@ -808,12 +844,12 @@ export const SettingsScreen: React.FC = () => {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.modalBackdrop}
         >
-          <View style={[styles.modalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View
+            style={[styles.modalCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+          >
             {/* Modal Header: Title on Right, Close on Left */}
             <View style={styles.modalHeader}>
-              <Text style={[typography.h3, { color: theme.text }]}>
-                استعادة نسخة احتياطية
-              </Text>
+              <Text style={[typography.h3, { color: theme.text }]}>استعادة نسخة احتياطية</Text>
 
               <Pressable
                 onPress={() => setIsImportModalOpen(false)}
@@ -839,19 +875,27 @@ export const SettingsScreen: React.FC = () => {
                 <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
                   <Ionicons name="document-text" size={24} color={theme.primary} />
                   <View style={{ marginRight: 10, flex: 1 }}>
-                    <Text style={[typography.bodyMedium, { color: theme.text, fontWeight: '700', textAlign: 'right' }]}>
+                    <Text
+                      style={[
+                        typography.bodyMedium,
+                        { color: theme.text, fontWeight: '700', textAlign: 'right' },
+                      ]}
+                    >
                       {selectedBackupFileName}
                     </Text>
-                    <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginTop: 2 }]}>
-                      يحتوي على {selectedBackupPayload.habits?.length ?? 0} عادة و {selectedBackupPayload.checkins?.length ?? 0} سجل إنجاز
+                    <Text
+                      style={[
+                        typography.caption,
+                        { color: theme.textSecondary, textAlign: 'right', marginTop: 2 },
+                      ]}
+                    >
+                      يحتوي على {selectedBackupPayload.habits?.length ?? 0} عادة و{' '}
+                      {selectedBackupPayload.checkins?.length ?? 0} سجل إنجاز
                     </Text>
                   </View>
                 </View>
 
-                <Pressable
-                  onPress={handlePickBackupFile}
-                  style={styles.changeFileButton}
-                >
+                <Pressable onPress={handlePickBackupFile} style={styles.changeFileButton}>
                   <Text style={[typography.caption, { color: theme.primary, fontWeight: '700' }]}>
                     تغيير الملف
                   </Text>
@@ -860,7 +904,9 @@ export const SettingsScreen: React.FC = () => {
             ) : (
               <View style={{ marginVertical: 10 }}>
                 <Button
-                  title={isPickingFile ? 'جارٍ فتح الملفات...' : 'اختيار ملف النسخة الاحتياطية (.json)'}
+                  title={
+                    isPickingFile ? 'جارٍ فتح الملفات...' : 'اختيار ملف النسخة الاحتياطية (.json)'
+                  }
                   iconName="folder-open-outline"
                   variant="primary"
                   size="md"
@@ -875,7 +921,13 @@ export const SettingsScreen: React.FC = () => {
             <Text
               style={[
                 typography.caption,
-                { color: theme.textSecondary, textAlign: 'right', marginTop: 12, marginBottom: 8, fontWeight: '600' },
+                {
+                  color: theme.textSecondary,
+                  textAlign: 'right',
+                  marginTop: 12,
+                  marginBottom: 8,
+                  fontWeight: '600',
+                },
               ]}
             >
               طريقة الاستعادة:
@@ -890,7 +942,8 @@ export const SettingsScreen: React.FC = () => {
                 style={[
                   styles.modePill,
                   {
-                    backgroundColor: importMode === 'merge' ? (isDark ? '#2D323B' : '#FFFFFF') : 'transparent',
+                    backgroundColor:
+                      importMode === 'merge' ? (isDark ? '#2D323B' : '#FFFFFF') : 'transparent',
                     borderColor: importMode === 'merge' ? theme.primary : theme.border,
                     borderRadius: radius.sm,
                     borderWidth: importMode === 'merge' ? 1.5 : 1,
@@ -919,7 +972,8 @@ export const SettingsScreen: React.FC = () => {
                 style={[
                   styles.modePill,
                   {
-                    backgroundColor: importMode === 'replace' ? (isDark ? '#2D323B' : '#FFFFFF') : 'transparent',
+                    backgroundColor:
+                      importMode === 'replace' ? (isDark ? '#2D323B' : '#FFFFFF') : 'transparent',
                     borderColor: importMode === 'replace' ? theme.destructive : theme.border,
                     borderRadius: radius.sm,
                     borderWidth: importMode === 'replace' ? 1.5 : 1,
@@ -1022,77 +1076,171 @@ export const SettingsScreen: React.FC = () => {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} style={{ marginVertical: 10 }}>
-              <View style={[styles.loopFileInfoBox, { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary, borderColor: theme.border }]}>
+              <View
+                style={[
+                  styles.loopFileInfoBox,
+                  {
+                    backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary,
+                    borderColor: theme.border,
+                  },
+                ]}
+              >
                 <Ionicons name="file-tray-full" size={24} color={theme.primary} />
                 <View style={{ flex: 1, marginRight: 10 }}>
-                  <Text style={[typography.bodyMedium, { color: theme.text, textAlign: 'right', fontWeight: 'bold' }]}>
+                  <Text
+                    style={[
+                      typography.bodyMedium,
+                      { color: theme.text, textAlign: 'right', fontWeight: 'bold' },
+                    ]}
+                  >
                     {loopDataPreview?.inspection.fileName}
                   </Text>
                   {loopDataPreview?.inspection.oldestRecordDate && (
-                    <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', marginTop: 2 }]}>
-                      السجلات من {loopDataPreview.inspection.oldestRecordDate} إلى {loopDataPreview.inspection.newestRecordDate}
+                    <Text
+                      style={[
+                        typography.caption,
+                        { color: theme.textSecondary, textAlign: 'right', marginTop: 2 },
+                      ]}
+                    >
+                      السجلات من {loopDataPreview.inspection.oldestRecordDate} إلى{' '}
+                      {loopDataPreview.inspection.newestRecordDate}
                     </Text>
                   )}
                 </View>
               </View>
 
               <View style={styles.loopStatsGrid}>
-                <View style={[styles.loopStatCard, { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary }]}>
+                <View
+                  style={[
+                    styles.loopStatCard,
+                    { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary },
+                  ]}
+                >
                   <Text style={[typography.h3, { color: theme.primary, textAlign: 'center' }]}>
                     {toArabicNumerals(loopDataPreview?.inspection.totalHabits ?? 0)}
                   </Text>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'center' }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'center' },
+                    ]}
+                  >
                     إجمالي العادات
                   </Text>
                 </View>
 
-                <View style={[styles.loopStatCard, { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary }]}>
+                <View
+                  style={[
+                    styles.loopStatCard,
+                    { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary },
+                  ]}
+                >
                   <Text style={[typography.h3, { color: '#15803D', textAlign: 'center' }]}>
                     {toArabicNumerals(loopDataPreview?.inspection.activeHabitsCount ?? 0)}
                   </Text>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'center' }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'center' },
+                    ]}
+                  >
                     عادات نشطة
                   </Text>
                 </View>
 
-                <View style={[styles.loopStatCard, { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary }]}>
+                <View
+                  style={[
+                    styles.loopStatCard,
+                    { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary },
+                  ]}
+                >
                   <Text style={[typography.h3, { color: theme.textMuted, textAlign: 'center' }]}>
                     {toArabicNumerals(loopDataPreview?.inspection.archivedHabitsCount ?? 0)}
                   </Text>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'center' }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'center' },
+                    ]}
+                  >
                     عادات مؤرشفة
                   </Text>
                 </View>
               </View>
 
               <View style={[styles.loopStatsGrid, { marginTop: 8 }]}>
-                <View style={[styles.loopStatCard, { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary }]}>
+                <View
+                  style={[
+                    styles.loopStatCard,
+                    { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary },
+                  ]}
+                >
                   <Text style={[typography.h3, { color: theme.primary, textAlign: 'center' }]}>
                     {toArabicNumerals(loopDataPreview?.inspection.totalCheckinsCount ?? 0)}
                   </Text>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'center' }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'center' },
+                    ]}
+                  >
                     سجلات إنجاز
                   </Text>
                 </View>
 
-                <View style={[styles.loopStatCard, { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary }]}>
+                <View
+                  style={[
+                    styles.loopStatCard,
+                    { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary },
+                  ]}
+                >
                   <Text style={[typography.h3, { color: '#B45309', textAlign: 'center' }]}>
                     {toArabicNumerals(loopDataPreview?.inspection.notesCount ?? 0)}
                   </Text>
-                  <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'center' }]}>
+                  <Text
+                    style={[
+                      typography.caption,
+                      { color: theme.textSecondary, textAlign: 'center' },
+                    ]}
+                  >
                     ملاحظات يومية
                   </Text>
                 </View>
               </View>
 
-              <View style={[styles.loopNoticeBanner, { backgroundColor: isDark ? 'rgba(42, 75, 58, 0.2)' : theme.primaryLight, borderColor: theme.primary }]}>
+              <View
+                style={[
+                  styles.loopNoticeBanner,
+                  {
+                    backgroundColor: isDark ? 'rgba(42, 75, 58, 0.2)' : theme.primaryLight,
+                    borderColor: theme.primary,
+                  },
+                ]}
+              >
                 <Ionicons name="shield-checkmark-outline" size={20} color={theme.primary} />
-                <Text style={[typography.caption, { color: theme.primary, flex: 1, marginRight: 8, textAlign: 'right', lineHeight: 18 }]}>
-                  استيراد آمن بنمط «الدمج دائماً»: ستُضاف كافة العادات والسجلات التاريخية دون مساس بأي من عاداتك الحالية.
+                <Text
+                  style={[
+                    typography.caption,
+                    {
+                      color: theme.primary,
+                      flex: 1,
+                      marginRight: 8,
+                      textAlign: 'right',
+                      lineHeight: 18,
+                    },
+                  ]}
+                >
+                  استيراد آمن بنمط «الدمج دائماً»: ستُضاف كافة العادات والسجلات التاريخية دون مساس بأي
+                  من عاداتك الحالية.
                 </Text>
               </View>
 
-              <Text style={[typography.subMedium, { color: theme.text, textAlign: 'right', marginTop: 14, marginBottom: 8 }]}>
+              <Text
+                style={[
+                  typography.subMedium,
+                  { color: theme.text, textAlign: 'right', marginTop: 14, marginBottom: 8 },
+                ]}
+              >
                 قائمة العادات التي سيتم استيرادها:
               </Text>
               <View style={[styles.loopHabitsList, { borderColor: theme.border }]}>
@@ -1103,19 +1251,58 @@ export const SettingsScreen: React.FC = () => {
                       style={[
                         styles.loopHabitRow,
                         { borderBottomColor: theme.borderSubtle },
-                        idx === (loopDataPreview.inspection.habitsPreview.length - 1) && { borderBottomWidth: 0 },
+                        idx === loopDataPreview.inspection.habitsPreview.length - 1 && {
+                          borderBottomWidth: 0,
+                        },
                       ]}
                     >
-                      <View style={{ flexDirection: 'row-reverse', alignItems: 'center', flex: 1, justifyContent: 'flex-start' }}>
-                        <View style={[styles.habitIconCircle, { backgroundColor: item.color + '20', marginLeft: 8 }]}>
+                      <View
+                        style={{
+                          flexDirection: 'row-reverse',
+                          alignItems: 'center',
+                          flex: 1,
+                          justifyContent: 'flex-start',
+                        }}
+                      >
+                        <View
+                          style={[
+                            styles.habitIconCircle,
+                            { backgroundColor: item.color + '20', marginLeft: 8 },
+                          ]}
+                        >
                           <Ionicons name={item.icon as any} size={16} color={item.color} />
                         </View>
-                        <Text style={[typography.bodyMedium, { color: theme.text, textAlign: 'right', flex: 1 }]} numberOfLines={1}>
+                        <Text
+                          style={[
+                            typography.bodyMedium,
+                            { color: theme.text, textAlign: 'right', flex: 1 },
+                          ]}
+                          numberOfLines={1}
+                        >
                           {item.name}
                         </Text>
                       </View>
-                      <View style={[styles.loopHabitBadge, { backgroundColor: item.isArchived ? (isDark ? '#262A30' : theme.cardHover) : theme.primaryLight }]}>
-                        <Text style={[typography.caption, { color: item.isArchived ? theme.textMuted : theme.primary, fontSize: 11 }]}>
+                      <View
+                        style={[
+                          styles.loopHabitBadge,
+                          {
+                            backgroundColor: item.isArchived
+                              ? isDark
+                                ? '#262A30'
+                                : theme.cardHover
+                              : theme.primaryLight,
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            typography.caption,
+                            {
+                              color: item.isArchived ? theme.textMuted : theme.primary,
+                              fontSize: 11,
+                            },
+                          ]}
+                        >
                           {item.isArchived ? 'مؤرشفة' : 'نشطة'}
                         </Text>
                       </View>
@@ -1127,7 +1314,11 @@ export const SettingsScreen: React.FC = () => {
 
             <View style={{ gap: 8, marginTop: 14 }}>
               <Button
-                title={isProcessingLoopImport ? 'جاري إنشاء العادات...' : 'إنشاء العادات فقط (بدون سجلات سابقة)'}
+                title={
+                  isProcessingLoopImport
+                    ? 'جاري إنشاء العادات...'
+                    : 'إنشاء العادات فقط (بدون سجلات سابقة)'
+                }
                 iconName="sparkles-outline"
                 variant="primary"
                 size="md"
@@ -1136,7 +1327,9 @@ export const SettingsScreen: React.FC = () => {
                 disabled={isProcessingLoopImport}
               />
               <Button
-                title={isProcessingLoopImport ? 'جاري الدمج...' : 'استيراد كامل مع السجلات التاريخية'}
+                title={
+                  isProcessingLoopImport ? 'جاري الدمج...' : 'استيراد كامل مع السجلات التاريخية'
+                }
                 iconName="download-outline"
                 variant="outline"
                 size="sm"
@@ -1173,68 +1366,143 @@ export const SettingsScreen: React.FC = () => {
                   سياسة الخصوصية وأمان البيانات
                 </Text>
               </View>
-              <Pressable
-                onPress={() => setIsPrivacyModalOpen(false)}
-                hitSlop={10}
-              >
+              <Pressable onPress={() => setIsPrivacyModalOpen(false)} hitSlop={10}>
                 <Ionicons name="close-circle-outline" size={24} color={theme.textMuted} />
               </Pressable>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 10 }}>
-              <View style={[styles.privacyCallout, { backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary, borderColor: theme.border }]}>
-                <Text style={[typography.bodyMedium, { color: theme.text, textAlign: 'right', fontWeight: '700', marginBottom: 4 }]}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingVertical: 10 }}
+            >
+              <View
+                style={[
+                  styles.privacyCallout,
+                  {
+                    backgroundColor: isDark ? '#1C1F24' : theme.cardSecondary,
+                    borderColor: theme.border,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    typography.bodyMedium,
+                    { color: theme.text, textAlign: 'right', fontWeight: '700', marginBottom: 4 },
+                  ]}
+                >
                   🛡️ خصوصيتك هي أولويتنا المطلقة
                 </Text>
-                <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 }]}>
-                  تطبيق "إنجاز" مصمم بمبدأ التخزين المحلي أولاً (Local-First). جميع عاداتك وملاحظاتك وإنجازاتك ملك لك وحدك ومحفوظة داخل جهازك بأمان تام.
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 },
+                  ]}
+                >
+                  تطبيق «إنجاز» مصمم بمبدأ التخزين المحلي أولاً (Local-First). جميع عاداتك وملاحظاتك
+                  وإنجازاتك ملك لك وحدك ومحفوظة داخل جهازك بأمان تام.
                 </Text>
               </View>
 
               <View style={styles.privacySection}>
-                <Text style={[typography.bodyMedium, { color: theme.text, fontWeight: '700', textAlign: 'right', marginBottom: 4 }]}>
+                <Text
+                  style={[
+                    typography.bodyMedium,
+                    { color: theme.text, fontWeight: '700', textAlign: 'right', marginBottom: 4 },
+                  ]}
+                >
                   ١. التخزين المحلي والبيانات
                 </Text>
-                <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 }]}>
-                  تُخزن جميع البيانات في قاعدة بيانات SQLite معزولة داخل مجلد التطبيق الآمن على هاتفك. لا نشترط أي تسجيل دخول أو بريد إلكتروني أو رقم هاتف لاستخدام التطبيق.
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 },
+                  ]}
+                >
+                  تُخزن جميع البيانات في قاعدة بيانات SQLite معزولة داخل مجلد التطبيق الآمن على
+                  هاتفك. لا نشترط أي تسجيل دخول أو بريد إلكتروني أو رقم هاتف لاستخدام التطبيق.
                 </Text>
               </View>
 
               <View style={styles.privacySection}>
-                <Text style={[typography.bodyMedium, { color: theme.text, fontWeight: '700', textAlign: 'right', marginBottom: 4 }]}>
-                  ٢. خالٍ من الإعلانات والتتبع
+                <Text
+                  style={[
+                    typography.bodyMedium,
+                    { color: theme.text, fontWeight: '700', textAlign: 'right', marginBottom: 4 },
+                  ]}
+                >
+                  ٢. خالٍ من الإعلانات وتقارير الأعطال الاختيارية
                 </Text>
-                <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 }]}>
-                  التطبيق خالٍ تماماً ١٠٠٪ من أي برمجيات إعلانية (No Ads) أو أدوات تتبع السلوك (No Analytics Tracking) أو SDKs خارجية تسجل نشاطك.
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 },
+                  ]}
+                >
+                  التطبيق خالٍ تماماً من الإعلانات والتتبع السلوكي. إذا فعّلت خيار «إرسال تقارير
+                  الأعطال لتحسين التطبيق» طوعاً من الإعدادات، تُرسل تقارير تقنية مجهولة للأعطال وسرعة
+                  الأداء (عبر Sentry وExpo Observe) دون أي بيانات شخصية ودون إرسال أسماء العادات أو
+                  الملاحظات، ويمكنك إيقافه في أي وقت.
                 </Text>
               </View>
 
               <View style={styles.privacySection}>
-                <Text style={[typography.bodyMedium, { color: theme.text, fontWeight: '700', textAlign: 'right', marginBottom: 4 }]}>
-                  ٣. لا توجد خوادم ولا مزامنة سحابية (Offline-First)
+                <Text
+                  style={[
+                    typography.bodyMedium,
+                    { color: theme.text, fontWeight: '700', textAlign: 'right', marginBottom: 4 },
+                  ]}
+                >
+                  ٣. التخزين المحلي لبياناتك (Local-First)
                 </Text>
-                <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 }]}>
-                  يعمل التطبيق بشكل محلي ومستقل بنسبة ١٠٠٪ دون أي خوادم أو قواعد بيانات سحابية. عاداتك، سجلاتك، وملاحظاتك الشخصية لا تغادر هاتفك إطلاقاً.
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 },
+                  ]}
+                >
+                  تعمل جميع ميزات التطبيق محلياً بنسبة ١٠٠٪، وعاداتك وسجلاتك وملاحظاتك الشخصية لا
+                  تغادر هاتفك إطلاقاً.
                 </Text>
               </View>
 
               <View style={styles.privacySection}>
-                <Text style={[typography.bodyMedium, { color: theme.text, fontWeight: '700', textAlign: 'right', marginBottom: 4 }]}>
+                <Text
+                  style={[
+                    typography.bodyMedium,
+                    { color: theme.text, fontWeight: '700', textAlign: 'right', marginBottom: 4 },
+                  ]}
+                >
                   ٤. الأذونات والصلاحيات
                 </Text>
-                <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 }]}>
-                  • الإشعارات (POST_NOTIFICATIONS): لتذكيرك بمواعيد عاداتك محلياً.{'\n'}
-                  • الاهتزاز (VIBRATE): للتغذية اللمسية عند الإنجاز.{'\n'}
-                  • لا يطلب التطبيق إذن الميكروفون أو الكاميرا أو الموقع الجغرافي.
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 },
+                  ]}
+                >
+                  • الإشعارات (POST_NOTIFICATIONS): لتذكيرك بمواعيد عاداتك محلياً.{'\n'}• الاهتزاز
+                  (VIBRATE): للتغذية اللمسية عند الإنجاز.{'\n'}• لا يطلب التطبيق إذن الميكروفون أو
+                  الكاميرا أو الموقع الجغرافي.
                 </Text>
               </View>
 
               <View style={styles.privacySection}>
-                <Text style={[typography.bodyMedium, { color: theme.text, fontWeight: '700', textAlign: 'right', marginBottom: 4 }]}>
+                <Text
+                  style={[
+                    typography.bodyMedium,
+                    { color: theme.text, fontWeight: '700', textAlign: 'right', marginBottom: 4 },
+                  ]}
+                >
                   ٥. تحكم كامل وحذف فوري
                 </Text>
-                <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 }]}>
-                  يمكنك تصدير كافة بياناتك في أي وقت كملف JSON أو جداول CSV، كما يمكنك مسح كافة بياناتك نهائياً بضغطة زر واحدة من شاشة الإعدادات.
+                <Text
+                  style={[
+                    typography.caption,
+                    { color: theme.textSecondary, textAlign: 'right', lineHeight: 20 },
+                  ]}
+                >
+                  يمكنك تصدير كافة بياناتك في أي وقت كملف JSON أو جداول CSV، كما يمكنك مسح كافة
+                  بياناتك نهائياً بضغطة زر واحدة من شاشة الإعدادات.
                 </Text>
               </View>
             </ScrollView>
@@ -1246,8 +1514,12 @@ export const SettingsScreen: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onPress={() => {
-                  Linking.openURL('https://sultanalhabsi.github.io/enjaz-Habit-Tracker/privacy.html').catch(() => {
-                    Linking.openURL('https://github.com/sultanAlhabsi/enjaz-Habit-Tracker/blob/main/PRIVACY_POLICY.md').catch(() => {});
+                  Linking.openURL(
+                    'https://sultanalhabsi.github.io/enjaz-Habit-Tracker/privacy.html'
+                  ).catch(() => {
+                    Linking.openURL(
+                      'https://github.com/sultanAlhabsi/enjaz-Habit-Tracker/blob/main/PRIVACY_POLICY.md'
+                    ).catch(() => {});
                   });
                 }}
               />

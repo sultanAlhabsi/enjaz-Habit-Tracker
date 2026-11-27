@@ -19,4 +19,3 @@ export type RootStackParamList = {
   Onboarding: { isRevisit?: boolean } | undefined;
   Contact: undefined;
 };
-

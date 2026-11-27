@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useTheme } from '../../theme/ThemeContext';
 
 interface OnboardingPaginationProps {

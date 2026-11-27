@@ -99,16 +99,36 @@ export const detectHabitIcon = (name: string): string => {
   const lower = trimmed.toLowerCase();
 
   // High-priority exact keyword rules
-  if (lower.includes('حذف الصور') || lower.includes('تنظيف الصور') || lower.includes('الصور') || lower.includes('صور')) {
+  if (
+    lower.includes('حذف الصور') ||
+    lower.includes('تنظيف الصور') ||
+    lower.includes('الصور') ||
+    lower.includes('صور')
+  ) {
     return 'images-outline';
   }
-  if (lower.includes('قص الاظافر') || lower.includes('قص الأظافر') || lower.includes('أظافر') || lower.includes('اظافر')) {
+  if (
+    lower.includes('قص الاظافر') ||
+    lower.includes('قص الأظافر') ||
+    lower.includes('أظافر') ||
+    lower.includes('اظافر')
+  ) {
     return 'cut-outline';
   }
-  if (lower.includes('هاتف') || lower.includes('جوال') || lower.includes('شاشة') || lower.includes('موبايل')) {
+  if (
+    lower.includes('هاتف') ||
+    lower.includes('جوال') ||
+    lower.includes('شاشة') ||
+    lower.includes('موبايل')
+  ) {
     return 'phone-portrait-outline';
   }
-  if (lower.includes('استغفار') || lower.includes('أستغفار') || lower.includes('سحاب') || lower.includes('oci')) {
+  if (
+    lower.includes('استغفار') ||
+    lower.includes('أستغفار') ||
+    lower.includes('سحاب') ||
+    lower.includes('oci')
+  ) {
     return 'cloud-outline';
   }
   if (lower.includes('ألعاب الذكاء') || lower.includes('العاب الذكاء') || lower.includes('ذكاء')) {
@@ -117,28 +137,68 @@ export const detectHabitIcon = (name: string): string => {
   if (lower.includes('بلغوا عني') || lower.includes('نشر') || lower.includes('مشاركة')) {
     return 'repeat-outline';
   }
-  if (lower.includes('سواك') || lower.includes('السواك') || lower.includes('فرشاة') || lower.includes('أسنان')) {
+  if (
+    lower.includes('سواك') ||
+    lower.includes('السواك') ||
+    lower.includes('فرشاة') ||
+    lower.includes('أسنان')
+  ) {
     return 'brush-outline';
   }
-  if (lower.includes('عصافير') || lower.includes('طيور') || lower.includes('حيوان') || lower.includes('قطط')) {
+  if (
+    lower.includes('عصافير') ||
+    lower.includes('طيور') ||
+    lower.includes('حيوان') ||
+    lower.includes('قطط')
+  ) {
     return 'paw-outline';
   }
-  if (lower.includes('صدقة') || lower.includes('تبرع') || lower.includes('زكاة') || lower.includes('إحسان')) {
+  if (
+    lower.includes('صدقة') ||
+    lower.includes('تبرع') ||
+    lower.includes('زكاة') ||
+    lower.includes('إحسان')
+  ) {
     return 'gift-outline';
   }
-  if (lower.includes('قرآن') || lower.includes('القرآن') || lower.includes('قران') || lower.includes('مصحف')) {
+  if (
+    lower.includes('قرآن') ||
+    lower.includes('القرآن') ||
+    lower.includes('قران') ||
+    lower.includes('مصحف')
+  ) {
     return 'book-outline';
   }
-  if (lower.includes('كتابة') || lower.includes('تدوين') || lower.includes('يوميات') || lower.includes('مذكرات')) {
+  if (
+    lower.includes('كتابة') ||
+    lower.includes('تدوين') ||
+    lower.includes('يوميات') ||
+    lower.includes('مذكرات')
+  ) {
     return 'pencil-outline';
   }
-  if (lower.includes('شرب الماء') || lower.includes('ماء') || lower.includes('الماء') || lower.includes('سوائل')) {
+  if (
+    lower.includes('شرب الماء') ||
+    lower.includes('ماء') ||
+    lower.includes('الماء') ||
+    lower.includes('سوائل')
+  ) {
     return 'water-outline';
   }
-  if (lower.includes('سورة') || lower.includes('جزء عم') || lower.includes('الكهف') || lower.includes('الفرقان')) {
+  if (
+    lower.includes('سورة') ||
+    lower.includes('جزء عم') ||
+    lower.includes('الكهف') ||
+    lower.includes('الفرقان')
+  ) {
     return 'star-outline';
   }
-  if (lower.includes('تداول') || lower.includes('أسهم') || lower.includes('استثمار') || lower.includes('بورصة')) {
+  if (
+    lower.includes('تداول') ||
+    lower.includes('أسهم') ||
+    lower.includes('استثمار') ||
+    lower.includes('بورصة')
+  ) {
     return 'trending-up-outline';
   }
   if (lower.includes('صيام') || lower.includes('صوم') || lower.includes('إفطار')) {
@@ -150,16 +210,34 @@ export const detectHabitIcon = (name: string): string => {
   if (lower.includes('ركض') || lower.includes('جري') || lower.includes('هرولة')) {
     return 'footsteps-outline';
   }
-  if (lower.includes('بلانك') || lower.includes('ضغط') || lower.includes('حديد') || lower.includes('أثقال') || lower.includes('تمارين') || lower.includes('رياضة')) {
+  if (
+    lower.includes('بلانك') ||
+    lower.includes('ضغط') ||
+    lower.includes('حديد') ||
+    lower.includes('أثقال') ||
+    lower.includes('تمارين') ||
+    lower.includes('رياضة')
+  ) {
     return 'fitness-outline';
   }
   if (lower.includes('صباح') || lower.includes('ضحى') || lower.includes('شروق')) {
     return 'sunny-outline';
   }
-  if (lower.includes('مساء') || lower.includes('ليل') || lower.includes('نوم') || lower.includes('فجر') || lower.includes('وتر')) {
+  if (
+    lower.includes('مساء') ||
+    lower.includes('ليل') ||
+    lower.includes('نوم') ||
+    lower.includes('فجر') ||
+    lower.includes('وتر')
+  ) {
     return 'moon-outline';
   }
-  if (lower.includes('تنفس') || lower.includes('يوغا') || lower.includes('استرخاء') || lower.includes('جولاين')) {
+  if (
+    lower.includes('تنفس') ||
+    lower.includes('يوغا') ||
+    lower.includes('استرخاء') ||
+    lower.includes('جولاين')
+  ) {
     return 'body-outline';
   }
   if (lower.includes('تعب') || lower.includes('إرهاق') || lower.includes('راحة')) {
@@ -327,9 +405,7 @@ export const convertLoopRawRecords = (
 
     // Determine created date based on earliest repetition
     const earliestTs = habitMinTimestamp.get(h.id);
-    const createdAt = earliestTs
-      ? new Date(earliestTs).toISOString()
-      : new Date().toISOString();
+    const createdAt = earliestTs ? new Date(earliestTs).toISOString() : new Date().toISOString();
 
     const archivedAt = isArchived ? new Date().toISOString() : null;
 
@@ -430,9 +506,7 @@ export const convertLoopRawRecords = (
       ? new Date(overallMinTimestamp).toISOString().split('T')[0]
       : undefined;
   const newestDate =
-    overallMaxTimestamp > 0
-      ? new Date(overallMaxTimestamp).toISOString().split('T')[0]
-      : undefined;
+    overallMaxTimestamp > 0 ? new Date(overallMaxTimestamp).toISOString().split('T')[0] : undefined;
 
   const inspection: LoopBackupInspection = {
     fileName,

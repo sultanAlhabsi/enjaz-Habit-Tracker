@@ -22,135 +22,131 @@ interface FilterTabsBarProps {
 
 const TABS: HabitFilter[] = ['all', 'pending', 'completed'];
 
-export const FilterTabsBar: React.FC<FilterTabsBarProps> = React.memo(({
-  filter,
-  onSelectFilter,
-  allCount,
-  pendingCount,
-  completedCount,
-}) => {
-  const { theme, typography } = useTheme();
+export const FilterTabsBar: React.FC<FilterTabsBarProps> = React.memo(
+  ({ filter, onSelectFilter, allCount, pendingCount, completedCount }) => {
+    const { theme, typography } = useTheme();
 
-  // Local active tab for instant, zero-lag visual feedback
-  const [activeTab, setActiveTab] = useState<HabitFilter>(filter);
+    // Local active tab for instant, zero-lag visual feedback
+    const [activeTab, setActiveTab] = useState<HabitFilter>(filter);
 
-  const tabLayouts = useRef<{ [key in HabitFilter]?: { x: number; width: number } }>({});
-  const isInitial = useRef(true);
+    const tabLayouts = useRef<{ [key in HabitFilter]?: { x: number; width: number } }>({});
+    const isInitial = useRef(true);
 
-  const lineX = useSharedValue(0);
-  const lineWidth = useSharedValue(0);
-  const lineOpacity = useSharedValue(0);
+    const lineX = useSharedValue(0);
+    const lineWidth = useSharedValue(0);
+    const lineOpacity = useSharedValue(0);
 
-  const updatePosition = (tab: HabitFilter, immediate = false) => {
-    const layout = tabLayouts.current[tab];
-    if (!layout) return;
+    const updatePosition = (tab: HabitFilter, immediate = false) => {
+      const layout = tabLayouts.current[tab];
+      if (!layout) return;
 
-    const targetX = layout.x;
-    const targetWidth = layout.width;
+      const targetX = layout.x;
+      const targetWidth = layout.width;
 
-    if (immediate || isInitial.current) {
-      isInitial.current = false;
-      lineX.value = targetX;
-      lineWidth.value = targetWidth;
-      lineOpacity.value = 1;
-    } else {
-      lineOpacity.value = withTiming(1, { duration: 150 });
-      lineX.value = withSpring(targetX, {
-        damping: 24,
-        stiffness: 280,
-        mass: 0.7,
-      });
-      lineWidth.value = withSpring(targetWidth, {
-        damping: 24,
-        stiffness: 280,
-        mass: 0.7,
-      });
-    }
-  };
-
-  // Sync if prop changes externally
-  useEffect(() => {
-    setActiveTab(filter);
-    updatePosition(filter);
-  }, [filter, allCount, pendingCount, completedCount]);
-
-  const handlePressTab = (tab: HabitFilter) => {
-    if (tab === activeTab) return;
-
-    setActiveTab(tab);
-    updatePosition(tab);
-    onSelectFilter(tab);
-  };
-
-  const animatedLineStyle = useAnimatedStyle(() => {
-    'worklet';
-    return {
-      transform: [{ translateX: lineX.value }],
-      width: lineWidth.value,
-      opacity: lineOpacity.value,
+      if (immediate || isInitial.current) {
+        isInitial.current = false;
+        lineX.value = targetX;
+        lineWidth.value = targetWidth;
+        lineOpacity.value = 1;
+      } else {
+        lineOpacity.value = withTiming(1, { duration: 150 });
+        lineX.value = withSpring(targetX, {
+          damping: 24,
+          stiffness: 280,
+          mass: 0.7,
+        });
+        lineWidth.value = withSpring(targetWidth, {
+          damping: 24,
+          stiffness: 280,
+          mass: 0.7,
+        });
+      }
     };
-  });
 
-  const labels: Record<HabitFilter, string> = {
-    all: `الكل (${toArabicNumerals(allCount)})`,
-    pending: `المتبقية (${toArabicNumerals(pendingCount)})`,
-    completed: `المكتملة (${toArabicNumerals(completedCount)})`,
-  };
+    // Sync if prop changes externally
+    useEffect(() => {
+      setActiveTab(filter);
+      updatePosition(filter);
+    }, [filter, allCount, pendingCount, completedCount]);
 
-  return (
-    <View style={styles.container}>
-      {/* Sliding Underline between the filters */}
-      <Animated.View
-        pointerEvents="none"
-        style={[
-          styles.slidingLine,
-          {
-            backgroundColor: theme.primary,
-          },
-          animatedLineStyle,
-        ]}
-      />
+    const handlePressTab = (tab: HabitFilter) => {
+      if (tab === activeTab) return;
 
-      {TABS.map((tab) => {
-        const isSelected = activeTab === tab;
-        return (
-          <Pressable
-            key={tab}
-            accessibilityRole="button"
-            accessibilityState={{ selected: isSelected }}
-            onPress={() => handlePressTab(tab)}
-            onLayout={(e) => {
-              const { x, width } = e.nativeEvent.layout;
-              tabLayouts.current[tab] = { x, width };
-              if (tab === activeTab) {
-                updatePosition(activeTab, isInitial.current);
-              }
-            }}
-            style={({ pressed }) => [
-              styles.tabBtn,
-              {
-                opacity: pressed ? 0.7 : 1,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                typography.caption,
+      setActiveTab(tab);
+      updatePosition(tab);
+      onSelectFilter(tab);
+    };
+
+    const animatedLineStyle = useAnimatedStyle(() => {
+      'worklet';
+      return {
+        transform: [{ translateX: lineX.value }],
+        width: lineWidth.value,
+        opacity: lineOpacity.value,
+      };
+    });
+
+    const labels: Record<HabitFilter, string> = {
+      all: `الكل (${toArabicNumerals(allCount)})`,
+      pending: `المتبقية (${toArabicNumerals(pendingCount)})`,
+      completed: `المكتملة (${toArabicNumerals(completedCount)})`,
+    };
+
+    return (
+      <View style={styles.container}>
+        {/* Sliding Underline between the filters */}
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.slidingLine,
+            {
+              backgroundColor: theme.primary,
+            },
+            animatedLineStyle,
+          ]}
+        />
+
+        {TABS.map((tab) => {
+          const isSelected = activeTab === tab;
+          return (
+            <Pressable
+              key={tab}
+              accessibilityRole="button"
+              accessibilityState={{ selected: isSelected }}
+              onPress={() => handlePressTab(tab)}
+              onLayout={(e) => {
+                const { x, width } = e.nativeEvent.layout;
+                tabLayouts.current[tab] = { x, width };
+                if (tab === activeTab) {
+                  updatePosition(activeTab, isInitial.current);
+                }
+              }}
+              style={({ pressed }) => [
+                styles.tabBtn,
                 {
-                  color: isSelected ? theme.primary : theme.textMuted,
-                  fontWeight: isSelected ? '700' : '400',
-                  paddingBottom: 6,
+                  opacity: pressed ? 0.7 : 1,
                 },
               ]}
             >
-              {labels[tab]}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-});
+              <Text
+                style={[
+                  typography.caption,
+                  {
+                    color: isSelected ? theme.primary : theme.textMuted,
+                    fontWeight: isSelected ? '700' : '400',
+                    paddingBottom: 6,
+                  },
+                ]}
+              >
+                {labels[tab]}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {

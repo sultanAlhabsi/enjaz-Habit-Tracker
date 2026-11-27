@@ -34,13 +34,7 @@ import { FilterTabsBar } from '../components/home/FilterTabsBar';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { HomeScreenSkeleton } from '../components/skeleton';
 
-
-import {
-  HABIT_CATEGORIES,
-  HabitCategory,
-  HABIT_SORT_OPTIONS,
-  Habit,
-} from '../types/habit';
+import { HABIT_CATEGORIES, HabitCategory, HABIT_SORT_OPTIONS, Habit } from '../types/habit';
 import {
   calculateHabitStats,
   calculateCurrentStreakFromDates,
@@ -57,7 +51,6 @@ import {
   getPeriodicBadgeText,
   toArabicNumerals,
 } from '../utils/habitUtils';
-
 
 const isFabric = !!(globalThis as any).nativeFabricUIManager;
 if (Platform.OS === 'android' && !isFabric && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -184,7 +177,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   // Fast O(1) lookup map for selectedDate: `${habitId}:${date}` -> HabitCheckin
   // Only filters checkins for selectedDate, reducing loop overhead by 99%
   const checkinsMap = useMemo(() => {
-    const map = new Map<string, typeof checkins[0]>();
+    const map = new Map<string, (typeof checkins)[0]>();
     for (let i = 0; i < checkins.length; i++) {
       const c = checkins[i];
       if (c.date === selectedDate) {
@@ -195,10 +188,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   }, [checkins, selectedDate]);
 
   // Unarchived active habits (memoized)
-  const activeUnarchivedHabits = useMemo(
-    () => habits.filter((h) => !h.archivedAt),
-    [habits]
-  );
+  const activeUnarchivedHabits = useMemo(() => habits.filter((h) => !h.archivedAt), [habits]);
 
   // Periodic flexible habits (weekly_target and monthly_target)
   const periodicHabits = useMemo(
@@ -249,10 +239,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     return baseHabits.filter((h) => getHabitCategory(h.icon) === selectedCategory);
   }, [baseHabits, selectedCategory]);
 
-  const categoryCompletedCount = useMemo(() =>
-    categoryFilteredHabits.filter((h) =>
-      checkinsMap.get(`${h.id}:${selectedDate}`)?.completed
-    ).length,
+  const categoryCompletedCount = useMemo(
+    () =>
+      categoryFilteredHabits.filter((h) => checkinsMap.get(`${h.id}:${selectedDate}`)?.completed)
+        .length,
     [categoryFilteredHabits, checkinsMap, selectedDate]
   );
 
@@ -295,10 +285,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   }, [sortedFilteredHabits, completedDatesByHabit, selectedDate]);
 
   // Off-schedule habits: scheduled habits that are NOT due on selected date
-  const offScheduleHabits = useMemo(() =>
-    scheduledHabits.filter(
-      (h) => !dueHabits.some((dh) => dh.id === h.id)
-    ),
+  const offScheduleHabits = useMemo(
+    () => scheduledHabits.filter((h) => !dueHabits.some((dh) => dh.id === h.id)),
     [scheduledHabits, dueHabits]
   );
 
@@ -399,58 +387,45 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     setActiveQuickActionHabit(habit);
   }, []);
 
-  const handlePressNote = useCallback(
-    (habit: Habit, note?: string) => {
-      const activeDate = useHabitStore.getState().selectedDate;
-      setActiveNoteModal({
-        habit,
-        date: activeDate,
-        initialNote: note,
-      });
-    },
-    []
-  );
+  const handlePressNote = useCallback((habit: Habit, note?: string) => {
+    const activeDate = useHabitStore.getState().selectedDate;
+    setActiveNoteModal({
+      habit,
+      date: activeDate,
+      initialNote: note,
+    });
+  }, []);
 
-  const handlePressQuantity = useCallback(
-    (habit: Habit, currentCount: number) => {
-      const activeDate = useHabitStore.getState().selectedDate;
-      setActiveQuantityModal({
-        habit,
-        currentCount,
-        date: activeDate,
-      });
-    },
-    []
-  );
+  const handlePressQuantity = useCallback((habit: Habit, currentCount: number) => {
+    const activeDate = useHabitStore.getState().selectedDate;
+    setActiveQuantityModal({
+      habit,
+      currentCount,
+      date: activeDate,
+    });
+  }, []);
 
   const handleResetAll = useCallback(() => {
     if (dailyStats.todayCompletedCount <= 0) return;
 
-    appAlert(
-      'إعادة تعيين عادات اليوم',
-      'هل ترغب في إلغاء تحديد إنجاز عادات هذا اليوم؟',
-      [
-        { text: 'تراجع', style: 'cancel' },
-        {
-          text: 'إعادة تعيين',
-          style: 'destructive',
-          onPress: async () => {
-            const activeDate = useHabitStore.getState().selectedDate;
-            await resetAllDueHabits(activeDate);
-          },
+    appAlert('إعادة تعيين عادات اليوم', 'هل ترغب في إلغاء تحديد إنجاز عادات هذا اليوم؟', [
+      { text: 'تراجع', style: 'cancel' },
+      {
+        text: 'إعادة تعيين',
+        style: 'destructive',
+        onPress: async () => {
+          const activeDate = useHabitStore.getState().selectedDate;
+          await resetAllDueHabits(activeDate);
         },
-      ]
-    );
+      },
+    ]);
   }, [dailyStats.todayCompletedCount, resetAllDueHabits]);
 
   const listHeaderComponent = useMemo(
     () => (
       <View>
         {/* Date Selector Strip */}
-        <DateStrip
-          selectedDate={selectedDate}
-          onSelectDate={setSelectedDate}
-        />
+        <DateStrip selectedDate={selectedDate} onSelectDate={setSelectedDate} />
 
         {/* Daily Progress Overview */}
         <DailyProgressCard
@@ -509,7 +484,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </ScrollView>
 
         {/* Quiet Filter Tabs & Sort Button */}
-        <View style={[styles.filterBarContainer, { marginHorizontal: spacing.base, marginBottom: spacing.md }]}>
+        <View
+          style={[
+            styles.filterBarContainer,
+            { marginHorizontal: spacing.base, marginBottom: spacing.md },
+          ]}
+        >
           <FilterTabsBar
             filter={filter}
             onSelectFilter={setFilter}
@@ -905,7 +885,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       const isCompleted = Boolean(checkin?.completed);
       const currentCount = checkin ? checkin.count : 0;
       const streak = habitStreakMap.get(habit.id) ?? 0;
-      const isDue = isHabitDueOnDate(habit, selectedDate, true) || isHabitScheduledForDate(habit, selectedDate);
+      const isDue =
+        isHabitDueOnDate(habit, selectedDate, true) || isHabitScheduledForDate(habit, selectedDate);
       const periodicBadgeText = getPeriodicBadgeText(
         habit,
         completedDatesByHabit.get(habit.id) || new Set<string>(),
@@ -958,14 +939,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       completedDatesByHabit,
       theme,
     }),
-    [
-      selectedDate,
-      checkinsMap,
-      habitStreakMap,
-      isFutureDate,
-      completedDatesByHabit,
-      theme,
-    ]
+    [selectedDate, checkinsMap, habitStreakMap, isFutureDate, completedDatesByHabit, theme]
   );
 
   if (isLoading || isPreviewingSkeleton) {
@@ -1182,25 +1156,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         visible={activeQuickActionHabit !== null}
         habit={activeQuickActionHabit}
         selectedDate={selectedDate}
-        isCompleted={
-          Boolean(
-            activeQuickActionHabit &&
-            checkinsMap.get(`${activeQuickActionHabit.id}:${selectedDate}`)?.completed
-          )
-        }
+        isCompleted={Boolean(
+          activeQuickActionHabit &&
+          checkinsMap.get(`${activeQuickActionHabit.id}:${selectedDate}`)?.completed
+        )}
         streak={
           activeQuickActionHabit
             ? (habitStreakMap.get(activeQuickActionHabit.id) ??
-               offScheduleStreakMap.get(activeQuickActionHabit.id) ??
-               0)
+              offScheduleStreakMap.get(activeQuickActionHabit.id) ??
+              0)
             : 0
         }
-        hasNote={
-          Boolean(
-            activeQuickActionHabit &&
-            checkinsMap.get(`${activeQuickActionHabit.id}:${selectedDate}`)?.note?.trim()
-          )
-        }
+        hasNote={Boolean(
+          activeQuickActionHabit &&
+          checkinsMap.get(`${activeQuickActionHabit.id}:${selectedDate}`)?.note?.trim()
+        )}
         isFutureDate={isFutureDate}
         onClose={() => setActiveQuickActionHabit(null)}
         onToggleCheckin={() => {
@@ -1234,11 +1204,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             try {
               const stats = calculateHabitStats(activeQuickActionHabit, checkins);
               const milestone = calculateStreakMilestone(stats.currentStreak);
-              const text = formatHabitStatsForShare(
-                activeQuickActionHabit,
-                stats,
-                milestone
-              );
+              const text = formatHabitStatsForShare(activeQuickActionHabit, stats, milestone);
               await Share.share({ message: text });
             } catch (_) {}
           }
@@ -1327,10 +1293,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         animationType="fade"
         onRequestClose={() => setIsSortModalVisible(false)}
       >
-        <Pressable
-          style={styles.modalBackdrop}
-          onPress={() => setIsSortModalVisible(false)}
-        >
+        <Pressable style={styles.modalBackdrop} onPress={() => setIsSortModalVisible(false)}>
           <Pressable
             style={[
               styles.modalContent,
@@ -1395,9 +1358,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                       {item.label}
                     </Text>
                   </View>
-                  {isSelected && (
-                    <Ionicons name="checkmark" size={18} color={theme.text} />
-                  )}
+                  {isSelected && <Ionicons name="checkmark" size={18} color={theme.text} />}
                 </Pressable>
               );
             })}
@@ -1609,4 +1570,3 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
 });
-

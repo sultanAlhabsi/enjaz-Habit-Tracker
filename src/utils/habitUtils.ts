@@ -402,7 +402,8 @@ export const getWeeklyTargetProgress = (
     completedCount = datesInWeek.size;
   }
 
-  const targetCount = habit.weeklyTargetCount && habit.weeklyTargetCount > 0 ? habit.weeklyTargetCount : 1;
+  const targetCount =
+    habit.weeklyTargetCount && habit.weeklyTargetCount > 0 ? habit.weeklyTargetCount : 1;
   return {
     completedCount,
     targetCount,
@@ -451,7 +452,8 @@ export const getMonthlyTargetProgress = (
     completedCount = datesInMonth.size;
   }
 
-  const targetCount = habit.monthlyTargetCount && habit.monthlyTargetCount > 0 ? habit.monthlyTargetCount : 1;
+  const targetCount =
+    habit.monthlyTargetCount && habit.monthlyTargetCount > 0 ? habit.monthlyTargetCount : 1;
   return {
     completedCount,
     targetCount,
@@ -495,8 +497,11 @@ export const calculateWeeklyStreak = (
   referenceDate?: string | dayjs.Dayjs
 ): number => {
   const ref = referenceDate ? dayjs(referenceDate) : dayjs();
-  const target = habit.weeklyTargetCount && habit.weeklyTargetCount > 0 ? habit.weeklyTargetCount : 1;
-  const created = dayjs(habit.createdAt || ref).day(0).startOf('day');
+  const target =
+    habit.weeklyTargetCount && habit.weeklyTargetCount > 0 ? habit.weeklyTargetCount : 1;
+  const created = dayjs(habit.createdAt || ref)
+    .day(0)
+    .startOf('day');
 
   let curWeekRef = ref;
   const currentWeekProgress = getWeeklyTargetProgress(habit, completedDates, curWeekRef);
@@ -528,7 +533,8 @@ export const calculateMonthlyStreak = (
   referenceDate?: string | dayjs.Dayjs
 ): number => {
   const ref = referenceDate ? dayjs(referenceDate) : dayjs();
-  const target = habit.monthlyTargetCount && habit.monthlyTargetCount > 0 ? habit.monthlyTargetCount : 1;
+  const target =
+    habit.monthlyTargetCount && habit.monthlyTargetCount > 0 ? habit.monthlyTargetCount : 1;
   const created = dayjs(habit.createdAt || ref).startOf('month');
 
   let curMonthRef = ref;
@@ -562,8 +568,11 @@ const calculateWeeklyStatsInternal = (
   totalCompletions: number
 ): HabitStats => {
   const currentStreak = calculateWeeklyStreak(habit, completedDates, today);
-  const target = habit.weeklyTargetCount && habit.weeklyTargetCount > 0 ? habit.weeklyTargetCount : 1;
-  const created = dayjs(habit.createdAt || today).day(0).startOf('day');
+  const target =
+    habit.weeklyTargetCount && habit.weeklyTargetCount > 0 ? habit.weeklyTargetCount : 1;
+  const created = dayjs(habit.createdAt || today)
+    .day(0)
+    .startOf('day');
   const endOfWeek = today.day(6).endOf('day');
 
   let bestStreak = currentStreak;
@@ -604,7 +613,8 @@ const calculateMonthlyStatsInternal = (
   totalCompletions: number
 ): HabitStats => {
   const currentStreak = calculateMonthlyStreak(habit, completedDates, today);
-  const target = habit.monthlyTargetCount && habit.monthlyTargetCount > 0 ? habit.monthlyTargetCount : 1;
+  const target =
+    habit.monthlyTargetCount && habit.monthlyTargetCount > 0 ? habit.monthlyTargetCount : 1;
   const created = dayjs(habit.createdAt || today).startOf('month');
   const endOfMonth = today.endOf('month');
 
@@ -817,9 +827,7 @@ export const getHabitsForDate = (
 
   // Build a Set of habitIds completed on this date for O(1) lookup
   const completedHabitIdsOnDate = new Set(
-    allCheckins
-      .filter((c) => c.date === dateStr && c.completed)
-      .map((c) => c.habitId)
+    allCheckins.filter((c) => c.date === dateStr && c.completed).map((c) => c.habitId)
   );
 
   return habits.filter((h) => {
@@ -862,9 +870,7 @@ export const getPendingDueHabitsForDate = (
 
   // Completed habit IDs on this date
   const completedIds = new Set(
-    allCheckins
-      .filter((c) => c.date === dateStr && c.completed)
-      .map((c) => c.habitId)
+    allCheckins.filter((c) => c.date === dateStr && c.completed).map((c) => c.habitId)
   );
 
   return habits.filter((h) => {
@@ -884,9 +890,7 @@ export const getCompletedDueHabitsForDate = (
   dateStr: string
 ): Habit[] => {
   const completedIds = new Set(
-    allCheckins
-      .filter((c) => c.date === dateStr && c.completed)
-      .map((c) => c.habitId)
+    allCheckins.filter((c) => c.date === dateStr && c.completed).map((c) => c.habitId)
   );
 
   return habits.filter((h) => {
@@ -958,7 +962,6 @@ export const buildBatchCheckinPayloadForReset = (
   });
 };
 
-
 /**
  * Calculate 7-day adherence for any week (Sunday to Saturday) around a reference date
  */
@@ -995,9 +998,7 @@ export const calculateWeekAdherence = (
       (h) => !dueHabitIds.has(h.id) && completedSet.has(`${h.id}:${dStr}`)
     );
 
-    const completedDueCount = dueHabits.filter((h) =>
-      completedSet.has(`${h.id}:${dStr}`)
-    ).length;
+    const completedDueCount = dueHabits.filter((h) => completedSet.has(`${h.id}:${dStr}`)).length;
 
     const totalCompleted = completedDueCount + completedOffScheduleHabits.length;
     const totalOpportunities = dueHabits.length + completedOffScheduleHabits.length;
@@ -1026,10 +1027,7 @@ export const calculateWeekAdherence = (
 /**
  * Check if the user has ever achieved 100% completion on any past day
  */
-export const hasEverHadPerfectDay = (
-  habits: Habit[],
-  allCheckins: HabitCheckin[]
-): boolean => {
+export const hasEverHadPerfectDay = (habits: Habit[], allCheckins: HabitCheckin[]): boolean => {
   if (habits.length === 0 || allCheckins.length === 0) return false;
 
   const completedCheckins = allCheckins.filter((c) => c.completed);
@@ -1038,7 +1036,9 @@ export const hasEverHadPerfectDay = (
   // Build a Set of `habitId:date` for O(1) lookups
   const completedSet = new Set(completedCheckins.map((c) => `${c.habitId}:${c.date}`));
   // Sort descending so the most recent dates are checked first, terminating early
-  const distinctDates = Array.from(new Set(completedCheckins.map((c) => c.date))).sort((a, b) => b.localeCompare(a));
+  const distinctDates = Array.from(new Set(completedCheckins.map((c) => c.date))).sort((a, b) =>
+    b.localeCompare(a)
+  );
 
   for (const dateStr of distinctDates) {
     const dueHabits = habits.filter((h) => isHabitDueOnDate(h, dateStr, false));
@@ -1051,7 +1051,6 @@ export const hasEverHadPerfectDay = (
   }
 
   return false;
-
 };
 
 /**
@@ -1135,8 +1134,18 @@ export const formatArabicDate = (dateStr: string): string => {
   const d = dayjs(dateStr);
   const arabicDays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
   const arabicMonths = [
-    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+    'يناير',
+    'فبراير',
+    'مارس',
+    'أبريل',
+    'مايو',
+    'يونيو',
+    'يوليو',
+    'أغسطس',
+    'سبتمبر',
+    'أكتوبر',
+    'نوفمبر',
+    'ديسمبر',
   ];
 
   const dayName = arabicDays[d.day()];
@@ -1156,8 +1165,18 @@ export const formatWeekRangeArabic = (referenceDate: string | dayjs.Dayjs): stri
   const end = ref.endOf('week');
 
   const arabicMonths = [
-    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+    'يناير',
+    'فبراير',
+    'مارس',
+    'أبريل',
+    'مايو',
+    'يونيو',
+    'يوليو',
+    'أغسطس',
+    'سبتمبر',
+    'أكتوبر',
+    'نوفمبر',
+    'ديسمبر',
   ];
 
   const sDate = toArabicNumerals(start.date());
@@ -1231,10 +1250,7 @@ export const isQuantitativeHabit = (habit?: Habit | null): boolean => {
 /**
  * Calculate progress details for a habit checkin
  */
-export const calculateCheckinProgress = (
-  habit: Habit,
-  checkin?: HabitCheckin
-): CheckinProgress => {
+export const calculateCheckinProgress = (habit: Habit, checkin?: HabitCheckin): CheckinProgress => {
   const targetCount = Math.max(1, habit.targetCount || 1);
   const count = Math.max(0, checkin ? checkin.count : 0);
   const isCompleted = Boolean(checkin?.completed) || count >= targetCount;
@@ -1260,10 +1276,7 @@ export const calculateCheckinProgress = (
  * Default assumes progress is a percentage (0 to 100, e.g. 1 = 1%, 50 = 50%, 100 = 100%).
  * If isRatio is true, assumes progress is a 0 to 1 ratio (e.g. 0.01 = 1%, 0.5 = 50%, 1 = 100%).
  */
-export const normalizeProgressBarValue = (
-  progress: number,
-  isRatio: boolean = false
-): number => {
+export const normalizeProgressBarValue = (progress: number, isRatio: boolean = false): number => {
   const normalized = isRatio ? progress : progress / 100;
   return Math.min(1, Math.max(0, isNaN(normalized) ? 0 : normalized));
 };
@@ -1271,10 +1284,7 @@ export const normalizeProgressBarValue = (
 /**
  * Calculates the total logged units across all checkins for a quantitative habit.
  */
-export const calculateTotalLoggedUnits = (
-  habitId: string,
-  allCheckins: HabitCheckin[]
-): number => {
+export const calculateTotalLoggedUnits = (habitId: string, allCheckins: HabitCheckin[]): number => {
   let total = 0;
   for (const c of allCheckins) {
     if (c.habitId === habitId && c.count && c.count > 0) {
@@ -1325,7 +1335,6 @@ export const getHabitStreakStatus = (
     iconName: 'time-outline',
   };
 };
-
 
 /**
  * Calculate the next clamped count for incremental checkins
@@ -1447,9 +1456,7 @@ export const sortHabits = (
   }
 
   const completedSet = new Set(
-    allCheckins
-      .filter((c) => c.date === selectedDate && c.completed)
-      .map((c) => c.habitId)
+    allCheckins.filter((c) => c.date === selectedDate && c.completed).map((c) => c.habitId)
   );
 
   let streakCache: Map<string, number> | null = null;
@@ -1468,10 +1475,7 @@ export const sortHabits = (
     }
     habits.forEach((h) => {
       const dates = completedDatesByHabit.get(h.id) || new Set<string>();
-      streakCache!.set(
-        h.id,
-        calculateCurrentStreakFromDates(h, dates, selectedDate)
-      );
+      streakCache!.set(h.id, calculateCurrentStreakFromDates(h, dates, selectedDate));
     });
   }
 
@@ -1553,8 +1557,18 @@ export const reorderArray = <T>(list: T[], fromIndex: number, toIndex: number): 
 };
 
 const ARABIC_MONTH_NAMES = [
-  'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-  'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
+  'يناير',
+  'فبراير',
+  'مارس',
+  'أبريل',
+  'مايو',
+  'يونيو',
+  'يوليو',
+  'أغسطس',
+  'سبتمبر',
+  'أكتوبر',
+  'نوفمبر',
+  'ديسمبر',
 ];
 
 /**
@@ -1581,8 +1595,8 @@ export const calculateMonthAdherence = (
   const daysToEvaluate = isFutureMonth
     ? 0
     : isCurrentMonth
-    ? Math.min(daysInMonth, today.date())
-    : daysInMonth;
+      ? Math.min(daysInMonth, today.date())
+      : daysInMonth;
 
   let totalDueOpportunities = 0;
   let totalCompletions = 0;
@@ -1623,9 +1637,7 @@ export const calculateMonthAdherence = (
   }
 
   const completionRate =
-    totalDueOpportunities > 0
-      ? Math.round((totalCompletions / totalDueOpportunities) * 100)
-      : 0;
+    totalDueOpportunities > 0 ? Math.round((totalCompletions / totalDueOpportunities) * 100) : 0;
 
   return {
     monthLabel,
@@ -1929,22 +1941,14 @@ export const getHabitCheckinNotes = (
   habitId: string
 ): HabitCheckin[] => {
   return allCheckins
-    .filter(
-      (c) =>
-        c.habitId === habitId &&
-        typeof c.note === 'string' &&
-        c.note.trim().length > 0
-    )
+    .filter((c) => c.habitId === habitId && typeof c.note === 'string' && c.note.trim().length > 0)
     .sort((a, b) => b.date.localeCompare(a.date));
 };
 
 /**
  * Formats a reflection diary note summary for native sharing
  */
-export const formatHabitNotesForShare = (
-  habit: Habit,
-  notes: HabitCheckin[]
-): string => {
+export const formatHabitNotesForShare = (habit: Habit, notes: HabitCheckin[]): string => {
   if (!notes || notes.length === 0) {
     return appendDownloadLink(`مذكرات وخواطر عادة: ${habit.name}\nلا توجد ملاحظات مسجلة بعد.`);
   }
@@ -2254,10 +2258,7 @@ export const escapeCsvCell = (value: string | number | boolean | null | undefine
  * Exports all checkins and daily reflection notes to standard CSV format.
  * Prepends UTF-8 BOM (\uFEFF) to ensure Arabic text displays correctly in Excel.
  */
-export const exportCheckinsToCsv = (
-  habits: Habit[],
-  checkins: HabitCheckin[]
-): string => {
+export const exportCheckinsToCsv = (habits: Habit[], checkins: HabitCheckin[]): string => {
   const habitMap = new Map<string, Habit>();
   habits.forEach((h) => habitMap.set(h.id, h));
 
@@ -2294,17 +2295,7 @@ export const exportCheckinsToCsv = (
     const updatedAt = c.updatedAt || '';
 
     rows.push(
-      [
-        c.date,
-        habitName,
-        category,
-        statusText,
-        c.count,
-        targetCount,
-        unit,
-        note,
-        updatedAt,
-      ]
+      [c.date, habitName, category, statusText, c.count, targetCount, unit, note, updatedAt]
         .map(escapeCsvCell)
         .join(',')
     );
@@ -2316,10 +2307,7 @@ export const exportCheckinsToCsv = (
 /**
  * Exports a summary of all habits with streak metrics and adherence to CSV.
  */
-export const exportHabitsSummaryToCsv = (
-  habits: Habit[],
-  checkins: HabitCheckin[]
-): string => {
+export const exportHabitsSummaryToCsv = (habits: Habit[], checkins: HabitCheckin[]): string => {
   const headers = [
     'اسم العادة',
     'القسم',
@@ -2373,10 +2361,7 @@ export const exportHabitsSummaryToCsv = (
 /**
  * Exports a comprehensive report containing both habits summary and detailed checkin records.
  */
-export const exportFullReportToCsv = (
-  habits: Habit[],
-  checkins: HabitCheckin[]
-): string => {
+export const exportFullReportToCsv = (habits: Habit[], checkins: HabitCheckin[]): string => {
   const habitsCsv = exportHabitsSummaryToCsv(habits, checkins).replace(/^\uFEFF/, '');
   const checkinsCsv = exportCheckinsToCsv(habits, checkins).replace(/^\uFEFF/, '');
 
@@ -2395,10 +2380,7 @@ export const exportFullReportToCsv = (
 /**
  * Exports a detailed CSV record for a single habit including its stats and all chronological checkins.
  */
-export const exportSingleHabitToCsv = (
-  habit: Habit,
-  allCheckins: HabitCheckin[]
-): string => {
+export const exportSingleHabitToCsv = (habit: Habit, allCheckins: HabitCheckin[]): string => {
   const stats = calculateHabitStats(habit, allCheckins);
   const habitCheckins = allCheckins
     .filter((c) => c.habitId === habit.id)
@@ -2471,6 +2453,3 @@ export const exportSingleHabitToCsv = (
     (checkinRows.length > 0 ? '\r\n' + checkinRows.join('\r\n') : '')
   );
 };
-
-
-

@@ -49,10 +49,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode; initialMode?: 
     setPreference('theme_mode', mode);
   }, []);
 
-  const isDark =
-    themeMode === 'system'
-      ? systemColorScheme === 'dark'
-      : themeMode === 'dark';
+  const isDark = themeMode === 'system' ? systemColorScheme === 'dark' : themeMode === 'dark';
 
   const theme = isDark ? DARK_THEME : LIGHT_THEME;
 
@@ -75,4 +72,3 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode; initialMode?: 
 };
 
 export const useTheme = () => useContext(ThemeContext);
-

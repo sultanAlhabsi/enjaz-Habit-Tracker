@@ -1,12 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Dimensions,
-  FlatList,
-  Pressable,
-} from 'react-native';
+import { StyleSheet, View, Text, Dimensions, FlatList, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -141,10 +134,7 @@ export const OnboardingScreen: React.FC = () => {
           return <OnboardingInteractiveCard3 />;
         case 3:
           return (
-            <OnboardingStarterPack
-              onComplete={handleCompleteOnboarding}
-              isRevisit={isRevisit}
-            />
+            <OnboardingStarterPack onComplete={handleCompleteOnboarding} isRevisit={isRevisit} />
           );
         default:
           return null;
@@ -173,11 +163,7 @@ export const OnboardingScreen: React.FC = () => {
             hitSlop={12}
             style={styles.headerIconButton}
           >
-            <Ionicons
-              name="chevron-forward"
-              size={22}
-              color={theme.textSecondary}
-            />
+            <Ionicons name="chevron-forward" size={22} color={theme.textSecondary} />
           </Pressable>
         ) : (
           <View style={styles.headerIconButtonPlaceholder} />
@@ -188,24 +174,12 @@ export const OnboardingScreen: React.FC = () => {
 
         {/* Skip or Close Button */}
         {isRevisit ? (
-          <Pressable
-            onPress={handleClose}
-            hitSlop={12}
-            style={styles.headerTextButton}
-          >
-            <Text style={[styles.skipText, { color: theme.textSecondary }]}>
-              إغلاق
-            </Text>
+          <Pressable onPress={handleClose} hitSlop={12} style={styles.headerTextButton}>
+            <Text style={[styles.skipText, { color: theme.textSecondary }]}>إغلاق</Text>
           </Pressable>
         ) : !isLastSlide ? (
-          <Pressable
-            onPress={handleSkip}
-            hitSlop={12}
-            style={styles.headerTextButton}
-          >
-            <Text style={[styles.skipText, { color: theme.textSecondary }]}>
-              تخطي
-            </Text>
+          <Pressable onPress={handleSkip} hitSlop={12} style={styles.headerTextButton}>
+            <Text style={[styles.skipText, { color: theme.textSecondary }]}>تخطي</Text>
           </Pressable>
         ) : (
           <View style={styles.headerIconButtonPlaceholder} />
@@ -235,18 +209,12 @@ export const OnboardingScreen: React.FC = () => {
             ) : (
               <View style={styles.standardSlideContent}>
                 {/* 3D Interactive Centerpiece */}
-                <View style={styles.interactiveArea}>
-                  {renderSlideCard(index)}
-                </View>
+                <View style={styles.interactiveArea}>{renderSlideCard(index)}</View>
 
                 {/* Typography and Description */}
                 <View style={styles.textContainer}>
-                  <Text style={[styles.slideTitle, { color: theme.text }]}>
-                    {item.title}
-                  </Text>
-                  <Text
-                    style={[styles.slideSubtitle, { color: theme.textSecondary }]}
-                  >
+                  <Text style={[styles.slideTitle, { color: theme.text }]}>{item.title}</Text>
+                  <Text style={[styles.slideSubtitle, { color: theme.textSecondary }]}>
                     {item.subtitle}
                   </Text>
                 </View>
@@ -278,12 +246,7 @@ export const OnboardingScreen: React.FC = () => {
             <Text style={styles.primaryButtonText}>
               {currentIndex === SLIDES.length - 2 ? 'ابدأ رحلتك 🌿' : 'متابعة'}
             </Text>
-            <Ionicons
-              name="arrow-back"
-              size={18}
-              color="#FFFFFF"
-              style={styles.buttonIcon}
-            />
+            <Ionicons name="arrow-back" size={18} color="#FFFFFF" style={styles.buttonIcon} />
           </Pressable>
         </View>
       )}

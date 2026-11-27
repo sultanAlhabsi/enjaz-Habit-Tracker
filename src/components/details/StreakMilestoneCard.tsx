@@ -1,11 +1,15 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text } from '../common/AppText';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../theme/ThemeContext';
 import { Card } from '../common/Card';
 import type { StreakMilestoneInfo, HabitFrequency } from '../../types/habit';
-import { formatHabitStreakArabic, formatArabicDaysCount, toArabicNumerals } from '../../utils/habitUtils';
+import {
+  formatHabitStreakArabic,
+  formatArabicDaysCount,
+  toArabicNumerals,
+} from '../../utils/habitUtils';
 
 interface StreakMilestoneCardProps {
   milestoneInfo: StreakMilestoneInfo;
@@ -13,158 +17,160 @@ interface StreakMilestoneCardProps {
   frequency?: HabitFrequency;
 }
 
-export const StreakMilestoneCard: React.FC<StreakMilestoneCardProps> = React.memo(({
-  milestoneInfo,
-  habitColor,
-  frequency = 'daily',
-}) => {
-  const { theme, radius, spacing, typography } = useTheme();
-  const accentColor = habitColor || theme.primary;
+export const StreakMilestoneCard: React.FC<StreakMilestoneCardProps> = React.memo(
+  ({ milestoneInfo, habitColor, frequency = 'daily' }) => {
+    const { theme, radius, spacing, typography } = useTheme();
+    const accentColor = habitColor || theme.primary;
 
-  const { currentTier, nextMilestone, progressPercent, isTopTier, currentStreak } = milestoneInfo;
+    const { currentTier, nextMilestone, progressPercent, isTopTier, currentStreak } = milestoneInfo;
 
-  return (
-    <Card style={[styles.container, { marginBottom: spacing.base }]}>
-      {/* Header Row */}
-      <View style={styles.headerRow}>
-        <View style={styles.titleWithIcon}>
+    return (
+      <Card style={[styles.container, { marginBottom: spacing.base }]}>
+        {/* Header Row */}
+        <View style={styles.headerRow}>
+          <View style={styles.titleWithIcon}>
+            <View
+              style={[
+                styles.iconWrapper,
+                {
+                  backgroundColor: `${accentColor}18`,
+                  borderRadius: radius.md,
+                },
+              ]}
+            >
+              <Ionicons
+                name={(currentTier.icon as any) || 'flame-outline'}
+                size={20}
+                color={accentColor}
+              />
+            </View>
+            <View style={styles.headerTitles}>
+              <Text style={[typography.h3, { color: theme.text, textAlign: 'right' }]}>
+                محطة بناء العادة
+              </Text>
+              <Text
+                style={[typography.caption, { color: theme.textSecondary, textAlign: 'right' }]}
+              >
+                {currentTier.name} ({currentTier.days} {currentTier.days === 1 ? 'يوم' : 'أيام'})
+              </Text>
+            </View>
+          </View>
+
+          {/* Current streak pill */}
           <View
             style={[
-              styles.iconWrapper,
+              styles.streakBadge,
               {
-                backgroundColor: `${accentColor}18`,
-                borderRadius: radius.md,
-              },
-            ]}
-          >
-            <Ionicons
-              name={(currentTier.icon as any) || 'flame-outline'}
-              size={20}
-              color={accentColor}
-            />
-          </View>
-          <View style={styles.headerTitles}>
-            <Text style={[typography.h3, { color: theme.text, textAlign: 'right' }]}>
-              محطة بناء العادة
-            </Text>
-            <Text style={[typography.caption, { color: theme.textSecondary, textAlign: 'right' }]}>
-              {currentTier.name} ({currentTier.days} {currentTier.days === 1 ? 'يوم' : 'أيام'})
-            </Text>
-          </View>
-        </View>
-
-        {/* Current streak pill */}
-        <View
-          style={[
-            styles.streakBadge,
-            {
-              backgroundColor: `${accentColor}15`,
-              borderColor: `${accentColor}40`,
-              borderRadius: radius.full,
-            },
-          ]}
-        >
-          <Ionicons name="flame" size={13} color={accentColor} style={{ marginLeft: 3 }} />
-          <Text style={[typography.caption, { color: accentColor, fontWeight: '700' }]}>
-            {formatHabitStreakArabic(currentStreak, frequency)}
-          </Text>
-        </View>
-      </View>
-
-      {/* Tier description */}
-      <Text
-        style={[
-          typography.sub,
-          {
-            color: theme.textSecondary,
-            marginTop: spacing.xs,
-            marginBottom: spacing.md,
-            textAlign: 'right',
-            lineHeight: 20,
-          },
-        ]}
-      >
-        {currentTier.description}
-      </Text>
-
-      {/* Next Milestone progress */}
-      {!isTopTier && nextMilestone ? (
-        <View style={styles.progressSection}>
-          <View style={styles.progressLabels}>
-            <Text style={[typography.caption, { color: theme.text, fontWeight: '600' }]}>
-              المحطة القادمة: {nextMilestone.tier.name} ({toArabicNumerals(nextMilestone.tier.days)} يوم)
-            </Text>
-            <Text style={[typography.caption, { color: accentColor, fontWeight: '700' }]}>
-              {toArabicNumerals(progressPercent)}٪
-            </Text>
-          </View>
-
-          {/* Progress Bar Track */}
-          <View
-            style={[
-              styles.progressBarTrack,
-              {
-                backgroundColor: theme.cardSecondary,
+                backgroundColor: `${accentColor}15`,
+                borderColor: `${accentColor}40`,
                 borderRadius: radius.full,
               },
             ]}
           >
-            <View
-              style={[
-                styles.progressBarFill,
-                {
-                  width: `${Math.max(5, Math.min(100, progressPercent))}%`,
-                  backgroundColor: accentColor,
-                  borderRadius: radius.full,
-                },
-              ]}
-            />
+            <Ionicons name="flame" size={13} color={accentColor} style={{ marginLeft: 3 }} />
+            <Text style={[typography.caption, { color: accentColor, fontWeight: '700' }]}>
+              {formatHabitStreakArabic(currentStreak, frequency)}
+            </Text>
           </View>
-
-          <Text
-            style={[
-              typography.caption,
-              {
-                color: theme.textMuted,
-                marginTop: 6,
-                textAlign: 'right',
-                fontSize: 11,
-              },
-            ]}
-          >
-            باقي {formatArabicDaysCount(nextMilestone.remainingDays)} من الاستمرار المتتالي للوصول إلى المحطة التالية.
-          </Text>
         </View>
-      ) : (
-        <View
+
+        {/* Tier description */}
+        <Text
           style={[
-            styles.topTierBanner,
+            typography.sub,
             {
-              backgroundColor: `${accentColor}12`,
-              borderRadius: radius.md,
-              borderColor: `${accentColor}30`,
+              color: theme.textSecondary,
+              marginTop: spacing.xs,
+              marginBottom: spacing.md,
+              textAlign: 'right',
+              lineHeight: 20,
             },
           ]}
         >
-          <Ionicons name="trophy" size={16} color={accentColor} style={{ marginLeft: 6 }} />
-          <Text
+          {currentTier.description}
+        </Text>
+
+        {/* Next Milestone progress */}
+        {!isTopTier && nextMilestone ? (
+          <View style={styles.progressSection}>
+            <View style={styles.progressLabels}>
+              <Text style={[typography.caption, { color: theme.text, fontWeight: '600' }]}>
+                المحطة القادمة: {nextMilestone.tier.name} (
+                {toArabicNumerals(nextMilestone.tier.days)} يوم)
+              </Text>
+              <Text style={[typography.caption, { color: accentColor, fontWeight: '700' }]}>
+                {toArabicNumerals(progressPercent)}٪
+              </Text>
+            </View>
+
+            {/* Progress Bar Track */}
+            <View
+              style={[
+                styles.progressBarTrack,
+                {
+                  backgroundColor: theme.cardSecondary,
+                  borderRadius: radius.full,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.progressBarFill,
+                  {
+                    width: `${Math.max(5, Math.min(100, progressPercent))}%`,
+                    backgroundColor: accentColor,
+                    borderRadius: radius.full,
+                  },
+                ]}
+              />
+            </View>
+
+            <Text
+              style={[
+                typography.caption,
+                {
+                  color: theme.textMuted,
+                  marginTop: 6,
+                  textAlign: 'right',
+                  fontSize: 11,
+                },
+              ]}
+            >
+              باقي {formatArabicDaysCount(nextMilestone.remainingDays)} من الاستمرار المتتالي للوصول
+              إلى المحطة التالية.
+            </Text>
+          </View>
+        ) : (
+          <View
             style={[
-              typography.caption,
+              styles.topTierBanner,
               {
-                color: accentColor,
-                fontWeight: '600',
-                flex: 1,
-                textAlign: 'right',
+                backgroundColor: `${accentColor}12`,
+                borderRadius: radius.md,
+                borderColor: `${accentColor}30`,
               },
             ]}
           >
-            ما شاء الله! حققت أعلى محطة التزام وانضباط (نادي المئة).
-          </Text>
-        </View>
-      )}
-    </Card>
-  );
-});
+            <Ionicons name="trophy" size={16} color={accentColor} style={{ marginLeft: 6 }} />
+            <Text
+              style={[
+                typography.caption,
+                {
+                  color: accentColor,
+                  fontWeight: '600',
+                  flex: 1,
+                  textAlign: 'right',
+                },
+              ]}
+            >
+              ما شاء الله! حققت أعلى محطة التزام وانضباط (نادي المئة).
+            </Text>
+          </View>
+        )}
+      </Card>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {

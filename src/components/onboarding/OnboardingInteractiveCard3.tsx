@@ -1,12 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Pressable,
-  Vibration,
-  Platform,
-} from 'react-native';
+import { StyleSheet, View, Text, Pressable, Vibration, Platform } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -61,20 +54,14 @@ export const OnboardingInteractiveCard3: React.FC = () => {
   const cardAnimatedStyle = useAnimatedStyle(() => {
     'worklet';
     return {
-      transform: [
-        { translateY: floatTranslateY.value },
-        { scale: cardScale.value },
-      ],
+      transform: [{ translateY: floatTranslateY.value }, { scale: cardScale.value }],
     };
   });
 
   const shieldAnimatedStyle = useAnimatedStyle(() => {
     'worklet';
     return {
-      transform: [
-        { scale: shieldScale.value },
-        { rotate: `${shieldRotate.value}deg` },
-      ],
+      transform: [{ scale: shieldScale.value }, { rotate: `${shieldRotate.value}deg` }],
     };
   });
 
@@ -112,9 +99,7 @@ export const OnboardingInteractiveCard3: React.FC = () => {
             </Animated.View>
           </Pressable>
 
-          <Text style={[styles.shieldTitle, { color: theme.text }]}>
-            بياناتك في أمان مطلق 🔒
-          </Text>
+          <Text style={[styles.shieldTitle, { color: theme.text }]}>بياناتك في أمان مطلق 🔒</Text>
           <Text style={[styles.shieldSubtitle, { color: theme.textSecondary }]}>
             محفوظة محلياً على جهازك في SQLite ولا تغادره
           </Text>
@@ -122,17 +107,9 @@ export const OnboardingInteractiveCard3: React.FC = () => {
 
         {/* Privacy Value Points */}
         <View style={styles.pointsList}>
-          <View
-            style={[
-              styles.pointRow,
-              { backgroundColor: isDark ? '#232320' : '#FAF9F6' },
-            ]}
-          >
+          <View style={[styles.pointRow, { backgroundColor: isDark ? '#232320' : '#FAF9F6' }]}>
             <View
-              style={[
-                styles.pointIconCircle,
-                { backgroundColor: isDark ? '#1A2920' : '#EBF5EF' },
-              ]}
+              style={[styles.pointIconCircle, { backgroundColor: isDark ? '#1A2920' : '#EBF5EF' }]}
             >
               <Ionicons name="phone-portrait-outline" size={16} color={theme.primary} />
             </View>
@@ -146,24 +123,14 @@ export const OnboardingInteractiveCard3: React.FC = () => {
             </View>
           </View>
 
-          <View
-            style={[
-              styles.pointRow,
-              { backgroundColor: isDark ? '#232320' : '#FAF9F6' },
-            ]}
-          >
+          <View style={[styles.pointRow, { backgroundColor: isDark ? '#232320' : '#FAF9F6' }]}>
             <View
-              style={[
-                styles.pointIconCircle,
-                { backgroundColor: isDark ? '#1A2920' : '#EBF5EF' },
-              ]}
+              style={[styles.pointIconCircle, { backgroundColor: isDark ? '#1A2920' : '#EBF5EF' }]}
             >
               <Ionicons name="ban-outline" size={16} color={theme.primary} />
             </View>
             <View style={styles.pointTextContainer}>
-              <Text style={[styles.pointHeader, { color: theme.text }]}>
-                صفر إعلانات وصفر تتبّع
-              </Text>
+              <Text style={[styles.pointHeader, { color: theme.text }]}>صفر إعلانات وصفر تتبّع</Text>
               <Text style={[styles.pointDescription, { color: theme.textMuted }]}>
                 واجهة هادئة خالية من التشتيت تركز على أهدافك
               </Text>
@@ -173,11 +140,7 @@ export const OnboardingInteractiveCard3: React.FC = () => {
 
         {/* Hint at Bottom */}
         <View style={styles.hintContainer}>
-          <Ionicons
-            name="lock-closed-outline"
-            size={12}
-            color={theme.textMuted}
-          />
+          <Ionicons name="lock-closed-outline" size={12} color={theme.textMuted} />
           <Text style={[styles.hintText, { color: theme.textMuted }]}>
             المس الدرع للتفاعل واستشعار الأمان
           </Text>

@@ -45,11 +45,7 @@ export const SkeletonProvider: React.FC<SkeletonProviderProps> = ({
     );
   }, [opacity, duration, minOpacity, maxOpacity]);
 
-  return (
-    <SkeletonContext.Provider value={{ opacity }}>
-      {children}
-    </SkeletonContext.Provider>
-  );
+  return <SkeletonContext.Provider value={{ opacity }}>{children}</SkeletonContext.Provider>;
 };
 
 export interface SkeletonProps {
@@ -98,8 +94,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   }));
 
   const resolvedRadius = borderRadius !== undefined ? borderRadius : radius.sm;
-  const resolvedColor =
-    color || (theme.isDark ? '#262A30' : '#E6E4DD');
+  const resolvedColor = color || (theme.isDark ? '#262A30' : '#E6E4DD');
 
   return (
     <Animated.View

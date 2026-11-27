@@ -55,12 +55,7 @@ const ConfettiParticle: React.FC<{
 
     return {
       opacity,
-      transform: [
-        { translateX },
-        { translateY },
-        { scale },
-        { rotate: rotation },
-      ],
+      transform: [{ translateX }, { translateY }, { scale }, { rotate: rotation }],
     };
   });
 
@@ -132,10 +127,7 @@ export const DailyCelebrationBanner: React.FC = () => {
   }, [triggerConfettiCycle, rotation, scale]);
 
   const animatedSparkleStyle = useAnimatedStyle(() => ({
-    transform: [
-      { rotate: `${rotation.value}deg` },
-      { scale: scale.value },
-    ],
+    transform: [{ rotate: `${rotation.value}deg` }, { scale: scale.value }],
   }));
 
   return (
@@ -173,10 +165,20 @@ export const DailyCelebrationBanner: React.FC = () => {
 
         {/* Celebratory Text */}
         <View style={styles.textContainer}>
-          <Text style={[typography.subMedium, { color: theme.primary, fontWeight: '700', textAlign: 'right' }]}>
+          <Text
+            style={[
+              typography.subMedium,
+              { color: theme.primary, fontWeight: '700', textAlign: 'right' },
+            ]}
+          >
             أحسنت! أتممت جميع عاداتك لليوم بنجاح
           </Text>
-          <Text style={[typography.caption, { color: theme.textSecondary, marginTop: 2, textAlign: 'right' }]}>
+          <Text
+            style={[
+              typography.caption,
+              { color: theme.textSecondary, marginTop: 2, textAlign: 'right' },
+            ]}
+          >
             حافظ على هذا الزخم والاستمرارية لبناء عادات راسخة.
           </Text>
         </View>

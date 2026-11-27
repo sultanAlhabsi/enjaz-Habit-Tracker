@@ -1,13 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  Vibration,
-  Platform,
-} from 'react-native';
+import { StyleSheet, View, Text, Pressable, ScrollView, Vibration, Platform } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -126,13 +118,9 @@ const StarterHabitRow: React.FC<{
                 ? '#1F2A22'
                 : '#1B1B19'
               : isSelected
-              ? '#F2F8F4'
-              : '#FFFFFF',
-            borderColor: isSelected
-              ? theme.primary
-              : isDark
-              ? '#2A2A26'
-              : '#ECEAE4',
+                ? '#F2F8F4'
+                : '#FFFFFF',
+            borderColor: isSelected ? theme.primary : isDark ? '#2A2A26' : '#ECEAE4',
           },
           animatedStyle,
         ]}
@@ -147,8 +135,8 @@ const StarterHabitRow: React.FC<{
                   ? '#283B2E'
                   : '#E2EFE7'
                 : isDark
-                ? '#242422'
-                : '#F4F3EF',
+                  ? '#242422'
+                  : '#F4F3EF',
             },
           ]}
         >
@@ -161,12 +149,8 @@ const StarterHabitRow: React.FC<{
 
         {/* Info */}
         <View style={styles.habitDetails}>
-          <Text style={[styles.habitName, { color: theme.text }]}>
-            {item.name}
-          </Text>
-          <Text style={[styles.habitDesc, { color: theme.textSecondary }]}>
-            {item.description}
-          </Text>
+          <Text style={[styles.habitName, { color: theme.text }]}>{item.name}</Text>
+          <Text style={[styles.habitDesc, { color: theme.textSecondary }]}>{item.description}</Text>
         </View>
 
         {/* Checkbox Pill */}
@@ -174,20 +158,12 @@ const StarterHabitRow: React.FC<{
           style={[
             styles.checkbox,
             {
-              backgroundColor: isSelected
-                ? theme.primary
-                : 'transparent',
-              borderColor: isSelected
-                ? theme.primary
-                : isDark
-                ? '#4A4A44'
-                : '#D0CDC4',
+              backgroundColor: isSelected ? theme.primary : 'transparent',
+              borderColor: isSelected ? theme.primary : isDark ? '#4A4A44' : '#D0CDC4',
             },
           ]}
         >
-          {isSelected && (
-            <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-          )}
+          {isSelected && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
         </View>
       </Animated.View>
     </Pressable>
@@ -210,19 +186,19 @@ export const OnboardingStarterPack: React.FC<OnboardingStarterPackProps> = ({
   }, []);
 
   const handleFinish = () => {
-    const selectedHabits: Omit<Habit, 'id' | 'createdAt'>[] = STARTER_HABITS
-      .filter((h) => selectedIds.includes(h.id))
-      .map((h) => ({
-        name: h.name,
-        description: h.description,
-        icon: h.icon,
-        color: h.color,
-        frequency: 'daily' as const,
-        frequencyDays: [0, 1, 2, 3, 4, 5, 6],
-        targetCount: h.targetCount,
-        unit: h.unit,
-        isActive: true,
-      }));
+    const selectedHabits: Omit<Habit, 'id' | 'createdAt'>[] = STARTER_HABITS.filter((h) =>
+      selectedIds.includes(h.id)
+    ).map((h) => ({
+      name: h.name,
+      description: h.description,
+      icon: h.icon,
+      color: h.color,
+      frequency: 'daily' as const,
+      frequencyDays: [0, 1, 2, 3, 4, 5, 6],
+      targetCount: h.targetCount,
+      unit: h.unit,
+      isActive: true,
+    }));
 
     onComplete(selectedHabits);
   };
@@ -231,19 +207,14 @@ export const OnboardingStarterPack: React.FC<OnboardingStarterPackProps> = ({
     <View style={styles.container}>
       {/* Header Info */}
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text }]}>
-          ابدأ عاداتك فوراً 🌿
-        </Text>
+        <Text style={[styles.title, { color: theme.text }]}>ابدأ عاداتك فوراً 🌿</Text>
         <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
           اخترنا لك عادات مبدئية أساسية لتنطلق بها.. يمكنك تخصيصها أو إزالتها بلمسة واحدة:
         </Text>
       </View>
 
       {/* Habits List */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContent}>
         {STARTER_HABITS.map((item) => (
           <StarterHabitRow
             key={item.id}

@@ -1,12 +1,10 @@
-name: "CodeQL Security Analysis"
+name: 'CodeQL Security Analysis'
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: ['main']
   schedule:
-    - cron: '30 6 * * 1' # Runs automatically every Monday at 06:30 UTC
+    - cron: '30 3 * * *' # Runs daily at 03:30 UTC
   workflow_dispatch:
 
 jobs:
@@ -41,4 +39,4 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
         with:
-          category: "/language:${{ matrix.language }}"
+          category: '/language:${{ matrix.language }}'

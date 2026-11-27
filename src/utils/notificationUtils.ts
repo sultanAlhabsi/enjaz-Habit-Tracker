@@ -25,7 +25,7 @@ export interface ReminderTriggerDescriptor {
   hour: number;
   minute: number;
   weekday?: number; // 1 = Sunday, 7 = Saturday
-  day?: number;     // 1 - 31 for monthly reminders
+  day?: number; // 1 - 31 for monthly reminders
 }
 
 /**
@@ -101,9 +101,7 @@ export const mapDayIndexToExpoWeekday = (dayIndex: number): number => {
  * Generates notification trigger descriptors for a habit.
  * Returns an empty array if habit is inactive, archived, or lacks a valid reminder time.
  */
-export const generateHabitReminderTriggers = (
-  habit: Habit
-): ReminderTriggerDescriptor[] => {
+export const generateHabitReminderTriggers = (habit: Habit): ReminderTriggerDescriptor[] => {
   if (!habit.isActive || habit.archivedAt || !habit.reminderTime) {
     return [];
   }
@@ -175,9 +173,7 @@ export const EVENING_REVIEW_REMINDER_ID = 'enjaz_evening_review_reminder';
  * Generates a daily trigger descriptor for the evening review reminder.
  * Returns null if the provided time string is invalid.
  */
-export const generateEveningReviewTrigger = (
-  timeStr: string
-): ReminderTriggerDescriptor | null => {
+export const generateEveningReviewTrigger = (timeStr: string): ReminderTriggerDescriptor | null => {
   const parsed = parseReminderTime(timeStr);
   if (!parsed) return null;
 
@@ -188,4 +184,3 @@ export const generateEveningReviewTrigger = (
     minute: parsed.minute,
   };
 };
-

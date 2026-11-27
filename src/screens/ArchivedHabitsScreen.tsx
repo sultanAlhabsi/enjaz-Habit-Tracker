@@ -1,12 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  Pressable,
-  TextInput,
-  ScrollView,
-} from 'react-native';
+import { View, StyleSheet, FlatList, Pressable, TextInput, ScrollView } from 'react-native';
 import { appAlert } from '../services/alertService';
 import { Text } from '../components/common/AppText';
 import { Ionicons } from '@expo/vector-icons';
@@ -32,9 +25,7 @@ interface ArchivedHabitsScreenProps {
   navigation: any;
 }
 
-export const ArchivedHabitsScreen: React.FC<ArchivedHabitsScreenProps> = ({
-  navigation,
-}) => {
+export const ArchivedHabitsScreen: React.FC<ArchivedHabitsScreenProps> = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const { theme, spacing, radius, typography, touchTarget } = useTheme();
   const { habits, checkins, restoreHabit, deleteHabit } = useHabitStore();
@@ -43,13 +34,9 @@ export const ArchivedHabitsScreen: React.FC<ArchivedHabitsScreenProps> = ({
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<HabitCategory | 'الكل'>('الكل');
 
-
   const isSearchActive = Boolean(searchQuery.trim());
 
-  const archivedHabits = useMemo(
-    () => habits.filter((h) => Boolean(h.archivedAt)),
-    [habits]
-  );
+  const archivedHabits = useMemo(() => habits.filter((h) => Boolean(h.archivedAt)), [habits]);
 
   const filteredArchivedHabits = useMemo(() => {
     const searched = isSearchActive
@@ -60,19 +47,15 @@ export const ArchivedHabitsScreen: React.FC<ArchivedHabitsScreenProps> = ({
   }, [archivedHabits, isSearchActive, searchQuery, selectedCategory]);
 
   const handleRestore = (habit: Habit) => {
-    appAlert(
-      'استعادة العادة',
-      `هل تريد استعادة عادة "${habit.name}" إلى قائمة العادات اليومية؟`,
-      [
-        { text: 'إلغاء', style: 'cancel' },
-        {
-          text: 'استعادة',
-          onPress: async () => {
-            await restoreHabit(habit.id);
-          },
+    appAlert('استعادة العادة', `هل تريد استعادة عادة "${habit.name}" إلى قائمة العادات اليومية؟`, [
+      { text: 'إلغاء', style: 'cancel' },
+      {
+        text: 'استعادة',
+        onPress: async () => {
+          await restoreHabit(habit.id);
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleDeletePermanent = (habit: Habit) => {
@@ -104,9 +87,7 @@ export const ArchivedHabitsScreen: React.FC<ArchivedHabitsScreenProps> = ({
   const renderHabitItem = ({ item: habit }: { item: Habit }) => {
     const stats = archivedHabitStatsMap.get(habit.id) ?? calculateHabitStats(habit, checkins);
     const category = getHabitCategory(habit.icon);
-    const archivedDateFormatted = habit.archivedAt
-      ? formatArabicDate(habit.archivedAt)
-      : '';
+    const archivedDateFormatted = habit.archivedAt ? formatArabicDate(habit.archivedAt) : '';
 
     return (
       <Card style={[styles.card, { marginBottom: spacing.sm }]}>
@@ -183,24 +164,17 @@ export const ArchivedHabitsScreen: React.FC<ArchivedHabitsScreenProps> = ({
           </View>
 
           <View
-            style={[
-              styles.statsRow,
-              { borderTopColor: theme.borderSubtle, marginTop: spacing.sm },
-            ]}
+            style={[styles.statsRow, { borderTopColor: theme.borderSubtle, marginTop: spacing.sm }]}
           >
             <View style={styles.statCol}>
-              <Text style={[typography.caption, { color: theme.textMuted }]}>
-                إجمالي الإنجازات
-              </Text>
+              <Text style={[typography.caption, { color: theme.textMuted }]}>إجمالي الإنجازات</Text>
               <Text style={[typography.subMedium, { color: theme.text }]}>
                 {toArabicNumerals(stats.totalCompletions)} {habit.unit}
               </Text>
             </View>
 
             <View style={styles.statCol}>
-              <Text style={[typography.caption, { color: theme.textMuted }]}>
-                أطول سلسلة
-              </Text>
+              <Text style={[typography.caption, { color: theme.textMuted }]}>أطول سلسلة</Text>
               <Text style={[typography.subMedium, { color: theme.text }]}>
                 {formatArabicStreakDays(stats.bestStreak)}
               </Text>
@@ -311,11 +285,7 @@ export const ArchivedHabitsScreen: React.FC<ArchivedHabitsScreenProps> = ({
             value={searchQuery}
             onChangeText={setSearchQuery}
             autoFocus
-            style={[
-              typography.body,
-              styles.searchInput,
-              { color: theme.text },
-            ]}
+            style={[typography.body, styles.searchInput, { color: theme.text }]}
           />
           {searchQuery.length > 0 && (
             <Pressable
@@ -375,17 +345,8 @@ export const ArchivedHabitsScreen: React.FC<ArchivedHabitsScreenProps> = ({
 
       {archivedHabits.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <View
-            style={[
-              styles.emptyIconCircle,
-              { backgroundColor: theme.cardSecondary },
-            ]}
-          >
-            <Ionicons
-              name="archive-outline"
-              size={36}
-              color={theme.textMuted}
-            />
+          <View style={[styles.emptyIconCircle, { backgroundColor: theme.cardSecondary }]}>
+            <Ionicons name="archive-outline" size={36} color={theme.textMuted} />
           </View>
           <Text style={[typography.h3, { color: theme.text, marginTop: 16 }]}>
             لا توجد عادات مؤرشفة

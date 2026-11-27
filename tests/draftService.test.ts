@@ -7,7 +7,12 @@ import {
   deleteNoteDraft,
   hasNoteDraft,
 } from '../src/services/draftService.ts';
-import { initDatabase, deletePreference, getPreference, setPreference } from '../src/services/database.ts';
+import {
+  initDatabase,
+  deletePreference,
+  getPreference,
+  setPreference,
+} from '../src/services/database.ts';
 
 test('draftService: initializes and generates correct key format', async () => {
   await initDatabase();
@@ -100,12 +105,8 @@ test('database: deletePreference removes keys from meta table and memory', async
 
 test('draftService: saveHabitDraft, getHabitDraft, and deleteHabitDraft', async () => {
   await initDatabase();
-  const {
-    saveHabitDraft,
-    getHabitDraft,
-    deleteHabitDraft,
-    hasHabitDraft,
-  } = await import('../src/services/draftService.ts');
+  const { saveHabitDraft, getHabitDraft, deleteHabitDraft, hasHabitDraft } =
+    await import('../src/services/draftService.ts');
 
   // Initially no draft
   await deleteHabitDraft('test_new');
@@ -148,4 +149,3 @@ test('draftService: saveHabitDraft, getHabitDraft, and deleteHabitDraft', async 
   await deleteHabitDraft('test_new');
   assert.equal(await hasHabitDraft('test_new'), false);
 });
-

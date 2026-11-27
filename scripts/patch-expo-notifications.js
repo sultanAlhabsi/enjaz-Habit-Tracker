@@ -38,10 +38,10 @@ const safeRead = (filePath) => {
 
 // 1. Patch warnOfExpoGoPushUsage.js to not throw Error on Android in Expo Go
 let warnContent = safeRead(warnFile);
-if (warnContent && warnContent.includes("throw new Error(message);")) {
+if (warnContent && warnContent.includes('throw new Error(message);')) {
   warnContent = warnContent.replace(
     /if \(Platform\.OS === 'android'\) \{\s*throw new Error\(message\);\s*\}\s*else if \(__DEV__\) \{\s*didWarn = true;\s*console\.warn\(message\);\s*\}/,
-    "didWarn = true;\n        if (__DEV__) {\n            console.warn(message);\n        }"
+    'didWarn = true;\n        if (__DEV__) {\n            console.warn(message);\n        }'
   );
   fs.writeFileSync(warnFile, warnContent, 'utf8');
   console.log('[patch-expo-notifications] Patched warnOfExpoGoPushUsage.js successfully.');
@@ -49,21 +49,20 @@ if (warnContent && warnContent.includes("throw new Error(message);")) {
 
 // 2. Patch DevicePushTokenAutoRegistration.fx.js to bypass in Expo Go
 let autoRegContent = safeRead(autoRegFile);
-if (autoRegContent && !autoRegContent.includes("isRunningInExpoGo")) {
+if (autoRegContent && !autoRegContent.includes('isRunningInExpoGo')) {
   autoRegContent = autoRegContent.replace(
     "import { UnavailabilityError } from 'expo-modules-core';",
     "import { isRunningInExpoGo } from 'expo';\nimport { UnavailabilityError } from 'expo-modules-core';"
   );
   autoRegContent = autoRegContent.replace(
-    "if (ServerRegistrationModule.getRegistrationInfoAsync) {",
-    "if (!isRunningInExpoGo() && ServerRegistrationModule.getRegistrationInfoAsync) {"
+    'if (ServerRegistrationModule.getRegistrationInfoAsync) {',
+    'if (!isRunningInExpoGo() && ServerRegistrationModule.getRegistrationInfoAsync) {'
   );
-  autoRegContent = autoRegContent.replace(
-    "}\nelse {",
-    "}\nelse if (!isRunningInExpoGo()) {"
-  );
+  autoRegContent = autoRegContent.replace('}\nelse {', '}\nelse if (!isRunningInExpoGo()) {');
   fs.writeFileSync(autoRegFile, autoRegContent, 'utf8');
-  console.log('[patch-expo-notifications] Patched DevicePushTokenAutoRegistration.fx.js successfully.');
+  console.log(
+    '[patch-expo-notifications] Patched DevicePushTokenAutoRegistration.fx.js successfully.'
+  );
 }
 
 // 3. Patch TopicSubscriptionModule.android.js for Expo Go missing module
@@ -83,7 +82,9 @@ const fallbackModule = {
 export default nativeModule ?? fallbackModule;
 `;
   fs.writeFileSync(topicFile, content, 'utf8');
-  console.log('[patch-expo-notifications] Patched TopicSubscriptionModule.android.js successfully.');
+  console.log(
+    '[patch-expo-notifications] Patched TopicSubscriptionModule.android.js successfully.'
+  );
 }
 
 // 4. Patch PushTokenManager.native.js for Expo Go missing module
@@ -107,7 +108,10 @@ export default nativeModule ?? fallbackModule;
 
 // 5. Patch ServerRegistrationModule.native.js for Expo Go missing module
 let serverRegContent = safeRead(serverRegFile);
-if (serverRegContent && serverRegContent.includes("requireNativeModule('NotificationsServerRegistrationModule')")) {
+if (
+  serverRegContent &&
+  serverRegContent.includes("requireNativeModule('NotificationsServerRegistrationModule')")
+) {
   const content = `import { requireOptionalNativeModule } from 'expo-modules-core';
 
 const nativeModule = requireOptionalNativeModule('NotificationsServerRegistrationModule');
@@ -122,5 +126,7 @@ const fallbackModule = {
 export default nativeModule ?? fallbackModule;
 `;
   fs.writeFileSync(serverRegFile, content, 'utf8');
-  console.log('[patch-expo-notifications] Patched ServerRegistrationModule.native.js successfully.');
+  console.log(
+    '[patch-expo-notifications] Patched ServerRegistrationModule.native.js successfully.'
+  );
 }

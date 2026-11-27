@@ -8,10 +8,7 @@ import {
   mapLoopColor,
   convertLoopRawRecords,
 } from '../src/services/loopImportService.ts';
-import type {
-  RawLoopHabit,
-  RawLoopRepetition,
-} from '../src/services/loopImportService.ts';
+import type { RawLoopHabit, RawLoopRepetition } from '../src/services/loopImportService.ts';
 
 test('Loop Habits import - detectHabitIcon smart mapping', () => {
   assert.equal(detectHabitIcon('حذف الصور 📷'), 'images-outline');
@@ -46,13 +43,21 @@ test('Loop Habits import - Full end-to-end conversion on Loop Habits Backup file
   assert.ok(fs.existsSync(dbPath), 'Database file must exist in project root');
 
   const db = new DatabaseSync(dbPath);
-  const rawHabits = db.prepare('SELECT * FROM Habits ORDER BY position, id').all() as unknown as RawLoopHabit[];
-  const rawReps = db.prepare('SELECT * FROM Repetitions ORDER BY timestamp ASC').all() as unknown as RawLoopRepetition[];
+  const rawHabits = db
+    .prepare('SELECT * FROM Habits ORDER BY position, id')
+    .all() as unknown as RawLoopHabit[];
+  const rawReps = db
+    .prepare('SELECT * FROM Repetitions ORDER BY timestamp ASC')
+    .all() as unknown as RawLoopRepetition[];
 
   assert.equal(rawHabits.length, 51, 'Should have 51 habits in the sample database');
   assert.equal(rawReps.length, 8591, 'Should have 8591 repetitions in the sample database');
 
-  const result = convertLoopRawRecords(rawHabits, rawReps, 'Loop Habits Backup 2026-09-13 082711.db');
+  const result = convertLoopRawRecords(
+    rawHabits,
+    rawReps,
+    'Loop Habits Backup 2026-09-13 082711.db'
+  );
 
   // Verify habits count
   assert.equal(result.habits.length, 51);
@@ -83,7 +88,10 @@ test('Loop Habits import - Full end-to-end conversion on Loop Habits Backup file
   assert.equal(waterHabit.unit, 'مل');
 
   // Verify checkins
-  assert.ok(result.checkins.length > 5000, `Should have converted checkins (got ${result.checkins.length})`);
+  assert.ok(
+    result.checkins.length > 5000,
+    `Should have converted checkins (got ${result.checkins.length})`
+  );
   assert.equal(result.inspection.notesCount, 58, 'Should preserve all 58 user reflection notes');
 
   // Verify notes are indeed present in checkins

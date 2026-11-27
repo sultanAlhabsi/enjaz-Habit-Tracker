@@ -50,14 +50,11 @@ export const DateStripSkeleton: React.FC = () => {
   const { spacing } = useTheme();
 
   return (
-    <View style={[styles.dateStripRow, { paddingHorizontal: spacing.base, marginBottom: spacing.sm }]}>
+    <View
+      style={[styles.dateStripRow, { paddingHorizontal: spacing.base, marginBottom: spacing.sm }]}
+    >
       {Array.from({ length: 7 }).map((_, index) => (
-        <Skeleton
-          key={index}
-          width={42}
-          height={62}
-          borderRadius={21}
-        />
+        <Skeleton key={index} width={42} height={62} borderRadius={21} />
       ))}
     </View>
   );
@@ -108,15 +105,11 @@ export const CategoryFilterSkeleton: React.FC = () => {
   const chipWidths = [64, 76, 58, 82, 70];
 
   return (
-    <View style={[styles.categoryRow, { paddingHorizontal: spacing.base, marginBottom: spacing.sm }]}>
+    <View
+      style={[styles.categoryRow, { paddingHorizontal: spacing.base, marginBottom: spacing.sm }]}
+    >
       {chipWidths.map((w, index) => (
-        <Skeleton
-          key={index}
-          width={w}
-          height={30}
-          borderRadius={15}
-          style={{ marginLeft: 8 }}
-        />
+        <Skeleton key={index} width={w} height={30} borderRadius={15} style={{ marginLeft: 8 }} />
       ))}
     </View>
   );

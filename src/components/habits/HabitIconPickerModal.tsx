@@ -33,7 +33,16 @@ const ICON_SEARCH_KEYWORDS: Record<string, string[]> = {
   'school-outline': ['دراسة', 'مذاكرة', 'مدرسة', 'جامعة', 'تخرج', 'school', 'study', 'exam'],
   'library-outline': ['مكتبة', 'كتب', 'بحث', 'مراجع', 'library', 'books'],
   'bulb-outline': ['فكرة', 'إبداع', 'ابتكار', 'ذكاء', 'تفكير', 'bulb', 'idea', 'creative'],
-  'language-outline': ['لغات', 'تعلم', 'انجليزي', 'ترجمة', 'لسان', 'language', 'translate', 'english'],
+  'language-outline': [
+    'لغات',
+    'تعلم',
+    'انجليزي',
+    'ترجمة',
+    'لسان',
+    'language',
+    'translate',
+    'english',
+  ],
   'pencil-outline': ['قلم', 'رسم', 'كتابة', 'تصميم', 'تخطيط', 'pencil', 'draw', 'sketch'],
   'reader-outline': ['قارئ', 'قراءة', 'مقالات', 'مقال', 'نصوص', 'reader', 'article'],
   'newspaper-outline': ['صحيفة', 'جريدة', 'أخبار', 'صحافة', 'news', 'newspaper'],
@@ -68,7 +77,17 @@ const ICON_SEARCH_KEYWORDS: Record<string, string[]> = {
   'walk-outline': ['مشي', 'خطوات', 'تمشية', 'حركة', 'walk', 'steps'],
   'footsteps-outline': ['خطوات', 'مشي', 'قدم', 'تتبع', 'footsteps', 'steps'],
   'bicycle-outline': ['دراجة', 'سيكل', 'ركوب', 'رياضة', 'bicycle', 'cycling', 'bike'],
-  'barbell-outline': ['حديد', 'أثقال', 'جيم', 'تمارين', 'عضلات', 'قوة', 'gym', 'weights', 'barbell'],
+  'barbell-outline': [
+    'حديد',
+    'أثقال',
+    'جيم',
+    'تمارين',
+    'عضلات',
+    'قوة',
+    'gym',
+    'weights',
+    'barbell',
+  ],
   'body-outline': ['إطالة', 'مرونة', 'يوغا', 'جسم', 'body', 'stretch', 'yoga'],
   'basketball-outline': ['سلة', 'كرة سلة', 'رياضة', 'basketball'],
   'football-outline': ['قدم', 'كرة قدم', 'مباراة', 'رياضة', 'football', 'soccer'],
@@ -105,7 +124,16 @@ const ICON_SEARCH_KEYWORDS: Record<string, string[]> = {
   'sad-outline': ['حزن', 'مزاج', 'تتبع المزاج', 'مشاعر', 'sad', 'mood'],
 
   // الغذاء والتغذية والمشروبات
-  'nutrition-outline': ['تغذية', 'أكل صحي', 'طعام', 'فواكه', 'دايت', 'nutrition', 'healthy', 'diet'],
+  'nutrition-outline': [
+    'تغذية',
+    'أكل صحي',
+    'طعام',
+    'فواكه',
+    'دايت',
+    'nutrition',
+    'healthy',
+    'diet',
+  ],
   'restaurant-outline': ['مطعم', 'وجبة', 'غداء', 'عشاء', 'أكل', 'restaurant', 'meal', 'food'],
   'cafe-outline': ['قهوة', 'شاي', 'كافيه', 'كافيين', 'مشروب', 'صباح', 'coffee', 'tea', 'cafe'],
   'fast-food-outline': ['وجبات سريعة', 'برجر', 'سناك', 'طعام', 'fast food', 'burger'],
@@ -232,7 +260,17 @@ const ICON_SEARCH_KEYWORDS: Record<string, string[]> = {
   'location-outline': ['موقع', 'عنوان', 'وصول', 'location'],
 
   // التواصل الاجتماعي والعلاقات والترفيه
-  'people-outline': ['ناس', 'أهل', 'أصدقاء', 'عائلة', 'صلة رحم', 'تواصل', 'people', 'family', 'friends'],
+  'people-outline': [
+    'ناس',
+    'أهل',
+    'أصدقاء',
+    'عائلة',
+    'صلة رحم',
+    'تواصل',
+    'people',
+    'family',
+    'friends',
+  ],
   'person-outline': ['شخص', 'ذات', 'تطوير الذات', 'نفسي', 'person', 'self'],
   'chatbubbles-outline': ['حوار', 'محادثة', 'كلام', 'نقاش', 'chat', 'discussion'],
   'chatbox-ellipses-outline': ['رسالة', 'شات', 'محادثة', 'chatbox'],
@@ -373,12 +411,7 @@ export const HabitIconPickerModal: React.FC<HabitIconPickerModalProps> = ({
               },
             ]}
           >
-            <Ionicons
-              name="search"
-              size={17}
-              color={theme.textMuted}
-              style={{ marginLeft: 8 }}
-            />
+            <Ionicons name="search" size={17} color={theme.textMuted} style={{ marginLeft: 8 }} />
             <TextInput
               placeholder="ابحث عن أيقونة (ماء، كتاب، رياضة...)"
               placeholderTextColor={theme.textMuted}
@@ -436,9 +469,7 @@ export const HabitIconPickerModal: React.FC<HabitIconPickerModalProps> = ({
                       {
                         width: tileSize,
                         height: tileSize,
-                        backgroundColor: isSelected
-                          ? `${selectedColor}18`
-                          : theme.card,
+                        backgroundColor: isSelected ? `${selectedColor}18` : theme.card,
                         borderColor: isSelected ? selectedColor : theme.border,
                         borderWidth: isSelected ? 2 : 1,
                         borderRadius: radius.md,
@@ -450,9 +481,7 @@ export const HabitIconPickerModal: React.FC<HabitIconPickerModalProps> = ({
                       style={[
                         styles.iconCircle,
                         {
-                          backgroundColor: isSelected
-                            ? selectedColor
-                            : theme.cardSecondary,
+                          backgroundColor: isSelected ? selectedColor : theme.cardSecondary,
                           borderRadius: radius.full,
                         },
                       ]}
